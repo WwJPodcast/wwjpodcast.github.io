@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Walking with Jesus — Following His Walk. Sharing His Word.</title>
+<meta name="description" content="A daily 15-minute habit in the Gospels. The King James text of all four Gospels, read in order. Podcast, YouTube, and social media.">
+<meta name="theme-color" content="#fbf7ec">
+<meta property="og:title" content="Walking with Jesus">
+<meta property="og:description" content="Following His Walk. Sharing His Word. Fifteen minutes in the Gospels, five days a week.">
+<meta property="og:type" content="website">
+<!-- TODO: add og:image (1200x630) and og:url once hosted -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fbf7ec'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='36' font-weight='700' fill='%2388231d' text-anchor='middle'%3EW%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --navy:#1b2a49;
+  --navy-2:#243659;
+  --gold:#b8862b;
+  --gold-light:#e3b55b;
+  --red:#88231d;
+  --cream:#fbf7ec;
+  --parchment:#f6efe0;
+  --paper:#fffaf0;
+  --ink:#1d2433;
+  --muted:#5b6477;
+  --line:#e2d6bb;
+  --radius:16px;
+  --serif:'Lora',Georgia,'Times New Roman',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  font-family:var(--sans);font-size:17px;line-height:1.6;color:var(--ink);
+  background:var(--parchment);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+.wrap{width:100%;max-width:640px;margin:0 auto;padding:0 20px}
+section{padding:44px 0}
+h1,h2,h3{font-family:var(--serif);line-height:1.2;color:var(--navy)}
+h2{font-size:1.65rem;margin-bottom:14px}
+.eyebrow{
+  font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--gold);margin-bottom:8px;
+}
+.lede{color:var(--muted);font-size:1.02rem}
+
+/* ---------- Hero ---------- */
+.hero{
+  background:var(--cream);text-align:center;border-bottom:1px solid var(--line);
+  padding:calc(28px + env(safe-area-inset-top)) 0 40px;
+}
+.hero .logo{width:min(78vw,300px);height:auto;margin:0 auto 10px}
+.tagline{font-family:var(--serif);font-size:1.2rem;color:var(--red);line-height:1.45;margin-bottom:26px}
+.tagline span{display:block}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:52px;padding:0 26px;border-radius:999px;border:0;cursor:pointer;
+  font:700 1rem var(--sans);text-decoration:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .12s ease,background .2s ease;
+}
+.btn:active{transform:scale(.97)}
+.btn-navy{background:var(--navy);color:var(--parchment)}
+.btn-navy:hover{background:var(--navy-2)}
+.btn-ghost{background:transparent;color:var(--navy);border:1.5px solid rgba(27,42,73,.35)}
+.hero .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+/* ---------- What is ---------- */
+.mission{
+  font-family:var(--serif);font-size:1.12rem;line-height:1.65;color:var(--ink);
+  border-left:4px solid var(--gold);padding-left:16px;
+}
+.why-p{margin-top:20px;font-family:var(--serif);font-size:1.05rem;line-height:1.65;color:var(--ink)}
+.how-we{margin-top:18px;font-size:.95rem;color:var(--muted)}
+
+/* ---------- Why / How / What cards (with video) ---------- */
+.cards{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:30px -20px 0;padding:0 20px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cards::-webkit-scrollbar{display:none}
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;
+}
+.card-head{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:center;margin-bottom:12px}
+.card .ico{
+  width:52px;height:52px;border-radius:14px;background:var(--navy);
+  display:grid;place-items:center;
+}
+.card .ico svg{width:28px;height:28px;stroke:var(--gold-light);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card h3{font-size:1.15rem}
+.card h3 small{display:block;font-family:var(--sans);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.card p{font-size:.98rem;color:var(--muted)}
+
+.vid{
+  position:relative;margin-top:16px;border-radius:12px;overflow:hidden;
+  aspect-ratio:var(--ratio,16/9);background:#0e1730;
+}
+.vid button,.vid iframe,.vid a{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid button{
+  background-size:cover;background-position:center;cursor:pointer;
+  display:grid;place-items:center;-webkit-tap-highlight-color:transparent;
+}
+.vid button::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.4))}
+.vid.empty{display:grid;place-items:center;text-align:center;background:transparent;border:1.5px dashed var(--line);color:var(--muted);font-size:.9rem}
+.vid.fb a{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  text-decoration:none;color:var(--parchment);background:linear-gradient(160deg,var(--navy),var(--navy-2));
+  font-weight:700;font-size:.98rem;text-align:center;padding:12px;
+}
+
+.play{
+  position:relative;width:60px;height:60px;border-radius:50%;
+  background:var(--gold-light);display:grid;place-items:center;flex:0 0 auto;
+}
+.play::after{
+  content:"";margin-left:5px;border-style:solid;border-width:10px 0 10px 17px;
+  border-color:transparent transparent transparent var(--navy);
+}
+
+.cards .card{flex:0 0 min(82vw,300px);scroll-snap-align:center;display:flex;flex-direction:column}
+.cards .card p{margin-bottom:16px}
+.cards .card .vid{margin-top:auto}
+.dots{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line);transition:background .2s,transform .2s}
+.dots i.on{background:var(--gold);transform:scale(1.25)}
+.dots span{font-size:.8rem;color:var(--muted);margin-left:6px}
+
+/* ---------- Shorts ---------- */
+.shorts-sec{background:var(--navy);color:var(--parchment)}
+.shorts-sec h2{color:var(--parchment)}
+.shorts-sec .lede{color:#b9c2d6}
+.shorts{
+  display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;
+  margin:20px -20px 0;padding:0 20px 8px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.shorts::-webkit-scrollbar{display:none}
+.short{
+  flex:0 0 min(62vw,240px);aspect-ratio:9/16;scroll-snap-align:center;
+  border-radius:14px;overflow:hidden;background:#0e1730;position:relative;
+}
+.short button,.short iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.short button{
+  background-size:cover;background-position:center;cursor:pointer;
+  display:grid;place-items:center;-webkit-tap-highlight-color:transparent;
+}
+.short button::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.45))}
+.short.empty{display:grid;place-items:center;text-align:center;padding:16px;
+  border:1.5px dashed rgba(227,181,91,.5);background:transparent;font-size:.9rem;color:#b9c2d6}
+.swipe-hint{font-size:.82rem;color:#b9c2d6;margin:10px 0 18px}
+.shorts-sec .linkbtn{background:transparent;color:var(--parchment);border-color:rgba(246,239,224,.4)}
+.shorts-sec .linkbtn.soon::after{color:#b9c2d6}
+
+/* ---------- Links ---------- */
+.group-label{font-weight:700;color:var(--navy);margin:22px 0 10px;font-size:.95rem}
+.linkgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.linkbtn{
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:56px;padding:8px 12px;border-radius:14px;text-decoration:none;
+  background:var(--paper);border:1.5px solid var(--line);color:var(--navy);font-weight:700;
+  -webkit-tap-highlight-color:transparent;
+  transition:border-color .2s,transform .12s;
+}
+.linkbtn:active{transform:scale(.97)}
+.linkbtn:hover{border-color:var(--gold)}
+.linkbtn.wide{grid-column:1 / -1}
+.linkbtn.primary{background:var(--navy);color:var(--parchment);border-color:var(--navy);min-height:60px;font-size:1.05rem}
+.linkbtn.soon{opacity:.55;pointer-events:none}
+.linkbtn.soon::after{content:"soon";font-size:.68rem;font-weight:600;margin-left:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.linkbtn.primary.soon::after{color:#b9c2d6}
+.share-row{margin-top:14px}
+.share-row .btn{width:100%;background:var(--gold);color:#fff}
+.toast{font-size:.9rem;color:var(--muted);text-align:center;margin-top:8px;min-height:1.4em}
+
+/* ---------- FAQ ---------- */
+.faq{background:var(--paper);border-top:1px solid var(--line)}
+details{border-bottom:1px solid var(--line)}
+details:first-of-type{border-top:1px solid var(--line)}
+summary{
+  list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;
+  min-height:60px;padding:14px 2px;font-family:var(--serif);font-weight:700;font-size:1.08rem;color:var(--navy);
+  -webkit-tap-highlight-color:transparent;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{
+  content:"+";flex:0 0 32px;height:32px;border-radius:50%;background:var(--parchment);
+  display:grid;place-items:center;font-family:var(--sans);font-size:1.3rem;font-weight:500;color:var(--gold);
+}
+details[open] summary::after{content:"–"}
+.answer{padding:0 2px 18px;color:var(--ink);font-size:1rem}
+.answer p+p{margin-top:10px}
+
+/* ---------- Footer ---------- */
+footer{background:var(--navy);color:#b9c2d6;text-align:center;padding:36px 0 calc(36px + env(safe-area-inset-bottom));font-size:.85rem}
+footer .tag{font-family:var(--serif);color:var(--gold-light);font-size:1.05rem;margin-bottom:10px}
+footer p+p{margin-top:8px}
+
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--gold-light);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media (min-width:700px){
+  body{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="wrap">
+    <img class="logo" src="logo.png" width="520" height="406" alt="Walking with Jesus">
+    <p class="tagline"><span>Following His Walk.</span><span>Sharing His Word.</span></p>
+    <div class="actions">
+      <a class="btn btn-navy" href="#follow">Start listening</a>
+      <a class="btn btn-ghost" href="#what">About the show</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= WHAT IS WALKING WITH JESUS ================= -->
+<section id="what">
+  <div class="wrap">
+    <p class="eyebrow">About</p>
+    <h2>What is Walking with Jesus?</h2>
+    <p class="mission">An effort to teach the value of daily time with Jesus through His words in the Gospels, and to make it an easy habit to adopt.</p>
+    <p class="why-p">Time with Jesus is what changes a life, and the Gospels are where we find Him: His words, His actions, and ultimately His sacrifice. The value isn&rsquo;t in making it through the Gospels once, or in hearing something new. It&rsquo;s in regular, prolonged exposure to the most important person in the Bible, day after day, as He shapes who we are.</p>
+    <p class="how-we">The method lives on YouTube and the major podcast platforms. The message spreads on Facebook and Instagram.</p>
+
+    <div class="cards">
+      <article class="card" data-explainer="why">
+        <div class="card-head">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h7M9 16h7"/></svg>
+          </div>
+          <h3><small>The Why</small>Time with Christ shapes us</h3>
+        </div>
+        <p>We become like what we spend time with. Hearing what Jesus said and did, again and again, is how He changes the way we think, love, and live.</p>
+        <div class="vid-slot"></div>
+      </article>
+
+      <article class="card" data-explainer="how">
+        <div class="card-head">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </div>
+          <h3><small>The How</small>Fifteen minutes, five days a week</h3>
+        </div>
+        <p>Press play on the commute, over lunch, or before bed. A small, steady habit is easier to keep than a heroic one.</p>
+        <div class="vid-slot"></div>
+      </article>
+
+      <article class="card" data-explainer="what">
+        <div class="card-head">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="6" rx="3"/><path d="M6 12h6" stroke-width="3"/></svg>
+          </div>
+          <h3><small>The What</small>All four Gospels, in order</h3>
+        </div>
+        <p>The King James text of Matthew, Mark, Luke, and John woven into one chronological story. Scripture only, with no commentary. Watch your progress grow week by week.</p>
+        <div class="vid-slot"></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SHORTS ================= -->
+<section class="shorts-sec" id="watch">
+  <div class="wrap">
+    <p class="eyebrow">Watch</p>
+    <h2>A taste of the Word</h2>
+    <p class="lede">50+ short passages from the Gospels. Tap to play.</p>
+    <div class="shorts" id="shorts" aria-label="YouTube Shorts"></div>
+    <p class="swipe-hint">Swipe for more →</p>
+    <div class="linkgrid"><a class="linkbtn wide" data-link="youtube">See all the Shorts on YouTube</a></div>
+  </div>
+</section>
+
+<!-- ================= FOLLOW ================= -->
+<section id="follow">
+  <div class="wrap">
+    <p class="eyebrow">Follow</p>
+    <h2>How can I follow?</h2>
+    <p class="lede">New episodes release Monday through Friday. Pick the place you already listen.</p>
+
+    <div class="linkgrid" style="margin-top:20px">
+      <a class="linkbtn wide primary" data-link="youtube">▶&nbsp; Watch on YouTube</a>
+    </div>
+
+    <p class="group-label">Listen to the podcast</p>
+    <div class="linkgrid">
+      <a class="linkbtn" data-link="apple">Apple Podcasts</a>
+      <a class="linkbtn" data-link="spotify">Spotify</a>
+      <a class="linkbtn" data-link="amazon">Amazon Music</a>
+      <a class="linkbtn" data-link="iheart">iHeart</a>
+      <a class="linkbtn wide" data-link="rss">More ways to listen</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SHARE ================= -->
+<section id="share" style="padding-top:8px">
+  <div class="wrap">
+    <p class="eyebrow">Share</p>
+    <h2>How can I share?</h2>
+    <p class="lede">Know someone who could use more Jesus in their week? Send them a link, or follow along on social media.</p>
+
+    <div class="linkgrid" style="margin-top:20px">
+      <a class="linkbtn" data-link="facebook">Facebook</a>
+      <a class="linkbtn" data-link="instagram">Instagram</a>
+    </div>
+    <div class="share-row">
+      <button class="btn" id="shareBtn" type="button">Share this page</button>
+      <p class="toast" id="toast" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <p class="eyebrow">FAQ</p>
+    <h2>Questions people ask</h2>
+
+    <details>
+      <summary>I already know these stories. Why listen?</summary>
+      <div class="answer">
+        <p>You don&rsquo;t stop spending time with someone because you already know their story. This isn&rsquo;t about new information; it&rsquo;s about time in His company, day after day.</p>
+        <p>Hearing familiar passages in order, and read aloud, also tends to bring out details we&rsquo;ve skimmed past.</p>
+      </div>
+    </details>
+
+    
+    <details>
+      <summary>Why the King James Version?</summary>
+      <div class="answer">
+        <p>The KJV is in the public domain, so the text can be read freely without licensing limits. Its rhythm was also shaped for being read aloud, which suits listening.</p>
+        <p>Many listeners grew up with it, and many are meeting it for the first time. Either way, you hear the Gospels as they have been spoken for centuries.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Why Monday through Friday, not daily?</summary>
+      <div class="answer">
+        <p>Walking with Jesus is built to be a habit you can keep. Five days gives you a steady rhythm without the pressure of a never-miss-a-day streak.</p>
+        <p>Weekends are left open for church, family, rest, and catching up on anything you missed. Every episode stays available, so you can go at your own pace.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>How did this come to be?</summary>
+      <div class="answer">
+        <p>It began with a simple conviction: if time with Jesus shapes a life, then spending dedicated time in the Gospels should be as easy to start as pressing play.</p>
+        <p>Walking with Jesus is an independent, one-person effort to make that habit approachable for the lifelong believer and the brand-new one alike.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Why not just read my Bible?</summary>
+      <div class="answer">
+        <p>You should! This isn't a replacement for your Bible; it's a way to build the habit of showing up. Many people find that hearing the Gospels read aloud helps them notice things they've read past a dozen times.</p>
+        <p>Listening also fits places reading doesn't: driving, walking, folding laundry, or a tired evening. Let this open the door, then open your Bible and go deeper.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Why not an audiobook Bible?</summary>
+      <div class="answer">
+        <p>An audiobook Bible reads straight through, so the four Gospels land in four separate places and retell many of the same events. Walking with Jesus is a harmony: the Gospels woven together into a single chronological story of Jesus' life.</p>
+        <p>Each episode is a short, finishable 15 minutes, with brief factual notes on where and when each scene takes place. There's no commentary or interpretation, just the Word.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Who is reading? Are the voices real?</summary>
+      <div class="answer">
+        <p>The voices are AI-generated, and we say so plainly. The words are not generated: every passage is the King James text, read in full.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="tag">Following His Walk. Sharing His Word.</p>
+    <p>Scripture quoted from the King James Version (public domain).</p>
+    <p>Narration voices are AI-generated.</p>
+  </div>
+</footer>
+
+<script>
+/* =====================================================
+   EDIT HERE — paste your real links and video IDs.
+   Anything left blank shows as a muted "soon" button or
+   "coming soon" tile, so nothing live is ever a dead link.
+   ===================================================== */
+const LINKS = {
+  youtube:   "",   // channel or S4 playlist URL
+  apple:     "https://podcasts.apple.com/us/podcast/walking-with-jesus/id6792097599",
+  spotify:   "https://open.spotify.com/show/033RbKV8qKtzNk5Xm9vwkf?si=3d7e5f653ca64b2e",
+  amazon:    "https://music.amazon.com/podcasts/b4e7eb21-3535-4715-9d53-a08a24759a83/walking-with-jesus?ref=dm_sh_QuG3jyTjA0O8yWjN9l6n3ygSo",
+  iheart:    "https://www.iheart.com/podcast/1333-walking-with-jesus-339200567",
+  rss:       "https://rss.com/podcasts/walking-with-jesus/",   // all other apps + listen on the web
+  facebook:  "",   // your Facebook page URL
+  instagram: "",
+  site:      ""    // this page's public URL (used by Share button; falls back to current URL)
+};
+
+// The three explainer videos in the Why / How / What cards.
+// youtube: YouTube video ID (the part after v= or /shorts/). Takes priority if set.
+// facebook: fallback link shown as a "Watch on Facebook" tile until the YouTube version exists.
+const EXPLAINERS = {
+  why:  { youtube: "", facebook: "https://www.facebook.com/share/v/19eXty9jpF/?mibextid=wwXIfr", label: "Watch the Manifesto" },
+  how:  { youtube: "" },
+  what: { youtube: "" }
+};
+const EXPLAINER_RATIO = "9/16";   // these are vertical videos
+
+// YouTube Short video IDs, e.g. for youtube.com/shorts/AbC123xyz_0 use "AbC123xyz_0"
+const SHORTS = [
+  "Sj_gEKm5m0U",
+  "wIvkPDH6H5w",
+  "4ymdNYr4Zcw",
+  "qHvTQNBjf08",
+  "r949WjN4bbY"
+];
+
+/* ---------- helpers ---------- */
+function facade(id, title, vertical){
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.setAttribute('aria-label', 'Play: ' + title);
+  b.style.backgroundImage = 'url(https://i.ytimg.com/vi/' + id + '/hqdefault.jpg)';
+  b.innerHTML = '<span class="play"></span>';
+  b.addEventListener('click', function(){
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&playsinline=1&rel=0&modestbranding=1';
+    f.title = title;
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    b.parentNode.replaceChild(f, b);
+  });
+  return b;
+}
+
+/* ---------- link wiring ---------- */
+document.querySelectorAll('[data-link]').forEach(function(a){
+  var url = LINKS[a.dataset.link];
+  if (url) { a.href = url; a.target = "_blank"; a.rel = "noopener"; }
+  else { a.classList.add('soon'); a.setAttribute('aria-disabled','true'); a.removeAttribute('href'); }
+});
+
+/* ---------- explainer videos (Why / How / What) ---------- */
+document.querySelectorAll('[data-explainer]').forEach(function(card){
+  var key = card.dataset.explainer, cfg = EXPLAINERS[key] || {};
+  var slot = card.querySelector('.vid-slot');
+  var box = document.createElement('div');
+  box.className = 'vid';
+  box.style.setProperty('--ratio', EXPLAINER_RATIO);
+  if (cfg.youtube) {
+    box.appendChild(facade(cfg.youtube, card.querySelector('h3').textContent));
+  } else if (cfg.facebook) {
+    box.classList.add('fb');
+    var a = document.createElement('a');
+    a.href = cfg.facebook; a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = '<span class="play"></span><span>' + (cfg.label || 'Watch the video') + ' on Facebook ↗</span>';
+    box.appendChild(a);
+  } else {
+    box.classList.add('empty');
+    box.textContent = 'Video coming soon';
+  }
+  slot.replaceWith(box);
+});
+
+
+/* ---------- Why / How / What slide dots ---------- */
+(function(){
+  var track = document.querySelector('.cards');
+  var cards = track.querySelectorAll('.card');
+  var wrap = document.createElement('div');
+  wrap.className = 'dots'; wrap.setAttribute('aria-hidden','true');
+  cards.forEach(function(){ wrap.appendChild(document.createElement('i')); });
+  var hint = document.createElement('span'); hint.textContent = 'Swipe'; wrap.appendChild(hint);
+  track.insertAdjacentElement('afterend', wrap);
+  var dots = wrap.querySelectorAll('i');
+  function update(){
+    var mid = track.scrollLeft + track.clientWidth / 2, best = 0, d = 1e9;
+    cards.forEach(function(c, i){
+      var dist = Math.abs(c.offsetLeft - track.offsetLeft + c.offsetWidth / 2 - mid);
+      if (dist < d) { d = dist; best = i; }
+    });
+    dots.forEach(function(el, i){ el.classList.toggle('on', i === best); });
+  }
+  track.addEventListener('scroll', function(){ window.requestAnimationFrame(update); }, {passive:true});
+  update();
+})();
+
+/* ---------- shorts (tap-to-load so the page stays fast) ---------- */
+(function(){
+  var host = document.getElementById('shorts');
+  if (!SHORTS.length) {
+    for (var i = 0; i < 3; i++) {
+      var d = document.createElement('div');
+      d.className = 'short empty';
+      d.textContent = 'Short coming soon';
+      host.appendChild(d);
+    }
+    return;
+  }
+  SHORTS.forEach(function(id, i){
+    var wrap = document.createElement('div');
+    wrap.className = 'short';
+    wrap.appendChild(facade(id, 'Walking with Jesus Short ' + (i + 1)));
+    host.appendChild(wrap);
+  });
+})();
+
+/* ---------- share ---------- */
+document.getElementById('shareBtn').addEventListener('click', function(){
+  var url = LINKS.site || location.href.split('#')[0];
+  var toast = document.getElementById('toast');
+  var data = { title: 'Walking with Jesus', text: 'Following His Walk. Sharing His Word.', url: url };
+  if (navigator.share) {
+    navigator.share(data).catch(function(){});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function(){
+      toast.textContent = 'Link copied!';
+      setTimeout(function(){ toast.textContent = ''; }, 2500);
+    });
+  } else {
+    toast.textContent = url;
+  }
+});
+</script>
+</body>
+</html>

@@ -457,7 +457,13 @@ function facade(id, title, vertical){
   var b = document.createElement('button');
   b.type = 'button';
   b.setAttribute('aria-label', 'Play: ' + title);
-  b.style.backgroundImage = 'url(https://i.ytimg.com/vi/' + id + '/hqdefault.jpg)';
+  (function(){
+    var base = 'https://i.ytimg.com/vi/' + id + '/';
+    b.style.backgroundImage = 'url(' + base + 'hqdefault.jpg)';
+    var im = new Image();
+    im.onload = function(){ if (im.naturalWidth > 200) b.style.backgroundImage = 'url(' + base + 'maxresdefault.jpg)'; };
+    im.src = base + 'maxresdefault.jpg';
+  })();
   b.innerHTML = '<span class="play"></span>';
   b.addEventListener('click', function(){
     var f = document.createElement('iframe');

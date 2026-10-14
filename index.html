@@ -73,13 +73,15 @@ h2{font-size:1.65rem;margin-bottom:14px}
 .hero .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 
 /* ---------- What is ---------- */
-.mission{
-  font-family:var(--serif);font-size:1.12rem;line-height:1.65;color:var(--ink);
-  border-left:4px solid var(--gold);padding-left:16px;
-}
-.why-p{margin-top:20px;font-family:var(--serif);font-size:1.05rem;line-height:1.65;color:var(--ink)}
-.how-we{margin-top:18px;font-size:.95rem;color:var(--muted)}
 
+.lead{font-family:var(--serif);font-size:1.12rem;line-height:1.65;font-weight:700;color:var(--navy);border-left:4px solid var(--gold);padding-left:16px}
+.body-copy{font-family:var(--serif);font-size:1.05rem;line-height:1.7;margin-top:18px;color:var(--ink)}
+.split{display:grid;grid-template-columns:1fr 1fr;margin-top:24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.split .col{padding:16px 6px 16px 0}
+.split .col+.col{padding:16px 0 16px 16px;border-left:1px solid var(--line)}
+.split small{display:block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:6px}
+.split strong{font-family:var(--serif);color:var(--navy);font-size:1.02rem;line-height:1.3;display:block;margin-bottom:6px}
+.split span{font-size:.9rem;color:var(--muted);line-height:1.5;display:block}
 /* ---------- Why / How / What cards (with video) ---------- */
 .cards{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:30px -20px 0;padding:0 20px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .cards::-webkit-scrollbar{display:none}
@@ -153,10 +155,12 @@ h2{font-size:1.65rem;margin-bottom:14px}
 .short button::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.45))}
 .short.empty{display:grid;place-items:center;text-align:center;padding:16px;
   border:1.5px dashed rgba(227,181,91,.5);background:transparent;font-size:.9rem;color:#b9c2d6}
-.swipe-hint{font-size:.82rem;color:#b9c2d6;margin:10px 0 18px}
 .shorts-sec .linkbtn{background:transparent;color:var(--parchment);border-color:rgba(246,239,224,.4)}
 .shorts-sec .linkbtn.soon::after{color:#b9c2d6}
 
+.shorts-sec .dots i{background:rgba(246,239,224,.3)}
+.shorts-sec .dots i.on{background:var(--gold-light)}
+.shorts-sec .dots span{color:#b9c2d6}
 /* ---------- Links ---------- */
 .group-label{font-weight:700;color:var(--navy);margin:22px 0 10px;font-size:.95rem}
 .linkgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -216,7 +220,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
     <img class="logo" src="logo.png" width="520" height="406" alt="Walking with Jesus">
     <p class="tagline"><span>Following His Walk.</span><span>Sharing His Word.</span></p>
     <div class="actions">
-      <a class="btn btn-navy" href="#follow">Start listening</a>
+      <a class="btn btn-navy" href="#follow">Subscribe</a>
       <a class="btn btn-ghost" href="#what">About the show</a>
     </div>
   </div>
@@ -229,9 +233,21 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
   <div class="wrap">
     <p class="eyebrow">About</p>
     <h2>What is Walking with Jesus?</h2>
-    <p class="mission">An effort to teach the value of daily time with Jesus through His words in the Gospels, and to make it an easy habit to adopt.</p>
-    <p class="why-p">Time with Jesus is what changes a life, and the Gospels are where we find Him: His words, His actions, and ultimately His sacrifice. The value isn&rsquo;t in making it through the Gospels once, or in hearing something new. It&rsquo;s in regular, prolonged exposure to the most important person in the Bible, day after day, as He shapes who we are.</p>
-    <p class="how-we">The method lives on YouTube and the major podcast platforms. The message spreads on Facebook and Instagram.</p>
+    <p class="lead">An effort to teach the value of daily time with Jesus through His words in the Gospels, and to make it an easy habit to adopt.</p>
+    <p class="body-copy">Time with Jesus is what changes a life, and the Gospels are where we find Him: His words, His actions, and ultimately His sacrifice. The value isn&rsquo;t in making it through the Gospels once, or in hearing something new. It&rsquo;s in regular, prolonged exposure to the most important person in the Bible, day after day, as He shapes who we are.</p>
+    <div class="split">
+      <div class="col"><small>The Method</small><strong>The daily habit</strong><span>On YouTube and major podcast platforms.</span></div>
+      <div class="col"><small>The Message</small><strong>Spreading the Word</strong><span>On Facebook and Instagram.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= THE METHOD ================= -->
+<section id="method" style="padding-top:8px">
+  <div class="wrap">
+    <p class="eyebrow">The Method</p>
+    <h2>The Why, the How, and the What</h2>
+    <p class="lede">Why daily time in the Gospels matters, how to start, and what you&rsquo;ll hear.</p>
 
     <div class="cards">
       <article class="card" data-explainer="why">
@@ -270,35 +286,34 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
   </div>
 </section>
 
-<!-- ================= SHORTS ================= -->
-<section class="shorts-sec" id="watch">
+<!-- ================= THE MESSAGE (SHORTS) ================= -->
+<section class="shorts-sec" id="message">
   <div class="wrap">
-    <p class="eyebrow">Watch</p>
+    <p class="eyebrow">Spreading the Message</p>
     <h2>A taste of the Word</h2>
-    <p class="lede">50+ short passages from the Gospels. Tap to play.</p>
-    <div class="shorts" id="shorts" aria-label="YouTube Shorts"></div>
-    <p class="swipe-hint">Swipe for more →</p>
+    <p class="lede">Here are five examples of our social media posts. Tap to play.</p>
+    <div class="shorts" id="shorts" aria-label="Social media post examples"></div>
   </div>
 </section>
 
 <!-- ================= FOLLOW ================= -->
 <section id="follow">
   <div class="wrap">
-    <p class="eyebrow">Follow</p>
+    <p class="eyebrow">Subscribe</p>
     <h2>How can I follow?</h2>
-    <p class="lede">New episodes release Monday through Friday. Pick the place you already listen.</p>
+    <p class="lede">New episodes release Monday through Friday. Subscribe wherever you already listen.</p>
 
     <div class="linkgrid" style="margin-top:20px">
-      <a class="linkbtn wide primary" data-link="youtube">▶&nbsp; Watch on YouTube</a>
+      <a class="linkbtn wide primary" data-link="youtube">▶&nbsp; Subscribe on YouTube</a>
     </div>
 
-    <p class="group-label">Listen to the podcast</p>
+    <p class="group-label">Subscribe to the podcast</p>
     <div class="linkgrid">
       <a class="linkbtn" data-link="apple">Apple Podcasts</a>
       <a class="linkbtn" data-link="spotify">Spotify</a>
       <a class="linkbtn" data-link="amazon">Amazon Music</a>
       <a class="linkbtn" data-link="iheart">iHeart</a>
-      <a class="linkbtn wide" data-link="rss">More ways to listen</a>
+      <a class="linkbtn wide" data-link="rss">More ways to subscribe</a>
     </div>
   </div>
 </section>
@@ -306,13 +321,13 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
 <!-- ================= SHARE ================= -->
 <section id="share" style="padding-top:8px">
   <div class="wrap">
-    <p class="eyebrow">Share</p>
+    <p class="eyebrow">Follow us</p>
     <h2>How can I share?</h2>
-    <p class="lede">Know someone who could use more Jesus in their week? Send them a link, or follow along on social media.</p>
+    <p class="lede">Know someone who could use more Jesus in their week? Send them the link, and follow us on social media.</p>
 
     <div class="linkgrid" style="margin-top:20px">
-      <a class="linkbtn" data-link="facebook">Facebook</a>
-      <a class="linkbtn" data-link="instagram">Instagram</a>
+      <a class="linkbtn" data-link="facebook">Follow on Facebook</a>
+      <a class="linkbtn" data-link="instagram">Follow on Instagram</a>
     </div>
     <div class="share-row">
       <button class="btn" id="shareBtn" type="button">Share this page</button>
@@ -390,8 +405,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
 <footer>
   <div class="wrap">
     <p class="tag">Following His Walk. Sharing His Word.</p>
-    <p>Scripture quoted from the King James Version (public domain).</p>
-    <p>Narration voices are AI-generated.</p>
+    <p>Scripture quoted from the KJV (public domain).</p>
   </div>
 </footer>
 
@@ -480,19 +494,20 @@ document.querySelectorAll('[data-explainer]').forEach(function(card){
 });
 
 
-/* ---------- Why / How / What slide dots ---------- */
-(function(){
-  var track = document.querySelector('.cards');
-  var cards = track.querySelectorAll('.card');
+/* ---------- slide dots (Method cards + Message posts) ---------- */
+function makeDots(track, itemSel){
+  if (!track) return;
+  var items = track.querySelectorAll(itemSel);
+  if (items.length < 2) return;
   var wrap = document.createElement('div');
   wrap.className = 'dots'; wrap.setAttribute('aria-hidden','true');
-  cards.forEach(function(){ wrap.appendChild(document.createElement('i')); });
+  items.forEach(function(){ wrap.appendChild(document.createElement('i')); });
   var hint = document.createElement('span'); hint.textContent = 'Swipe'; wrap.appendChild(hint);
   track.insertAdjacentElement('afterend', wrap);
   var dots = wrap.querySelectorAll('i');
   function update(){
     var mid = track.scrollLeft + track.clientWidth / 2, best = 0, d = 1e9;
-    cards.forEach(function(c, i){
+    items.forEach(function(c, i){
       var dist = Math.abs(c.offsetLeft - track.offsetLeft + c.offsetWidth / 2 - mid);
       if (dist < d) { d = dist; best = i; }
     });
@@ -500,7 +515,7 @@ document.querySelectorAll('[data-explainer]').forEach(function(card){
   }
   track.addEventListener('scroll', function(){ window.requestAnimationFrame(update); }, {passive:true});
   update();
-})();
+}
 
 /* ---------- shorts (tap-to-load so the page stays fast) ---------- */
 (function(){
@@ -521,6 +536,9 @@ document.querySelectorAll('[data-explainer]').forEach(function(card){
     host.appendChild(wrap);
   });
 })();
+
+makeDots(document.querySelector('.cards'), '.card');
+makeDots(document.getElementById('shorts'), '.short');
 
 /* ---------- share ---------- */
 document.getElementById('shareBtn').addEventListener('click', function(){

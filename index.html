@@ -53,11 +53,15 @@ h2{font-size:1.65rem;margin-bottom:14px}
 
 /* ---------- Hero ---------- */
 .hero{
-  background:var(--cream);text-align:center;border-bottom:1px solid var(--line);
-  padding:calc(28px + env(safe-area-inset-top)) 0 40px;
+  background:linear-gradient(180deg,var(--navy) 0%,var(--navy-2) 100%);text-align:center;
+  padding:calc(32px + env(safe-area-inset-top)) 0 44px;
 }
-.hero .logo{width:min(78vw,300px);height:auto;margin:0 auto 10px}
-.tagline{font-family:var(--serif);font-size:1.2rem;color:var(--red);line-height:1.45;margin-bottom:26px}
+.logo-box{
+  background:var(--cream);border-radius:22px;width:min(84vw,330px);margin:0 auto 24px;
+  padding:18px 22px 14px;box-shadow:0 8px 28px rgba(0,0,0,.28);
+}
+.logo-box .logo{width:100%;height:auto;margin:0}
+.tagline{font-family:var(--serif);font-size:1.2rem;color:var(--gold-light);line-height:1.45;margin-bottom:26px}
 .tagline span{display:block}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -67,9 +71,9 @@ h2{font-size:1.65rem;margin-bottom:14px}
   transition:transform .12s ease,background .2s ease;
 }
 .btn:active{transform:scale(.97)}
-.btn-navy{background:var(--navy);color:var(--parchment)}
-.btn-navy:hover{background:var(--navy-2)}
-.btn-ghost{background:transparent;color:var(--navy);border:1.5px solid rgba(27,42,73,.35)}
+.btn-gold{background:var(--gold-light);color:var(--navy)}
+.btn-gold:hover{background:#efc671}
+.btn-ghost{background:transparent;color:var(--parchment);border:1.5px solid rgba(246,239,224,.45)}
 .hero .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 
 /* ---------- What is ---------- */
@@ -217,10 +221,10 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
 <!-- ================= HERO ================= -->
 <header class="hero">
   <div class="wrap">
-    <img class="logo" src="logo.png" width="520" height="406" alt="Walking with Jesus">
+    <div class="logo-box"><img class="logo" src="logo.png" width="520" height="406" alt="Walking with Jesus"></div>
     <p class="tagline"><span>Following His Walk.</span><span>Sharing His Word.</span></p>
     <div class="actions">
-      <a class="btn btn-navy" href="#follow">Subscribe</a>
+      <a class="btn btn-gold" href="#follow">Subscribe</a>
       <a class="btn btn-ghost" href="#what">About the show</a>
     </div>
   </div>

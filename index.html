@@ -168,6 +168,17 @@ h2{font-size:1.65rem;margin-bottom:14px}
 /* ---------- Links ---------- */
 .group-label{font-weight:700;color:var(--navy);margin:22px 0 10px;font-size:.95rem}
 .linkgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pls{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:0 20px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.pls::-webkit-scrollbar{display:none}
+.pl{flex:0 0 min(80vw,320px);scroll-snap-align:center;background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column}
+.pl:active{transform:scale(.98)}
+.pl img{display:block;width:100%;height:auto;aspect-ratio:16/9;background:var(--parchment)}
+.pl-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:3px}
+.pl-body strong{color:var(--navy);font-size:1rem;line-height:1.25}
+.pl-body span{color:var(--muted);font-size:.88rem;line-height:1.35}
+.pl.soon{opacity:.55;pointer-events:none}
+.pl.soon::after{display:none}
+@media(min-width:760px){.pls{flex-wrap:wrap;overflow:visible;margin:0;padding:0}.pl{flex:1 1 0;min-width:220px}}
 .linkbtn{
   display:flex;align-items:center;justify-content:center;text-align:center;
   min-height:56px;padding:8px 12px;border-radius:14px;text-decoration:none;
@@ -307,8 +318,20 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
     <h2>Where can I find Walking with Jesus?</h2>
     <p class="lede">New episodes release Monday through Friday. Subscribe wherever you already listen.</p>
 
-    <div class="linkgrid" style="margin-top:20px">
-      <a class="linkbtn wide primary" data-link="youtube">▶&nbsp; Subscribe on YouTube</a>
+    <p class="group-label" style="margin-top:22px">Subscribe on YouTube: pick your playlist</p>
+    <div class="pls" id="playlists">
+      <a class="pl" data-link="pl_harmony">
+        <img src="pl-harmony.jpg" alt="Harmony of the Gospels, King James Version" width="640" height="360" loading="lazy">
+        <div class="pl-body"><strong>Harmony of the Gospels</strong><span>All four Gospels woven into one story, in order.</span></div>
+      </a>
+      <a class="pl" data-link="pl_seniors">
+        <img src="pl-seniors.jpg" alt="Slow Scripture for Seniors" width="640" height="360" loading="lazy">
+        <div class="pl-body"><strong>Slow Scripture for Seniors</strong><span>Large print, slow scroll, read aloud.</span></div>
+      </a>
+      <a class="pl" data-link="pl_tenweeks">
+        <img src="pl-tenweeks.jpg" alt="A New Christian's First Ten Weeks" width="640" height="360" loading="lazy">
+        <div class="pl-body"><strong>A New Christian's First Ten Weeks</strong><span>Ten weeks of daily time with Jesus.</span></div>
+      </a>
     </div>
 
     <p class="group-label">Subscribe to the podcast</p>
@@ -422,6 +445,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
    "coming soon" tile, so nothing live is ever a dead link.
    ===================================================== */
 const LINKS = {
+  pl_harmony: "https://www.youtube.com/playlist?list=PLU5XeYmL8DoI",
+  pl_seniors: "https://www.youtube.com/playlist?list=PLG_jhvvWTLgw",
+  pl_tenweeks: "https://www.youtube.com/playlist?list=PLAMXTkxARGRI",
   youtube:   "https://www.youtube.com/playlist?list=PLU5XeYmL8DoI",   // main S4 playlist
   apple:     "https://podcasts.apple.com/us/podcast/walking-with-jesus/id6792097599",
   spotify:   "https://open.spotify.com/show/033RbKV8qKtzNk5Xm9vwkf?si=3d7e5f653ca64b2e",
@@ -551,6 +577,7 @@ function makeDots(track, itemSel){
 
 makeDots(document.querySelector('.cards'), '.card');
 makeDots(document.getElementById('shorts'), '.short');
+if (window.matchMedia('(max-width:759px)').matches) makeDots(document.getElementById('playlists'), '.pl');
 
 /* ---------- share ---------- */
 document.getElementById('shareBtn').addEventListener('click', function(){

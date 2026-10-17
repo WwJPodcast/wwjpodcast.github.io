@@ -51,7 +51,7 @@ ul.tick li::before{content:"✓";position:absolute;left:0;color:var(--gold);font
 .opt:active{transform:scale(.97)}
 .opt.wide{grid-column:1/-1}
 .closing{text-align:center;font-family:var(--serif);font-size:1.4rem;color:var(--navy);font-weight:700;padding:30px 0 6px}
-footer{text-align:center;color:var(--muted);font-size:.95rem;padding:26px 20px 40px}
+footer{max-width:600px;margin:0 auto;color:var(--muted);font-size:.95rem;padding:10px 20px 44px}
 footer a{color:var(--navy)}
 </style>
 </head>
@@ -111,15 +111,13 @@ footer a{color:var(--navy)}
       <a class="opt" href="https://www.iheart.com/podcast/1333-walking-with-jesus-339200567" target="_blank" rel="noopener">iHeart</a>
       <a class="opt" href="https://rss.com/podcasts/walking-with-jesus/" target="_blank" rel="noopener">More ways</a>
     </div>
-    <p class="closing">Congratulations on taking this step.</p>
-    <p style="text-align:center">Whether through this platform or another way, we encourage you to walk daily with Jesus so His words can truly shape your life. May God bless you as you bring His word into your heart.</p>
+    <h2 style="margin-top:34px">Congratulations on taking this step.</h2>
+    <p>Whether through this platform or another way, we encourage you to walk daily with Jesus so His words can truly shape your life.</p>
+    <p><strong>May God bless you as you bring His word into your heart.</strong></p>
   </section>
 </main>
 
-<footer>
-  Walking with Jesus<br>Scripture quoted from the KJV (public domain).<br><br>
-  <a href="../">Visit the main page</a>
-</footer>
+<footer><a href="../">Visit the main page</a></footer>
 
 <script>
 document.querySelectorAll('.vid').forEach(function(b){

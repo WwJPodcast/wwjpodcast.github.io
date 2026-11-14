@@ -244,6 +244,8 @@
       const s = +g(i,'itunes:season'), n = +g(i,'itunes:episode'), type = g(i,'itunes:episodeType') || 'full';
       const enc = i.querySelector('enclosure');
       if (!s || !n || type === 'trailer' || !enc) return;
+      const when = Date.parse(g(i,'pubDate'));            // never list an episode before its release time
+      if (when && when > Date.now()) return;
       out.push([s, n, g(i,'title'), enc.getAttribute('url'), +g(i,'itunes:duration') || 0, extractRefs(g(i,'description'))]);
     });
     if (!out.length) throw new Error('no episodes');

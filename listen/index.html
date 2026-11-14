@@ -109,6 +109,10 @@
   .desc p+p{margin-top:.6em}
   .desc p.b+p.b{margin-top:.15em}
   .desc p.b{font-weight:600;color:var(--ink)}
+  .tabs{display:flex;gap:6px;margin:2px 0 14px}
+  .tabs button{font-family:inherit;font-size:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;min-height:40px;padding:0 16px;border-radius:20px;border:1.5px solid var(--gold-soft);background:transparent;color:var(--muted);cursor:pointer}
+  .tabs button[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+  .desc [hidden]{display:none}
   .desc h3{font-size:14px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
   .desc h3:first-child{margin-top:4px}
   .fine{font-size:18px;font-style:italic;color:var(--muted);padding-top:12px}
@@ -162,10 +166,12 @@
     <details class="cat" id="catAbout">
       <summary>About</summary>
       <div class="body desc">
-        <h3>This episode</h3>
-        <div id="epDesc"></div>
-        <h3>The show</h3>
-        <div id="showDesc"></div>
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tabEp" aria-selected="true" aria-controls="epDesc">Episode</button>
+          <button type="button" role="tab" id="tabShow" aria-selected="false" aria-controls="showDesc">Show</button>
+        </div>
+        <div id="epDesc" role="tabpanel" aria-labelledby="tabEp"></div>
+        <div id="showDesc" role="tabpanel" aria-labelledby="tabShow" hidden></div>
       </div>
     </details>
     <details class="cat" id="catFaq">
@@ -260,8 +266,8 @@
     return '';
   }
   // Description as plain paragraphs (text only, so nothing from the feed is ever treated as markup).
-  const SHOW_FALLBACK = ['Walking with Jesus: The Listening Habit','15 Minutes Monday to Friday','Hear. Walk. Become.','“My sheep hear my voice, and I know them, and they follow me.” — John 10:27. Walking with Jesus is 15 minutes a day with the actual words of Christ, straight from the KJV. No commentary, no sermon — just Scripture, read aloud. Some days a single Gospel, some days all four woven together. 5 days a week, not 7 — a rhythm you can actually keep. His words stay with you. They come back when you need them. And before long, you’re not just making time to hear His voice—you’ve made room for it. Bring Jesus into the hour you’re already living…and let Him take it from there. Start today.'];
-  let showDesc = SHOW_FALLBACK.map((t, i) => ({ t, b: i < 3 }));
+  const SHOW_FALLBACK = ['Hear Jesus here.','“My sheep hear my voice, and I know them, and they follow me...” — John 10:27','Make hearing Jesus a daily practice.','Walking with Jesus Podcast gives you 15-minute episodes with the actual words of Christ, straight from the King James text. No commentary, no sermon — just Scripture, read aloud. And now there’s a Walking with Jesus player, so listening every day is easier than ever.'];
+  let showDesc = SHOW_FALLBACK.map((t, i) => ({ t, b: i === 0 }));
   function descParas(html) {
     const d = new DOMParser().parseFromString(html || '', 'text/html');
     return [...d.querySelectorAll('p')].map(p => ({ t: p.textContent.replace(/\s+/g, ' ').trim(), b: !!p.querySelector('strong') && p.children.length === 1 && p.textContent.trim() === p.querySelector('strong').textContent.trim() })).filter(x => x.t);
@@ -457,6 +463,14 @@
     h('previoustrack', () => step(-1, true)); h('nexttrack', () => step(1, true));
     h('seekto', d => { if (d.seekTime != null) audio.currentTime = d.seekTime; });
   }
+
+  /* ---------- About sub-tabs ---------- */
+  function aboutTab(show) {
+    $('tabEp').setAttribute('aria-selected', String(!show)); $('tabShow').setAttribute('aria-selected', String(show));
+    $('epDesc').hidden = show; $('showDesc').hidden = !show;
+  }
+  $('tabEp').addEventListener('click', () => aboutTab(false));
+  $('tabShow').addEventListener('click', () => aboutTab(true));
 
   /* ---------- bottom categories: one open at a time ---------- */
   const cats = [...document.querySelectorAll('.cat')];

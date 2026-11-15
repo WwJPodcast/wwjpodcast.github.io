@@ -549,7 +549,7 @@
     try {
       await loadYT();
       const noCC = ev => { try { ev.target.unloadModule('captions'); ev.target.unloadModule('cc'); } catch (e) {} };
-      yt = new YT.Player('ytHost', { videoId: id, playerVars: { start: t, autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, cc_load_policy: 0 },
+      yt = new YT.Player('ytHost', { videoId: id, width: '100%', height: '100%', playerVars: { start: t, autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, cc_load_policy: 0 },
         events: { onReady: noCC, onStateChange: ev => { if (ev.data === 1) noCC(ev); } } });   // the scrolling text is already on screen, so no captions
     } catch (e) {
       yt = null;   // API blocked: plain embed (no hand-back of position)
@@ -579,6 +579,17 @@
     }
     updateWatch();
   }
+  // After a rotation or resize, make the YouTube player re-measure itself to the box.
+  let fitTimer = null;
+  const fitVideo = () => {
+    clearTimeout(fitTimer);
+    fitTimer = setTimeout(() => {
+      const v = document.querySelector('.vin');
+      if (watching && yt && yt.setSize && v) { try { yt.setSize(v.clientWidth, v.clientHeight); } catch (e) {} }
+    }, 250);
+  };
+  window.addEventListener('resize', fitVideo);
+  window.addEventListener('orientationchange', () => { fitVideo(); setTimeout(fitVideo, 700); });
   $('watchBtn').addEventListener('click', () => watching ? stopWatch(true) : startWatch());
 
   /* ---------- About sub-tabs ---------- */

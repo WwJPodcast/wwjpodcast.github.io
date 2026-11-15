@@ -332,6 +332,19 @@
   // The dropdown list shows the length; the listening screen shows the name alone.
   SEASONS.forEach(s => seasonSel.add(new Option(s.label + ' (' + s.weeks + ')', s.id)));
   const seasonInfo = id => SEASONS.find(s => s.id === id);
+  // Per-series paragraph shown under the show description (About > Show). Matched by the series name in the
+  // dropdown label, so a series added to SEASONS later (or a rerun under a new season number) picks up its
+  // paragraph automatically. A series with no match here simply shows the show description alone.
+  const SERIES_DESC = [
+    { re: /four gospel/i, t: 'This is the complete story, with all four Gospels woven into one account. You get Mark\u2019s action, Matthew\u2019s eyewitness testimony, Luke\u2019s careful history, and the unique witness of John, the beloved disciple. Where the Gospels tell the same event, you hear it from every angle, and where only one of them records a moment, you hear that too. Every event and every word of Jesus is heard in order, from the first chapter to the last.' },
+    { re: /\bmark\b/i, t: 'Mark is the shortest of the four Gospels, and it moves fast. Jesus is always on the road, healing, casting out demons, and calming storms, and the word \u201cimmediately\u201d keeps the story moving. John, the beloved disciple, writes from the closest circle around Jesus. The great majority of what he records appears in none of the other Gospels. Blending Mark\u2019s action with John\u2019s intimate account gives you a fast-moving story that pauses at the special moments, from the Jordan River to the empty tomb.' },
+    { re: /matthew/i, t: 'Matthew was one of the twelve apostles, so his Gospel is an eyewitness account. He heard the Sermon on the Mount, watched the miracles, and sat at the table when Jesus called him from the tax booth. John, the beloved disciple, adds what the others leave out, since most of his Gospel is found nowhere else. Matthew\u2019s firsthand testimony and John\u2019s close-up view are both told by men who walked with Jesus, and together they tell one continuous story of His life and ministry.' },
+    { re: /luke/i, t: 'Luke was a physician and a historian, and he tells us he traced everything carefully from the beginning. His Gospel has a high level of exactness, with names, places, and details set down in order. John, the beloved disciple, brings what appears in no other Gospel, because most of what he writes is unique to him. Luke\u2019s careful history gives the story its footing and John\u2019s account gives it depth, all along the full arc of Jesus\u2019 life.' },
+    { re: /miracle/i, t: 'Jesus healed the sick, calmed storms, fed thousands, and raised the dead. This series gathers the miracles from all four Gospels and places them in the order they happened, each one read straight from the King James text. John calls them signs, and Matthew, Mark, and Luke show the crowds, the disciples, and the moments of quiet faith around them. Hear what Jesus did, and see why people followed Him.' },
+    { re: /parable/i, t: 'Jesus often taught in stories: a sower, a lost sheep, a good neighbor, a faithful servant. This short series gathers His parables from the Gospels and sets them in the general order He told them, each one read straight from the King James text. A brief bridge sets the scene before each story, with no commentary. You hear the parables the way His listeners did.' },
+    { re: /final days|last days|passion/i, t: 'The last days of Jesus\u2019 life, told from all four Gospels as one account. The series follows the final week day by day, from His entry into Jerusalem through the cross to the empty tomb. Each Gospel adds something the others do not, so you hear the whole account, read straight from the King James text.' },
+  ];
+  const seriesDesc = label => { const m = SERIES_DESC.find(x => x.re.test(label || '')); return m ? m.t : ''; };
 
   SPEEDS.forEach(v => {
     const b = document.createElement('button');
@@ -527,6 +540,12 @@
     const e = curEp();
     fill($('epDesc'), e && e.desc, 'The episode description is not available right now.');
     fill($('showDesc'), showDesc, '');
+    const si = cur.s != null && seasonInfo(cur.s), sd = si && seriesDesc(si.label);
+    if (sd) {
+      const h = document.createElement('h3'); h.textContent = si.label;
+      const p = document.createElement('p'); p.textContent = sd;
+      $('showDesc').append(h, p);
+    }
   }
   async function start() {
     msg('');

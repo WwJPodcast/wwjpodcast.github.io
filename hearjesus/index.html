@@ -548,10 +548,12 @@
     const box = $('vbox'); box.hidden = false; box.innerHTML = '<div class="vin"><div id="ytHost"></div></div>';
     try {
       await loadYT();
-      yt = new YT.Player('ytHost', { videoId: id, playerVars: { start: t, autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1 } });
+      const noCC = ev => { try { ev.target.unloadModule('captions'); ev.target.unloadModule('cc'); } catch (e) {} };
+      yt = new YT.Player('ytHost', { videoId: id, playerVars: { start: t, autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, cc_load_policy: 0 },
+        events: { onReady: noCC, onStateChange: ev => { if (ev.data === 1) noCC(ev); } } });   // the scrolling text is already on screen, so no captions
     } catch (e) {
       yt = null;   // API blocked: plain embed (no hand-back of position)
-      box.innerHTML = '<div class="vin"><iframe src="https://www.youtube.com/embed/' + id + '?start=' + t + '&autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Episode video"></iframe></div>';
+      box.innerHTML = '<div class="vin"><iframe src="https://www.youtube.com/embed/' + id + '?start=' + t + '&autoplay=1&playsinline=1&rel=0&cc_load_policy=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Episode video"></iframe></div>';
       box.dataset.start = t;
     }
   }

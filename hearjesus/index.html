@@ -331,7 +331,7 @@
     $('speeds').appendChild(b);
   });
   function setSpeed(v) {
-    store.speed = v; audio.playbackRate = v; save();
+    store.speed = v; audio.playbackRate = v; save(); paintTime();
     [...$('speeds').children].forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.v === v)));
   }
 
@@ -376,7 +376,7 @@
     seek.max = d || 100; seek.value = t;
     seek.style.setProperty('--p', d ? (t / d * 100) + '%' : '0%');
     $('tNow').textContent = fmt(t);
-    $('tLeft').textContent = '−' + fmt(Math.max(0, d - t));
+    $('tLeft').textContent = '−' + fmt(Math.max(0, d - t) / (store.speed || 1));   // time left at the current speed
   }
 
   /* ---------- progress memory ---------- */
@@ -403,7 +403,7 @@
     fillEpisodes(); paintLabels(); paintTime();
     setTicker(e, false);
     seek.max = e.dur || 100; seek.value = pendingSeek;
-    $('tNow').textContent = fmt(pendingSeek); $('tLeft').textContent = '−' + fmt(Math.max(0, (e.dur || 0) - pendingSeek));
+    $('tNow').textContent = fmt(pendingSeek); $('tLeft').textContent = '−' + fmt(Math.max(0, (e.dur || 0) - pendingSeek) / (store.speed || 1));
     seek.style.setProperty('--p', e.dur ? (pendingSeek / e.dur * 100) + '%' : '0%');
     updateMediaSession(); paintDesc();
     if (autoplay) audio.play().catch(() => {});

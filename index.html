@@ -72,8 +72,13 @@ h2{font-size:1.65rem;margin-bottom:14px}
 .choose{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:380px;margin:0 auto}
 .pick{grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:48px;padding:8px 14px;border-radius:999px;background:transparent;color:var(--parchment);text-decoration:none;text-align:center;font-weight:700;font-size:1rem;border:1.5px solid rgba(246,239,224,.5)}
 .pick.half{grid-column:auto}
-.pick-sen{background:var(--gold-light);color:var(--navy);border-color:var(--gold-light);min-height:54px;font-size:1.05rem}
-.pick-new{background:var(--cream);color:var(--gold);border-color:var(--cream)}
+.pick-player{background:var(--gold-light);color:var(--navy);border-color:var(--gold-light);min-height:58px;font-family:var(--serif);font-size:1.25rem;gap:10px}
+.pick-player em{font-style:italic}
+.pk-play{position:relative;flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:var(--navy)}
+.pk-play::after{content:"";position:absolute;left:13px;top:9px;border-style:solid;border-width:8px 0 8px 13px;border-color:transparent transparent transparent var(--gold-light)}
+.pick-new{background:var(--cream);color:var(--navy);border-color:var(--cream)}
+.pick-sen{background:var(--red);color:#fff;border-color:var(--red)}
+.pick-nav{background:#2b3f69;color:var(--cream);border-color:rgba(251,247,236,.4)}
 .pick:active{transform:scale(.98)}
 .note-links{margin-top:22px;text-align:center;color:var(--muted);font-size:.95rem}
 .note-links a{color:var(--navy);font-weight:700}
@@ -100,6 +105,7 @@ h2{font-size:1.65rem;margin-bottom:14px}
 .split small{display:block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:6px}
 .split strong{font-family:var(--serif);color:var(--navy);font-size:1.02rem;line-height:1.3;display:block;margin-bottom:6px}
 .split span{font-size:.9rem;color:var(--muted);line-height:1.5;display:block}
+.split span a{color:var(--navy);font-weight:700}
 /* ---------- Why / How / What cards (with video) ---------- */
 .cards{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:30px -20px 0;padding:0 20px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .cards::-webkit-scrollbar{display:none}
@@ -182,17 +188,6 @@ h2{font-size:1.65rem;margin-bottom:14px}
 /* ---------- Links ---------- */
 .group-label{font-weight:700;color:var(--navy);margin:22px 0 10px;font-size:.95rem}
 .linkgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pls{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:0 20px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.pls::-webkit-scrollbar{display:none}
-.pl{flex:0 0 min(80vw,320px);scroll-snap-align:center;background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column}
-.pl:active{transform:scale(.98)}
-.pl img{display:block;width:100%;height:auto;aspect-ratio:16/9;background:var(--parchment)}
-.pl-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:3px}
-.pl-body strong{color:var(--navy);font-size:1rem;line-height:1.25}
-.pl-body span{color:var(--muted);font-size:.88rem;line-height:1.35}
-.pl.soon{opacity:.55;pointer-events:none}
-.pl.soon::after{display:none}
-@media(min-width:760px){.pls{flex-wrap:wrap;overflow:visible;margin:0;padding:0}.pl{flex:1 1 0;min-width:220px}}
 .linkbtn{
   display:flex;align-items:center;justify-content:center;text-align:center;
   min-height:56px;padding:8px 12px;border-radius:14px;text-decoration:none;
@@ -204,6 +199,11 @@ h2{font-size:1.65rem;margin-bottom:14px}
 .linkbtn:hover{border-color:var(--gold)}
 .linkbtn.wide{grid-column:1 / -1}
 .linkbtn.primary{background:var(--navy);color:var(--parchment);border-color:var(--navy);min-height:60px;font-size:1.05rem}
+.linkbtn.player{background:var(--gold-light);border-color:var(--gold-light);color:var(--navy);min-height:60px;font-family:var(--serif);font-size:1.15rem;gap:10px}
+.linkbtn.player em{font-style:italic}
+.linkbtn.player .pk-play{flex:0 0 30px;width:30px;height:30px}
+.linkbtn.player .pk-play::after{left:11px;top:7px}
+.player-note{grid-column:1 / -1;text-align:center;font-size:.9rem;color:var(--muted);margin-top:-2px}
 .linkbtn.soon{opacity:.55;pointer-events:none}
 .linkbtn.soon::after{content:"soon";font-size:.68rem;font-weight:600;margin-left:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .linkbtn.primary.soon::after{color:#b9c2d6}
@@ -249,10 +249,11 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
     <div class="logo-box"><img class="logo" src="logo.png" width="520" height="406" alt="Walking with Jesus"></div>
     <p class="tagline"><span>Following His Walk.</span><span>Sharing His Word.</span></p>
     <div class="choose">
-      <a class="pick pick-sen" href="seniors/">Seniors: START HERE</a>
-      <a class="pick half" href="#follow">Subscribe</a>
-      <a class="pick half" href="#what">About</a>
+      <a class="pick pick-player" href="hearjesus/"><span class="pk-play" aria-hidden="true"></span><span>Hear Jesus <em>here</em></span></a>
       <a class="pick pick-new" href="new/">New to the Faith</a>
+      <a class="pick pick-sen" href="seniors/">YouTube for Seniors</a>
+      <a class="pick half pick-nav" href="#follow">Subscribe</a>
+      <a class="pick half pick-nav" href="#what">About</a>
     </div>
   </div>
 </header>
@@ -267,7 +268,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
     <p class="lead">An effort to teach the value of daily time with Jesus through His words in the Gospels, and to make it an easy habit to adopt.</p>
     <p class="body-copy">Time with Jesus is what changes a life, and the Gospels are where we find Him: His words, His actions, and ultimately His sacrifice. The value isn&rsquo;t in making it through the Gospels once, or in hearing something new. It&rsquo;s in regular, prolonged exposure to the most important person in the Bible, day after day, as He shapes who we are.</p>
     <div class="split">
-      <div class="col"><small>The Method</small><strong>The daily habit</strong><span>On YouTube and major podcast platforms.</span></div>
+      <div class="col"><small>The Method</small><strong>The daily habit</strong><span>On YouTube, podcast apps, and our <a href="hearjesus/">web player</a>.</span></div>
       <div class="col"><small>The Message</small><strong>Spreading the Word</strong><span>On Facebook and Instagram.</span></div>
     </div>
   </div>
@@ -330,23 +331,25 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
 <!-- ================= FOLLOW ================= -->
 <section id="follow">
   <div class="wrap">
-    <p class="eyebrow">Subscribe to the Method</p>
+    <p class="eyebrow">Listen or Watch</p>
     <h2>Where can I find Walking with Jesus?</h2>
-    <p class="lede">New episodes release Monday through Friday. Subscribe wherever you already listen.</p>
+    <p class="lede">New episodes release Monday through Friday. Listen right here, or subscribe wherever you already listen.</p>
 
     <div class="linkgrid" style="margin-top:20px">
-      <a class="linkbtn wide primary" data-link="youtube">▶&nbsp; Subscribe on YouTube</a>
+      <a class="linkbtn wide player" href="hearjesus/"><span class="pk-play" aria-hidden="true"></span><span>Hear Jesus <em>here</em></span></a>
+      <p class="player-note">No app needed. It remembers your place.</p>
+      <a class="linkbtn wide primary" data-link="youtube">▶&nbsp; Watch on YouTube</a>
     </div>
 
-    <p class="group-label">Subscribe to the podcast</p>
+    <p class="group-label">Or subscribe in your app</p>
     <div class="linkgrid">
       <a class="linkbtn" data-link="apple">Apple Podcasts</a>
       <a class="linkbtn" data-link="spotify">Spotify</a>
       <a class="linkbtn" data-link="amazon">Amazon Music</a>
       <a class="linkbtn" data-link="iheart">iHeart</a>
-      <a class="linkbtn wide" data-link="rss">More ways to subscribe</a>
+      <a class="linkbtn wide" data-link="rss">More apps</a>
     </div>
-    <p class="note-links">Large print? <a href="seniors/">Seniors, start here</a>. Just came to faith? <a href="new/">New to the faith</a>.</p>
+    <p class="note-links">Large print? <a href="seniors/">YouTube for Seniors</a>. Just came to faith? <a href="new/">New to the faith</a>.</p>
   </div>
 </section>
 
@@ -373,6 +376,14 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
   <div class="wrap">
     <p class="eyebrow">FAQ</p>
     <h2>Questions people ask</h2>
+
+    <details>
+      <summary>Can I listen without an app?</summary>
+      <div class="answer">
+        <p>Yes. Press play on our <a href="hearjesus/">web player</a>. There&rsquo;s nothing to download and no account to make.</p>
+        <p>It remembers where you stopped on that device, and you can add it to your home screen so it opens like an app.</p>
+      </div>
+    </details>
 
     <details>
       <summary>I already know the story of Jesus' life. Why listen again?</summary>
@@ -450,15 +461,12 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var
    "coming soon" tile, so nothing live is ever a dead link.
    ===================================================== */
 const LINKS = {
-  pl_harmony: "https://www.youtube.com/playlist?list=PLU5XeYmL8DoI",
-  pl_seniors: "https://www.youtube.com/playlist?list=PLG_jhvvWTLgw",
-  pl_tenweeks: "https://www.youtube.com/playlist?list=PLAMXTkxARGRI",
   youtube:   "https://www.youtube.com/playlist?list=PLU5XeYmL8DoI",   // main S4 playlist
   apple:     "https://podcasts.apple.com/us/podcast/walking-with-jesus/id6792097599",
   spotify:   "https://open.spotify.com/show/033RbKV8qKtzNk5Xm9vwkf?si=3d7e5f653ca64b2e",
   amazon:    "https://music.amazon.com/podcasts/b4e7eb21-3535-4715-9d53-a08a24759a83/walking-with-jesus?ref=dm_sh_QuG3jyTjA0O8yWjN9l6n3ygSo",
   iheart:    "https://www.iheart.com/podcast/1333-walking-with-jesus-339200567",
-  rss:       "https://rss.com/podcasts/walking-with-jesus/",   // all other apps + listen on the web
+  rss:       "https://rss.com/podcasts/walking-with-jesus/",   // all other apps
   facebook:  "https://www.facebook.com/profile.php?id=61592566504721",   // your Facebook page URL
   instagram: "https://www.instagram.com/wwjesuspodcast/",
   site:      ""    // this page's public URL (used by Share button; falls back to current URL)
@@ -582,7 +590,6 @@ function makeDots(track, itemSel){
 
 makeDots(document.querySelector('.cards'), '.card');
 makeDots(document.getElementById('shorts'), '.short');
-if (window.matchMedia('(max-width:759px)').matches) makeDots(document.getElementById('playlists'), '.pl');
 
 /* ---------- share ---------- */
 document.getElementById('shareBtn').addEventListener('click', function(){

@@ -127,6 +127,8 @@
   .links a,.sharebtn{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--gold-soft);
         color:var(--ink);text-decoration:none;font-family:inherit;font-weight:600;font-size:18px;background:transparent;cursor:pointer}
   .sharebtn{background:var(--red);border-color:var(--red);color:#fff;margin-top:6px}
+  .legal{margin-top:auto;padding:22px 0 4px;text-align:center;font-size:14px;line-height:1.45;color:var(--muted)}
+  .legal p+p{margin-top:4px}
   .toast{min-height:1.3em;margin-top:8px;font-style:italic;color:var(--muted);font-size:17px}
   .track .t{color:#2f2924}
   .track .r{color:var(--muted);font-size:.84em}
@@ -229,9 +231,17 @@
         <p class="grp">Share</p>
         <button class="sharebtn" id="shareBtn" type="button">Share this player</button>
         <p class="toast" id="toast" role="status" aria-live="polite"></p>
+        <p class="grp">Contact</p>
+        <div class="links">
+          <a href="mailto:wwjesuspodcast@gmail.com">Questions or feedback? Email us</a>
+        </div>
       </div>
     </details>
   </nav>
+  <footer class="legal">
+    <p>&copy; 2026 Walking with Jesus Podcast. All rights reserved. Scripture from the King James Version.</p>
+    <p>Listening and sharing links is welcome. Please don&rsquo;t re-upload the audio.</p>
+  </footer>
 </main>
 
 <audio id="audio" preload="metadata"></audio>

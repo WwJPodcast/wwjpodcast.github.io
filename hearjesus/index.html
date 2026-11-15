@@ -38,7 +38,8 @@
        padding:max(18px,env(safe-area-inset-top)) 26px max(18px,env(safe-area-inset-bottom))}
 
   /* top half: logo */
-  .logo{flex:0 0 auto;height:38vh;height:38dvh;max-height:400px;min-height:210px;display:flex;align-items:center;justify-content:center;padding:6px 0}
+  .app{--stage:clamp(210px,38vh,400px);--stage:clamp(210px,38dvh,400px)}
+  .logo{flex:0 0 auto;height:var(--stage);display:flex;align-items:center;justify-content:center;padding:6px 0}
   .logo img{display:block;max-width:100%;max-height:100%;object-fit:contain}
 
   /* bottom half: player */
@@ -131,8 +132,11 @@
   .legal p+p{margin-top:4px}
   .toast{min-height:1.3em;margin-top:8px;font-style:italic;color:var(--muted);font-size:17px}
   /* watch: video in place of the logo (seasons that have videos) */
-  .vbox{width:100%;aspect-ratio:16/9;background:#16120f;border-radius:6px;overflow:hidden;margin:8px 0 0}
-  .vbox iframe,.vbox>div{width:100%;height:100%;border:0;display:block}
+  /* same height as the logo area, so nothing below moves when the video appears */
+  .vbox{flex:0 0 auto;height:var(--stage);display:flex;align-items:center;justify-content:center}
+  .vbox[hidden]{display:none}
+  .vin{width:min(100%,calc(var(--stage) * 1.7778));aspect-ratio:16/9;background:#16120f;border-radius:6px;overflow:hidden}
+  .vin iframe,.vin>div{width:100%;height:100%;border:0;display:block}
   .watchrow{text-align:center;margin:2px 0 8px}
   .wpill{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 18px;border-radius:20px;border:1.5px solid var(--gold);background:transparent;color:var(--ink);font-family:inherit;font-weight:600;font-size:15px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
   .wpill .wic{width:0;height:0;border-left:9px solid var(--red);border-top:6px solid transparent;border-bottom:6px solid transparent}
@@ -541,13 +545,13 @@
     const t = Math.floor(audio.currentTime || pendingSeek || 0);
     audio.pause();
     watching = true; $('app').classList.add('watching'); $('watchTxt').textContent = 'Back to audio';
-    const box = $('vbox'); box.hidden = false; box.innerHTML = '<div id="ytHost"></div>';
+    const box = $('vbox'); box.hidden = false; box.innerHTML = '<div class="vin"><div id="ytHost"></div></div>';
     try {
       await loadYT();
       yt = new YT.Player('ytHost', { videoId: id, playerVars: { start: t, autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1 } });
     } catch (e) {
       yt = null;   // API blocked: plain embed (no hand-back of position)
-      box.innerHTML = '<iframe src="https://www.youtube.com/embed/' + id + '?start=' + t + '&autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Episode video"></iframe>';
+      box.innerHTML = '<div class="vin"><iframe src="https://www.youtube.com/embed/' + id + '?start=' + t + '&autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Episode video"></iframe></div>';
       box.dataset.start = t;
     }
   }

@@ -582,7 +582,17 @@
     }
     updateWatch();
   }
-  $('watchBtn').addEventListener('click', () => watching ? stopWatch(true) : startWatch());
+  // Phone held sideways: the embedded player misrenders on iOS, so hand off to YouTube itself.
+  const sideways = window.matchMedia('(orientation:landscape) and (max-height:520px)');
+  function openOnYouTube() {
+    const id = vidId(); if (!id) return;
+    const t = Math.floor(audio.currentTime || pendingSeek || 0);
+    audio.pause();
+    window.open('https://www.youtube.com/watch?v=' + id + (t ? '&t=' + t + 's' : ''), '_blank', 'noopener');
+  }
+  $('watchBtn').addEventListener('click', () => watching ? stopWatch(true) : (sideways.matches ? openOnYouTube() : startWatch()));
+  const onTurn = () => { if (sideways.matches && watching) stopWatch(true); };
+  if (sideways.addEventListener) sideways.addEventListener('change', onTurn); else sideways.addListener(onTurn);
 
   /* ---------- About sub-tabs ---------- */
   const TABS = [['tabEp', 'epDesc'], ['tabShow', 'showDesc'], ['tabPractice', 'practiceDesc']];

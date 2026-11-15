@@ -154,14 +154,14 @@
       <div class="times"><span id="tNow">0:00</span><span id="tLeft">−0:00</span></div>
     </div>
 
-    <div class="transport" id="transport">
+    <div class="transport" id="transport" data-ctl="b">
       <button class="skip" id="prev" aria-label="Previous episode"><svg viewBox="0 0 24 24"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
-      <button class="skip j" id="back15" aria-label="Back 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/><text x="12" y="16.3" text-anchor="middle" font-size="7.6" font-weight="700" fill="currentColor" font-family="Georgia,serif">15</text></svg></button>
+      <button class="skip j" id="back15" aria-label="Back 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg></button>
       <button class="play" id="play" aria-label="Play">
         <svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         <svg class="ic-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
       </button>
-      <button class="skip j" id="fwd15" aria-label="Forward 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(24 0) scale(-1 1)"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/></g><text x="12" y="16.3" text-anchor="middle" font-size="7.6" font-weight="700" fill="currentColor" font-family="Georgia,serif">15</text></svg></button>
+      <button class="skip j" id="fwd15" aria-label="Forward 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(24 0) scale(-1 1)"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/></g><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg></button>
       <button class="skip" id="next" aria-label="Next episode"><svg viewBox="0 0 24 24"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
     </div>
 
@@ -471,9 +471,7 @@
     h('seekto', d => { if (d.seekTime != null) audio.currentTime = d.seekTime; });
   }
 
-  /* ---------- 15-second jumps (preview: ?c=a or ?c=b) ---------- */
-  const ctl = new URLSearchParams(location.search).get('c');
-  if (ctl === 'a' || ctl === 'b') $('transport').dataset.ctl = ctl;
+  /* ---------- 15-second jumps ---------- */
   const jump = d => { const t = audio.currentTime + d, m = isFinite(audio.duration) ? audio.duration : t; audio.currentTime = Math.max(0, Math.min(t, m)); paintTime(); saveProgress(); };
   $('back15').addEventListener('click', () => jump(-15));
   $('fwd15').addEventListener('click', () => jump(15));

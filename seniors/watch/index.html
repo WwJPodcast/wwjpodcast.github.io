@@ -20,8 +20,7 @@ header h1{font-family:var(--serif);color:#fff;font-size:1.7rem;line-height:1.2}
 header p{font-family:var(--serif);color:#e3b55b;font-size:1.2rem;margin-top:6px}
 main{max-width:560px;margin:0 auto;padding:8px 16px 40px}
 .ep{padding:28px 0 8px;border-bottom:2px solid var(--line)}
-.num{font-weight:700;color:var(--red);font-size:1.1rem;letter-spacing:.04em;text-transform:uppercase}
-.ep h2{font-family:var(--serif);color:var(--navy);font-size:1.6rem;line-height:1.25;margin:2px 0 14px}
+.num{font-weight:700;color:var(--navy);font-size:1.5rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
 .vid{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;margin-bottom:24px}
 .vid button{all:unset;display:block;width:100%;height:100%;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent}
 .vid img{display:block;width:100%;height:100%;object-fit:cover}
@@ -45,16 +44,14 @@ main{max-width:560px;margin:0 auto;padding:8px 16px 40px}
 (function(){
   var list=document.getElementById('list'), KEY='wwj-grandma-last';
   function get(u){return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json();});}
-  Promise.all([get('../../hearjesus/videos.json'),get('../../hearjesus/episodes.json')]).then(function(r){
-    var vids=r[0]['4']||{}, titles={};
-    r[1].forEach(function(e){if(e[0]===4)titles[e[1]]=e[2];});
+  Promise.all([get('../../hearjesus/videos.json')]).then(function(r){
+    var vids=r[0]['4']||{};
     var nums=Object.keys(vids).map(Number).sort(function(a,b){return a-b;});
     list.innerHTML='';
     nums.forEach(function(n){
       var id=vids[n], s=document.createElement('section');
       s.className='ep'; s.id='ep'+n;
-      s.innerHTML='<div class="num">Episode '+n+'</div><h2></h2><div class="vid"><button type="button" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="https://i.ytimg.com/vi/'+id+'/hqdefault.jpg"><span class="play"></span></button></div>';
-      s.querySelector('h2').textContent=titles[n]||'';
+      s.innerHTML='<div class="num">Episode '+n+'</div><div class="vid"><button type="button" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="https://i.ytimg.com/vi/'+id+'/hqdefault.jpg"><span class="play"></span></button></div>';
       s.querySelector('button').addEventListener('click',function(){
         var box=s.querySelector('.vid');
         box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&playsinline=1&rel=0" title="Episode '+n+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';

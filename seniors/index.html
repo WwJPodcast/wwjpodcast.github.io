@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- NOTE: no viewport-fit=cover here. It breaks YouTube embeds on iPhone landscape. -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Slow Scripture for Seniors — Walking with Jesus</title>
-<meta name="description" content="Large print. Slow scroll. The whole story of Jesus, in order. The King James text, read aloud, on YouTube.">
+<meta name="description" content="Large print. Slow scroll. The whole story of Jesus, in order. Tap a picture and it plays.">
+<meta name="apple-mobile-web-app-title" content="Watch">
+<link rel="apple-touch-icon" href="../hearjesus/apple-touch-icon.png">
 <meta property="og:title" content="Slow Scripture for Seniors">
 <meta property="og:description" content="Large print. Slow scroll. The whole story of Jesus, in order.">
 <meta property="og:type" content="website">
@@ -46,6 +49,30 @@ h2{font-family:var(--serif);color:var(--navy);font-size:1.6rem;line-height:1.25;
 .pk-play::after{content:"";position:absolute;left:12px;top:8px;border-style:solid;border-width:8px 0 8px 12px;border-color:transparent transparent transparent var(--gold-light)}
 footer{text-align:center;color:var(--muted);font-size:1rem;padding:20px 20px 44px}
 footer a{color:var(--navy)}
+
+header{padding:22px 0 26px}
+.logo-box{width:min(40%,150px);margin:0 auto 14px;padding:8px;border-radius:16px}
+header h1{font-size:1.8rem}
+.sub{margin:18px 0 0;background:var(--paper);border:2px solid var(--navy);border-radius:16px}
+.sub summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:12px 18px;font-weight:700;font-size:1.25rem;color:var(--navy);cursor:pointer}
+.sub summary::-webkit-details-marker{display:none}
+.sub summary::after{content:"+";font-size:2rem;line-height:1}
+.sub[open] summary::after{content:"\2212"}
+.sub .inner{padding:4px 16px 16px}
+.hint{font-family:var(--serif);color:var(--navy);font-size:1.3rem;text-align:center;margin:22px 0 0}
+.ep{padding:22px 0 6px;border-bottom:2px solid var(--line)}
+.num{font-weight:700;color:var(--navy);font-size:1.5rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.vid{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;margin-bottom:22px}
+.vid button{all:unset;display:block;width:100%;height:100%;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent}
+.vid img{display:block;width:100%;height:100%;object-fit:cover}
+.vid .play{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:rgba(27,42,73,.88);border:4px solid #fff}
+.vid .play::after{content:"";position:absolute;left:32px;top:21px;border-style:solid;border-width:19px 0 19px 30px;border-color:transparent transparent transparent #fff}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.msg{padding:30px 0;text-align:center;color:var(--muted)}
+#list{margin-bottom:10px}
+@media (orientation:landscape) and (max-height:520px){
+  .wrap{max-width:min(100%,calc((100dvh - 24px) * 1.7778 + 40px))}
+}
 </style>
 </head>
 <body>
@@ -58,21 +85,21 @@ footer a{color:var(--navy)}
 </header>
 
 <main class="wrap">
-  <section>
-    <h2>The whole story of Jesus, in order.</h2>
-    <p style="margin-bottom:18px">The words of the King James Bible scroll slowly across your screen in large letters while they are read aloud. Just sit back, watch and listen. New episodes release daily, Monday through Friday, for ten weeks until the season ends.</p>
-    <a href="https://www.youtube.com/playlist?list=PLG_jhvvWTLgw" target="_blank" rel="noopener" aria-label="Open Slow Scripture for Seniors on YouTube"><img class="thumb" src="../pl-seniors.jpg" width="640" height="360" alt="Slow Scripture for Seniors"></a>
-  </section>
+  <details class="sub">
+    <summary>Subscribe on YouTube</summary>
+    <div class="inner">
+      <ol class="steps">
+        <li><div style="flex:1;min-width:0"><b>Tap this button:</b><a class="big" id="watch" style="margin:12px 0;font-size:1.2rem;white-space:nowrap" href="https://www.youtube.com/playlist?list=PLG_jhvvWTLgw" target="_blank" rel="noopener">&#9654;&nbsp; Watch on YouTube</a>The YouTube app opens. If it asks, tap <em>Open</em>.</div></li>
+        <li><div><b>Tap "Play all"</b>Then sit back and listen. To subscribe, tap the Subscribe button in YouTube.</div></li>
+      </ol>
+    </div>
+  </details>
+
+  <p class="hint">Tap a picture to watch</p>
+  <div id="list"><p class="msg">Loading&hellip;</p></div>
 
   <section>
-    <h2>How to watch</h2>
-    <ol class="steps">
-      <li><div style="flex:1;min-width:0"><b>Tap this button:</b><a class="big" id="watch" style="margin:12px 0;font-size:1.2rem;white-space:nowrap" href="https://www.youtube.com/playlist?list=PLG_jhvvWTLgw" target="_blank" rel="noopener">▶&nbsp; Watch on YouTube</a>The YouTube app opens. If it asks, tap <em>Open</em>.</div></li>
-      <li><div><b>Tap "Play all"</b>Then sit back and listen.</div></li>
-    </ol>
-
-
-    <h2 style="margin-top:26px">Prefer to just listen?</h2>
+    <h2>Prefer to just listen?</h2>
     <p>Audio only, with no screen to watch. Handy in the car, or when you want to rest your eyes. It remembers where you stopped.</p>
     <a class="big gold" style="min-height:64px;font-size:1.3rem" href="../hearjesus/"><span class="pk-play" aria-hidden="true"></span><span>Hear Jesus <em>here</em></span></a>
 
@@ -80,7 +107,7 @@ footer a{color:var(--navy)}
     <p>Keep this page. Bookmark it, or add it to your home screen:</p>
     <p><b>iPhone:</b> tap the Share button (the square with an arrow), then <b>Add to Home Screen</b>.</p>
     <p><b>Android:</b> tap the three dots at the top, then <b>Add to Home screen</b>.</p>
-    <p>Then, any day, tap the red button and press Play all.</p>
+    <p>Then, any day, tap the icon and the videos are right there.</p>
   </section>
 
   <section>
@@ -97,6 +124,31 @@ document.getElementById('share').addEventListener('click', function(){
   if (navigator.share) { navigator.share({title:'Slow Scripture for Seniors', url:url}).catch(function(){}); }
   else if (navigator.clipboard) { navigator.clipboard.writeText(url).then(function(){ var b=document.getElementById('share'); b.textContent='Link copied'; setTimeout(function(){b.textContent='Share this page'},2000); }); }
 });
+(function(){
+  var list=document.getElementById('list'), KEY='wwj-grandma-last';
+  fetch('../hearjesus/videos.json').then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){
+    var vids=d['4']||{};
+    var nums=Object.keys(vids).map(Number).sort(function(a,b){return a-b;});
+    list.innerHTML='';
+    nums.forEach(function(n){
+      var id=vids[n], s=document.createElement('section');
+      s.className='ep'; s.id='ep'+n;
+      s.innerHTML='<div class="num">Episode '+n+'</div><div class="vid"><button type="button" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="https://i.ytimg.com/vi/'+id+'/hqdefault.jpg"><span class="play"></span></button></div>';
+      s.querySelector('button').addEventListener('click',function(){
+        var box=s.querySelector('.vid');
+        box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&playsinline=1&rel=0" title="Episode '+n+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+        try{localStorage.setItem(KEY,String(n));}catch(e){}
+      });
+      list.appendChild(s);
+    });
+    try{
+      var last=localStorage.getItem(KEY), el=last&&document.getElementById('ep'+last);
+      if(el){setTimeout(function(){el.scrollIntoView();},50);}
+    }catch(e){}
+  }).catch(function(){
+    list.innerHTML='<p class="msg">Sorry, the videos did not load. Please check your internet and refresh this page.</p>';
+  });
+})();
 </script>
 </body>
 </html>

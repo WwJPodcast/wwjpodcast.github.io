@@ -53,7 +53,7 @@ footer a{color:var(--navy)}
 header{padding:22px 0 26px}
 .logo-box{width:min(40%,150px);margin:0 auto 14px;padding:8px;border-radius:16px}
 header h1{font-size:1.8rem}
-.sub{margin:18px 0 0;background:var(--paper);border:2px solid var(--navy);border-radius:16px}
+.sub-unused{margin:18px 0 0;background:var(--paper);border:2px solid var(--navy);border-radius:16px}
 .sub summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:12px 18px;font-weight:700;font-size:1.25rem;color:var(--navy);cursor:pointer}
 .sub summary::-webkit-details-marker{display:none}
 .sub summary::after{content:"+";font-size:2rem;line-height:1}
@@ -73,6 +73,17 @@ header h1{font-size:1.8rem}
 @media (orientation:landscape) and (max-height:520px){
   .wrap{max-width:min(100%,calc((100dvh - 24px) * 1.7778 + 40px))}
 }
+.faq{margin:16px 0 0;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 2px;font-size:1rem;color:var(--muted);cursor:pointer}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"\25BE";font-size:1rem}
+.faq details[open] summary::after{content:"\25B4"}
+.faq details[open] summary{color:var(--navy);font-weight:700}
+.faq .inner{padding:2px 2px 16px;font-size:1rem}
+.faq .inner p{margin-bottom:12px}
+.big.small{min-height:56px;font-size:1.15rem;box-shadow:none}
+.hint{font-size:1.1rem;margin:14px 0 0}
 </style>
 </head>
 <body>
@@ -85,25 +96,28 @@ header h1{font-size:1.8rem}
 </header>
 
 <main class="wrap">
-  <details class="sub">
-    <summary>Subscribe on YouTube</summary>
-    <div class="inner">
-      <ol class="steps">
-        <li><div style="flex:1;min-width:0"><b>Tap this button:</b><a class="big" id="watch" style="margin:12px 0;font-size:1.2rem;white-space:nowrap" href="https://www.youtube.com/playlist?list=PLG_jhvvWTLgw" target="_blank" rel="noopener">&#9654;&nbsp; Watch on YouTube</a>The YouTube app opens. If it asks, tap <em>Open</em>.</div></li>
-        <li><div><b>Tap "Play all"</b>Then sit back and listen. To subscribe, tap the Subscribe button in YouTube.</div></li>
-      </ol>
-    </div>
-  </details>
+  <div class="faq">
+    <details>
+      <summary>How do I subscribe on YouTube?</summary>
+      <div class="inner">
+        <p>Tap the button, and the YouTube app opens. If it asks, tap <em>Open</em>. Then tap <b>Play all</b>, or tap <b>Subscribe</b> to get every new episode.</p>
+        <a class="big small" href="https://www.youtube.com/playlist?list=PLG_jhvvWTLgw" target="_blank" rel="noopener">&#9654;&nbsp; Open on YouTube</a>
+      </div>
+    </details>
+    <details>
+      <summary>Can I just listen, without watching?</summary>
+      <div class="inner">
+        <p>Yes. Audio only, with no screen to watch. Handy in the car, or when you want to rest your eyes. It remembers where you stopped.</p>
+        <a class="big gold small" href="../hearjesus/"><span class="pk-play" aria-hidden="true"></span><span>Hear Jesus <em>here</em></span></a>
+      </div>
+    </details>
+  </div>
 
   <p class="hint">Tap a picture to watch</p>
   <div id="list"><p class="msg">Loading&hellip;</p></div>
 
   <section>
-    <h2>Prefer to just listen?</h2>
-    <p>Audio only, with no screen to watch. Handy in the car, or when you want to rest your eyes. It remembers where you stopped.</p>
-    <a class="big gold" style="min-height:64px;font-size:1.3rem" href="../hearjesus/"><span class="pk-play" aria-hidden="true"></span><span>Hear Jesus <em>here</em></span></a>
-
-    <h2 style="margin-top:26px">To come back later</h2>
+    <h2>To come back later</h2>
     <p>Keep this page. Bookmark it, or add it to your home screen:</p>
     <p><b>iPhone:</b> tap the Share button (the square with an arrow), then <b>Add to Home Screen</b>.</p>
     <p><b>Android:</b> tap the three dots at the top, then <b>Add to Home screen</b>.</p>
@@ -141,10 +155,6 @@ document.getElementById('share').addEventListener('click', function(){
       });
       list.appendChild(s);
     });
-    try{
-      var last=localStorage.getItem(KEY), el=last&&document.getElementById('ep'+last);
-      if(el){setTimeout(function(){el.scrollIntoView();},50);}
-    }catch(e){}
   }).catch(function(){
     list.innerHTML='<p class="msg">Sorry, the videos did not load. Please check your internet and refresh this page.</p>';
   });

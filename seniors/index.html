@@ -84,6 +84,16 @@ header h1{font-size:1.8rem}
 .faq .inner p{margin-bottom:12px}
 .big.small{min-height:56px;font-size:1.15rem;box-shadow:none}
 .hint{font-size:1.1rem;margin:14px 0 0}
+.faq{border-top:0;margin-top:14px}
+.faq-top{padding:10px 2px}
+.faq-top{font-size:1rem}
+.faq>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;color:var(--muted);cursor:pointer;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.faq>summary::-webkit-details-marker{display:none}
+.faq>summary::after{content:"\25BE"}
+.faq[open]>summary::after{content:"\25B4"}
+.faq[open]>summary{color:var(--navy);font-weight:700;border-bottom:0}
+.faq-list{border-bottom:0}
+.faq .share{min-height:56px;font-size:1.15rem}
 </style>
 </head>
 <body>
@@ -96,7 +106,9 @@ header h1{font-size:1.8rem}
 </header>
 
 <main class="wrap">
-  <div class="faq">
+  <details class="faq">
+    <summary class="faq-top">FAQ</summary>
+    <div class="faq-list">
     <details>
       <summary>How do I subscribe on YouTube?</summary>
       <div class="inner">
@@ -111,23 +123,27 @@ header h1{font-size:1.8rem}
         <a class="big gold small" href="../hearjesus/"><span class="pk-play" aria-hidden="true"></span><span>Hear Jesus <em>here</em></span></a>
       </div>
     </details>
-  </div>
+    <details>
+      <summary>How do I put this on my home screen?</summary>
+      <div class="inner">
+        <p><b>iPhone:</b> tap the Share button (the square with an arrow), then <b>Add to Home Screen</b>.</p>
+        <p><b>Android:</b> tap the three dots at the top, then <b>Add to Home screen</b>.</p>
+        <p>Then, any day, tap the icon and the videos are right there.</p>
+      </div>
+    </details>
+    <details>
+      <summary>How do I share this with someone?</summary>
+      <div class="inner">
+        <p>Know someone who would love this? Tap the button to send them this page.</p>
+        <button class="share" id="share">Share this page</button>
+      </div>
+    </details>
+    </div>
+  </details>
 
   <p class="hint">Tap a picture to watch</p>
   <div id="list"><p class="msg">Loading&hellip;</p></div>
 
-  <section>
-    <h2>To come back later</h2>
-    <p>Keep this page. Bookmark it, or add it to your home screen:</p>
-    <p><b>iPhone:</b> tap the Share button (the square with an arrow), then <b>Add to Home Screen</b>.</p>
-    <p><b>Android:</b> tap the three dots at the top, then <b>Add to Home screen</b>.</p>
-    <p>Then, any day, tap the icon and the videos are right there.</p>
-  </section>
-
-  <section>
-    <h2>Know someone who would love this?</h2>
-    <button class="share" id="share">Share this page</button>
-  </section>
 </main>
 
 <footer><a href="../">Visit the main page</a></footer>

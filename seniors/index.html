@@ -95,6 +95,14 @@ header h1{font-size:1.8rem}
 .faq-list{border-bottom:0}
 .faq .share{min-height:56px;font-size:1.15rem}
 .faq>summary{justify-content:center;gap:10px}
+#resume{margin:20px 0 0;flex-direction:column;gap:2px;line-height:1.2}
+#resume[hidden]{display:none}
+#resume small{display:block;font-size:1.15rem;font-weight:500}
+.fab{position:fixed;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:10px;padding:0 14px;z-index:20;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s}
+.fab.show{opacity:1;visibility:visible}
+.fab button{pointer-events:auto;min-height:60px;padding:0 22px;border-radius:30px;border:2px solid #fff;background:var(--navy);color:#fff;font:700 1.15rem var(--sans);box-shadow:0 4px 14px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent}
+.fab button:active{transform:scale(.97)}
+@media (orientation:landscape) and (max-height:520px){.fab{display:none}}
 </style>
 </head>
 <body>
@@ -142,11 +150,15 @@ header h1{font-size:1.8rem}
     </div>
   </details>
 
+  <a class="big" id="resume" href="#" hidden></a>
+
   <div id="list"><p class="msg">Loading&hellip;</p></div>
 
 </main>
 
 <footer><a href="../">Visit the main page</a></footer>
+
+<div class="fab" id="fab"><button type="button" id="toTop">&uarr; Back to top</button><button type="button" id="toNew">Newest &darr;</button></div>
 
 <script>
 document.getElementById('share').addEventListener('click', function(){
@@ -156,6 +168,21 @@ document.getElementById('share').addEventListener('click', function(){
 });
 (function(){
   var list=document.getElementById('list'), KEY='wwj-grandma-last';
+  function save(n){try{localStorage.setItem(KEY,String(n));}catch(e){}}
+  var fab=document.getElementById('fab'), ticking=false;
+  document.getElementById('toTop').addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  function onScroll(){
+    ticking=false;
+    var y=window.scrollY||document.documentElement.scrollTop;
+    fab.classList.toggle('show',y>600);
+    if(y<300)return;
+    var line=window.innerHeight*0.3, secs=list.children;
+    for(var i=0;i<secs.length;i++){
+      var r=secs[i].getBoundingClientRect();
+      if(r.top<=line&&r.bottom>line){ if(secs[i].dataset.n)save(secs[i].dataset.n); break; }
+    }
+  }
+  window.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(onScroll);} },{passive:true});
   fetch('../hearjesus/videos.json').then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){
     var vids=d['4']||{};
     var nums=Object.keys(vids).map(Number).sort(function(a,b){return a-b;});
@@ -167,9 +194,21 @@ document.getElementById('share').addEventListener('click', function(){
       s.querySelector('button').addEventListener('click',function(){
         var box=s.querySelector('.vid');
         box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&playsinline=1&rel=0" title="Episode '+n+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
-        try{localStorage.setItem(KEY,String(n));}catch(e){}
+        save(n);
       });
+      s.dataset.n=n;
       list.appendChild(s);
+    });
+    var saved=0; try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
+    var target=document.getElementById('ep'+saved);
+    if(saved>1 && target){
+      var rb=document.getElementById('resume');
+      rb.innerHTML='Continue where you left off<small>Episode '+saved+'</small>';
+      rb.hidden=false;
+      rb.addEventListener('click',function(e){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});});
+    }
+    document.getElementById('toNew').addEventListener('click',function(){
+      var last=list.lastElementChild; if(last)last.scrollIntoView({behavior:'smooth',block:'start'});
     });
   }).catch(function(){
     list.innerHTML='<p class="msg">Sorry, the videos did not load. Please check your internet and refresh this page.</p>';

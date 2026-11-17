@@ -100,9 +100,10 @@ header h1{font-size:1.8rem}
 #resume small{display:block;font-size:1.15rem;font-weight:500}
 .fab{position:fixed;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:10px;padding:0 14px;z-index:20;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s}
 .fab.show{opacity:1;visibility:visible}
-.fab button{pointer-events:auto;min-height:60px;padding:0 22px;border-radius:30px;border:2px solid #fff;background:var(--navy);color:#fff;font:700 1.15rem var(--sans);box-shadow:0 4px 14px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent}
+.fab button{pointer-events:auto;min-height:60px;padding:0 16px;border-radius:30px;border:2px solid #fff;background:var(--navy);color:#fff;font:700 1.15rem var(--sans);box-shadow:0 4px 14px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent}
 .fab button:active{transform:scale(.97)}
-@media (orientation:landscape) and (max-height:520px){.fab{display:none}}
+.fab button[hidden]{display:none}
+@media (orientation:landscape) and (max-height:520px){.fab{bottom:8px}.fab button{min-height:44px;padding:0 16px;font-size:1rem}}
 </style>
 </head>
 <body>
@@ -158,7 +159,7 @@ header h1{font-size:1.8rem}
 
 <footer><a href="../">Visit the main page</a></footer>
 
-<div class="fab" id="fab"><button type="button" id="toTop">&uarr; Back to top</button><button type="button" id="toNew">Newest &darr;</button></div>
+<div class="fab" id="fab"><button type="button" id="fabCont" hidden>Continue</button><button type="button" id="toTop">&uarr; Top</button><button type="button" id="toNew">Newest &darr;</button></div>
 
 <script>
 document.getElementById('share').addEventListener('click', function(){
@@ -168,14 +169,16 @@ document.getElementById('share').addEventListener('click', function(){
 });
 (function(){
   var list=document.getElementById('list'), KEY='wwj-grandma-last';
-  function save(n){try{localStorage.setItem(KEY,String(n));}catch(e){}}
+  var fc=document.getElementById('fabCont');
+  function save(n){try{localStorage.setItem(KEY,String(n));}catch(e){} if(+n>1)fc.hidden=false;}
   var fab=document.getElementById('fab'), ticking=false;
-  document.getElementById('toTop').addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  var hold=0;
+  document.getElementById('toTop').addEventListener('click',function(){hold=Date.now()+2500;window.scrollTo({top:0,behavior:'smooth'});});
   function onScroll(){
     ticking=false;
     var y=window.scrollY||document.documentElement.scrollTop;
     fab.classList.toggle('show',y>600);
-    if(y<300)return;
+    if(y<300||Date.now()<hold)return;
     var line=window.innerHeight*0.3, secs=list.children;
     for(var i=0;i<secs.length;i++){
       var r=secs[i].getBoundingClientRect();
@@ -208,7 +211,13 @@ document.getElementById('share').addEventListener('click', function(){
       rb.addEventListener('click',function(e){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});});
     }
     document.getElementById('toNew').addEventListener('click',function(){
-      var last=list.lastElementChild; if(last)last.scrollIntoView({behavior:'smooth',block:'start'});
+      var last=list.lastElementChild; hold=Date.now()+2500; if(last)last.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    if(saved>1&&target)fc.hidden=false;
+    fc.addEventListener('click',function(){
+      var n2=0; try{n2=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
+      var t2=document.getElementById('ep'+n2); if(!t2)return;
+      hold=Date.now()+2500; t2.scrollIntoView({behavior:'smooth',block:'start'});
     });
   }).catch(function(){
     list.innerHTML='<p class="msg">Sorry, the videos did not load. Please check your internet and refresh this page.</p>';

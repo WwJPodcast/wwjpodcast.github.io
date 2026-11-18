@@ -206,7 +206,7 @@ document.getElementById('share').addEventListener('click', function(){
     s.innerHTML='<div class="num">Episode '+n+'</div><div class="vid"></div>';
     var box=s.querySelector('.vid');
     function cover(){
-      box.innerHTML='<button type="button" class="cover" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="'+thumb(n)+'"><span class="play"></span></button>';
+      box.innerHTML='<button type="button" class="cover" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="'+thumb(n)+'"></button>';
       box.querySelector('button').addEventListener('click',play);
     }
     function play(){

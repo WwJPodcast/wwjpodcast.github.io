@@ -197,29 +197,33 @@ document.getElementById('share').addEventListener('click', function(){
   var R2='https://pub-306859672a3d4fa4a0d0662093095c81.r2.dev/';   // the ONE line to change if the video address ever moves
   var FIRST=1, LAST=50;                                              // Season 4 episodes that have a video
   function vurl(n){return R2+'s4ep'+(n<10?'0':'')+n+'_FULL.mp4';}
-  var vids=[];
-  function pauseOthers(except){vids.forEach(function(v){if(v!==except&&!v.paused)v.pause();});}
-  function load(v){ if(v.dataset.loaded)return; v.dataset.loaded='1'; v.preload='metadata'; v.src=v.dataset.src; }
-  var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){load(e.target);io.unobserve(e.target);}});},{rootMargin:'800px 0px'}):null;
+  function thumb(n){return 'thumbs/s4-ep'+(n<10?'0':'')+n+'.jpg';}
+  function pauseOthers(except){var all=list.querySelectorAll('video');for(var i=0;i<all.length;i++){if(all[i]!==except&&!all[i].paused)all[i].pause();}}
   list.innerHTML='';
   for(var n=FIRST;n<=LAST;n++){(function(n){
     var s=document.createElement('section');
     s.className='ep'; s.id='ep'+n; s.dataset.n=n;
-    s.innerHTML='<div class="num">Episode '+n+'</div><div class="vid"><video playsinline preload="none" data-src="'+vurl(n)+'" aria-label="Episode '+n+' video"></video><button type="button" class="cover" aria-label="Play episode '+n+'"><span class="play"></span></button></div>';
-    var box=s.querySelector('.vid'), v=s.querySelector('video'), btn=s.querySelector('button');
-    vids.push(v);
-    v.addEventListener('loadedmetadata',function(){ if(!v.dataset.started){ try{v.currentTime=Math.min(1,(v.duration||2)/2);}catch(e){} } });
-    v.addEventListener('error',function(){ if(!v.dataset.loaded)return; box.innerHTML='<p class="vmsg">This video is not available yet.<br>Please try again later.</p>'; });
-    v.addEventListener('play',function(){ pauseOthers(v); save(n); });
-    btn.addEventListener('click',function(){
-      pauseOthers(v); v.dataset.started='1'; load(v);
-      btn.remove(); v.controls=true; v.preload='auto';
-      try{v.currentTime=0;}catch(e){}
+    s.innerHTML='<div class="num">Episode '+n+'</div><div class="vid"></div>';
+    var box=s.querySelector('.vid');
+    function cover(){
+      box.innerHTML='<button type="button" class="cover" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="'+thumb(n)+'"><span class="play"></span></button>';
+      box.querySelector('button').addEventListener('click',play);
+    }
+    function play(){
+      var v=document.createElement('video');
+      v.controls=true; v.autoplay=true; v.setAttribute('playsinline',''); v.preload='auto'; v.src=vurl(n);
+      v.addEventListener('error',function(){
+        box.innerHTML='<p class="vmsg">This video could not load.<br>Please try again in a moment.</p>';
+        setTimeout(cover,3500);
+      });
+      v.addEventListener('play',function(){ pauseOthers(v); save(n); });
+      pauseOthers(v);
+      box.innerHTML=''; box.appendChild(v);
       var p=v.play(); if(p&&p.catch)p.catch(function(){});
       save(n);
-    });
+    }
+    cover();
     list.appendChild(s);
-    if(io){io.observe(v);} else if(n<=3){load(v);}
   })(n);}
   var saved=0; try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
   var target=document.getElementById('ep'+saved);

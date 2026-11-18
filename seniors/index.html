@@ -67,7 +67,9 @@ header h1{font-size:1.8rem}
 .vid img{display:block;width:100%;height:100%;object-fit:cover}
 .vid .play{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:rgba(27,42,73,.88);border:4px solid #fff}
 .vid .play::after{content:"";position:absolute;left:32px;top:21px;border-style:solid;border-width:19px 0 19px 30px;border-color:transparent transparent transparent #fff}
-.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.vid video{position:absolute;inset:0;width:100%;height:100%;display:block;background:#000;object-fit:contain}
+.vid button.cover{position:absolute;inset:0}
+.vmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;padding:12px;margin:0;font-size:1.1rem}
 .msg{padding:30px 0;text-align:center;color:var(--muted)}
 #list{margin-bottom:10px}
 @media (orientation:landscape) and (max-height:520px){
@@ -191,36 +193,47 @@ document.getElementById('share').addEventListener('click', function(){
     }
   }
   window.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(onScroll);} },{passive:true});
-  fetch('../hearjesus/videos.json').then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(d){
-    var vids=d['4']||{};
-    var nums=Object.keys(vids).map(Number).sort(function(a,b){return a-b;});
-    list.innerHTML='';
-    nums.forEach(function(n){
-      var id=vids[n], s=document.createElement('section');
-      s.className='ep'; s.id='ep'+n;
-      s.innerHTML='<div class="num">Episode '+n+'</div><div class="vid"><button type="button" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="https://i.ytimg.com/vi/'+id+'/hqdefault.jpg"></button></div>';
-      s.querySelector('button').addEventListener('click',function(){
-        var box=s.querySelector('.vid');
-        box.innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&playsinline=1&rel=0" title="Episode '+n+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
-        save(n);
-      });
-      s.dataset.n=n;
-      list.appendChild(s);
-    });
-    var saved=0; try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
-    var target=document.getElementById('ep'+saved);
-    if(saved>1 && target){
-      var rb=document.getElementById('resume');
-      rb.innerHTML='Continue where you left off<small>Episode '+saved+'</small>';
-      rb.hidden=false;
-      rb.addEventListener('click',function(e){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});});
+  var R2='https://pub-306859672a3d4fa4a0d0662093095c81.r2.dev/';   // the ONE line to change if the video address ever moves
+  var FIRST=1, LAST=50;                                              // Season 4 episodes that have a video
+  function vurl(n){return R2+'s4ep'+(n<10?'0':'')+n+'_FULL.mp4';}
+  function thumb(n){return 'thumbs/s4-ep'+(n<10?'0':'')+n+'.jpg';}
+  function pauseOthers(except){var all=list.querySelectorAll('video');for(var i=0;i<all.length;i++){if(all[i]!==except&&!all[i].paused)all[i].pause();}}
+  list.innerHTML='';
+  for(var n=FIRST;n<=LAST;n++){(function(n){
+    var s=document.createElement('section');
+    s.className='ep'; s.id='ep'+n; s.dataset.n=n;
+    s.innerHTML='<div class="num">Episode '+n+'</div><div class="vid"></div>';
+    var box=s.querySelector('.vid');
+    function cover(){
+      box.innerHTML='<button type="button" class="cover" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="'+thumb(n)+'"></button>';
+      box.querySelector('button').addEventListener('click',play);
     }
-    document.getElementById('toNew').addEventListener('click',function(){
-      var last=list.lastElementChild; hold=Date.now()+2500; if(last)last.scrollIntoView({behavior:'smooth',block:'start'});
-    });
-
-  }).catch(function(){
-    list.innerHTML='<p class="msg">Sorry, the videos did not load. Please check your internet and refresh this page.</p>';
+    function play(){
+      var v=document.createElement('video');
+      v.controls=true; v.autoplay=true; v.setAttribute('playsinline',''); v.preload='auto'; v.src=vurl(n);
+      v.addEventListener('error',function(){
+        box.innerHTML='<p class="vmsg">This video could not load.<br>Please try again in a moment.</p>';
+        setTimeout(cover,3500);
+      });
+      v.addEventListener('play',function(){ pauseOthers(v); save(n); });
+      pauseOthers(v);
+      box.innerHTML=''; box.appendChild(v);
+      var p=v.play(); if(p&&p.catch)p.catch(function(){});
+      save(n);
+    }
+    cover();
+    list.appendChild(s);
+  })(n);}
+  var saved=0; try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
+  var target=document.getElementById('ep'+saved);
+  if(saved>1 && target){
+    var rb=document.getElementById('resume');
+    rb.innerHTML='Continue where you left off<small>Episode '+saved+'</small>';
+    rb.hidden=false;
+    rb.addEventListener('click',function(e){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});});
+  }
+  document.getElementById('toNew').addEventListener('click',function(){
+    var last=list.lastElementChild; hold=Date.now()+2500; if(last)last.scrollIntoView({behavior:'smooth',block:'start'});
   });
 })();
 </script>

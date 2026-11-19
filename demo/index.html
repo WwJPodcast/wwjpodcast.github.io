@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<base href="https://wwjpodcast.github.io/hearjesus/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Walking with Jesus — Player (demo)</title>
+<meta name="description" content="Hear Jesus here. Listen to Walking with Jesus, the Gospels in order, 15 minutes at a time.">
+<meta name="theme-color" content="#FBF7EC">
+<meta property="og:title" content="Hear Jesus here. Podcast Player">
+<meta property="og:description" content="Listen free in your browser. The Gospels, in order, 15 minutes at a time. It remembers where you left off.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://wwjpodcast.github.io/hearjesus/">
+<meta property="og:image" content="https://wwjpodcast.github.io/hearjesus/og-image.jpg?v=2">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wwjpodcast.github.io/hearjesus/og-image.jpg?v=2">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hear Jesus">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF7EC; --ink:#111; --red:#9A1114; --gold:#C4A059; --gold-soft:#E4D6B8;
+    --muted:#6b625a; --track:#dcdad5;
+  }
+  /* Lining figures: this font's default numerals are old-style and drop below the line. */
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-variant-numeric:lining-nums}
+  html,body{background:var(--cream);color:var(--ink);font-family:'Cormorant Garamond',Georgia,serif}
+  body{min-height:100vh;min-height:100dvh;display:flex;justify-content:center}
+  .app{width:100%;max-width:520px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
+       padding:max(18px,env(safe-area-inset-top)) 26px max(18px,env(safe-area-inset-bottom))}
+
+  /* top half: logo */
+  .app{--stage:clamp(210px,38vh,400px);--stage:clamp(210px,38dvh,400px)}
+  .logo{flex:0 0 auto;height:var(--stage);display:flex;align-items:center;justify-content:center;padding:6px 0}
+  .logo img{display:block;max-width:100%;max-height:100%;object-fit:contain}
+
+  /* bottom half: player */
+  .player{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px;padding-top:6px}
+
+  .pick{position:relative;display:inline-flex;align-items:center;justify-content:center;max-width:100%}
+  .pick select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px}
+  .pick .shown{pointer-events:none;text-align:center;display:inline-flex;align-items:center;gap:8px}
+  .pick .chev{width:12px;height:12px;flex:0 0 auto;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-3px) rotate(45deg);opacity:.7}
+  .pick:focus-within{outline:2px solid var(--gold);outline-offset:4px;border-radius:6px}
+
+  .season .shown{font-weight:600;font-size:clamp(19px,5.4vw,27px);line-height:1.15;letter-spacing:.01em;padding:4px 2px}
+  .epnum .shown{font-weight:600;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+  .ticker{width:100%;overflow:hidden;white-space:nowrap;height:1.7em;position:relative;
+          font-style:italic;font-weight:500;font-size:clamp(19px,5vw,24px);color:#4a423b;
+          -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+                  mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+  .track{display:block;text-align:center;overflow:hidden;text-overflow:ellipsis;line-height:1.7em}
+  .ticker.run .track{display:inline-block;overflow:visible;text-overflow:clip;will-change:transform;
+                     animation:tick var(--dur,14s) linear infinite}
+  @keyframes tick{from{transform:translateX(var(--from,100%))}to{transform:translateX(var(--to,-100%))}}
+  @media (prefers-reduced-motion:reduce){.ticker.run .track{animation:none;display:block;overflow:hidden;text-overflow:ellipsis}}
+
+  .bar{width:100%;margin-top:2px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer;touch-action:none}
+  input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:4px;
+      background:linear-gradient(90deg,var(--red) var(--p,0%),var(--track) var(--p,0%))}
+  input[type=range]::-moz-range-track{height:8px;border-radius:4px;background:var(--track)}
+  input[type=range]::-moz-range-progress{height:8px;border-radius:4px;background:var(--red)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--red);margin-top:-5px;border:2px solid var(--cream);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+  input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--red);border:2px solid var(--cream)}
+  .times{display:flex;justify-content:space-between;font-style:italic;font-size:15px;color:var(--muted);margin-top:-2px;font-variant-numeric:lining-nums tabular-nums}
+
+  .transport{display:flex;align-items:center;justify-content:center;gap:30px;margin-top:6px}
+  .play{width:84px;height:84px;border-radius:50%;border:0;background:var(--red);display:grid;place-items:center;cursor:pointer;
+        box-shadow:0 6px 16px rgba(154,17,20,.28);transition:transform .08s}
+  .play:active{transform:scale(.96)}
+  .play svg{width:34px;height:34px;fill:#fff}
+  .play .ic-pause{display:none}
+  .playing .play .ic-play{display:none}
+  .playing .play .ic-pause{display:block}
+  .skip{width:48px;height:48px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--ink);opacity:.75;border-radius:50%}
+  .skip:disabled{opacity:.25;cursor:default}
+  .skip svg{width:26px;height:26px;fill:currentColor}
+  .skip.j svg{width:36px;height:36px}
+  .transport .j{display:none}
+  .transport[data-ctl=a] #prev,.transport[data-ctl=a] #next{display:none}
+  .transport[data-ctl=a] .j,.transport[data-ctl=b] .j{display:grid}
+  .transport[data-ctl=b]{gap:12px}
+
+  .speeds{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+  .speeds button{min-width:54px;min-height:44px;padding:0 10px;border-radius:22px;border:1.5px solid var(--gold-soft);background:transparent;color:var(--ink);
+        font-family:inherit;font-weight:600;font-size:18px;cursor:pointer}
+  @media(max-width:380px){.speeds{gap:5px}.speeds button{min-width:0;padding:0 8px}}
+  .speeds button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+
+  /* bottom categories */
+  .more{margin-top:26px;border-top:1px solid var(--gold-soft)}
+  .cat{border-bottom:1px solid var(--gold-soft)}
+  .cat>summary,.q>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .cat>summary::-webkit-details-marker,.q>summary::-webkit-details-marker{display:none}
+  .cat>summary{min-height:54px;font-weight:600;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+  .cat>summary::after,.q>summary::after{content:"";flex:0 0 auto;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translate(-2px,-2px);transition:transform .15s}
+  details[open]>summary::after{transform:rotate(-135deg) translate(-2px,-2px)}
+  .cat .body{padding:2px 0 20px}
+  .q{border-top:1px solid #efe7d4}
+  .q:first-child{border-top:0}
+  .q>summary{min-height:50px;padding:6px 0;font-weight:600;font-size:20px;line-height:1.2}
+  .q .a{padding:0 0 14px;font-size:19px;line-height:1.35;color:#3b342e}
+  .q .a p+p{margin-top:.6em}
+  .q .a a,.fine a{color:var(--red);text-decoration:none;border-bottom:1px solid var(--red)}
+  .desc p{font-size:19px;line-height:1.38;color:#3b342e}
+  .desc p+p{margin-top:.6em}
+  .desc p.b+p.b{margin-top:.15em}
+  .desc p.b{font-weight:600;color:var(--ink)}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 14px}
+  .tabs button{font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;min-height:40px;padding:0 12px;border-radius:20px;border:1.5px solid var(--gold-soft);background:transparent;color:var(--muted);cursor:pointer}
+  .tabs button[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+  .desc [hidden]{display:none}
+  .desc h3{font-size:14px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+  .desc h3:first-child{margin-top:4px}
+  .fine{font-size:18px;font-style:italic;color:var(--muted);padding-top:12px}
+  .grp{font-size:14px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
+  .links{display:flex;flex-wrap:wrap;gap:8px}
+  .links a,.sharebtn{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--gold-soft);
+        color:var(--ink);text-decoration:none;font-family:inherit;font-weight:600;font-size:18px;background:transparent;cursor:pointer}
+  .sharebtn{background:var(--red);border-color:var(--red);color:#fff;margin-top:6px}
+  .legal{margin-top:auto;padding:22px 0 4px;text-align:center;font-size:14px;line-height:1.45;color:var(--muted)}
+  .legal p+p{margin-top:4px}
+  .toast{min-height:1.3em;margin-top:8px;font-style:italic;color:var(--muted);font-size:17px}
+  /* watch: video in place of the logo (seasons that have videos) */
+  /* same height as the logo area, so nothing below moves when the video appears */
+  .vbox{flex:0 0 auto;height:var(--stage);display:flex;align-items:center;justify-content:center}
+  .vbox[hidden]{display:none}
+  .vin{width:min(100%,calc(var(--stage) * 1.7778));aspect-ratio:16/9;background:transparent;border-radius:0;overflow:hidden}
+  .vin iframe,.vin>div{width:100%;height:100%;border:0;display:block}
+  .watchrow{text-align:center;margin:2px 0 8px}
+  .wpill{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 18px;border-radius:20px;border:1.5px solid var(--gold);background:transparent;color:var(--ink);font-family:inherit;font-weight:600;font-size:15px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+  .wpill .wic{width:0;height:0;border-left:9px solid var(--red);border-top:6px solid transparent;border-bottom:6px solid transparent}
+  .app.watching .wpill .wic{width:11px;height:11px;border:0;border-radius:2px;background:var(--red)}
+  .app.watching .logo{display:none}
+  .app.watching .bar,.app.watching .transport,.app.watching .speeds{opacity:.35;pointer-events:none}
+  /* phone held sideways: the video grows to the visible height and uses the full width */
+  @media (orientation:landscape) and (max-height:520px){
+    .app.watching{--stage:calc(100vh - 62px)}
+    @supports (height:100dvh){.app.watching{--stage:calc(100dvh - 62px)}}
+    .app.watching .vbox{width:100vw;margin-left:calc(50% - 50vw)}
+    .app.watching .vin{width:min(100%,calc(var(--stage) * 1.7778))}
+  }
+  .track .t{color:#2f2924}
+  .track .r{color:var(--muted);font-size:.84em}
+  .track .sep{color:var(--gold);padding:0 .5em}
+  .track .gap{display:inline-block;width:30vw}
+  .msg{font-style:italic;color:var(--muted);font-size:18px;text-align:center;min-height:1.3em}
+  .msg button{font-family:inherit;font-size:inherit;color:var(--red);background:none;border:0;border-bottom:1px solid var(--red);cursor:pointer}
+  button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  /* ===== DEMO ADDITIONS ===== */
+  .linkbtn{background:none;border:0;border-bottom:1px solid var(--red);color:var(--red);font-family:inherit;font-size:inherit;font-style:italic;cursor:pointer;padding:0}
+  .first{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+  .first a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:62px;padding:8px 18px;border:1.5px solid var(--gold-soft);border-radius:14px;text-decoration:none;color:var(--ink)}
+  .first a b{display:block;font-size:22px;font-weight:700;line-height:1.1}
+  .first a span{display:block;font-size:17px;font-style:italic;color:var(--muted);line-height:1.2}
+  .first a::after{content:"";flex:0 0 auto;width:9px;height:9px;border-right:2.5px solid var(--red);border-top:2.5px solid var(--red);transform:rotate(45deg);margin-right:4px}
+  .first + .more{margin-top:18px}
+  .how{display:flex;flex-direction:column;gap:20px}
+  .hrow{display:flex;gap:14px;align-items:flex-start}
+  .hic{flex:0 0 52px;width:52px;height:52px;color:var(--red)}
+  .hrow h4{font-size:22px;font-weight:700;line-height:1.1}
+  .hrow p{font-size:19px;line-height:1.35;color:#3b342e;margin-top:3px}
+  .slot{flex:0 0 auto;height:var(--stage);display:flex;align-items:stretch;justify-content:center;padding:4px 0}
+  .slot[hidden]{display:none}
+  .app.slotting .logo{display:none}
+  .wcard{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:0}
+  .wmain{flex:1 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+  .wimg{display:block;height:100%;max-height:100%;width:auto;max-width:100%;aspect-ratio:1/1}
+  .wnav{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px}
+  .wskip{min-height:44px;padding:0 6px;background:none;border:0;color:var(--muted);font-family:inherit;font-size:18px;font-style:italic;cursor:pointer}
+  .wbtn{min-height:46px;padding:0 24px;border-radius:23px;border:0;background:var(--red);color:#fff;font-family:inherit;font-weight:600;font-size:19px;cursor:pointer}
+  .dots{display:flex;gap:7px}
+  .dots i{width:8px;height:8px;border-radius:50%;background:var(--gold-soft)}
+  .dots i.on{background:var(--red)}
+  .tcard{position:relative;width:100%;height:100%;box-sizing:border-box;border:1.5px solid var(--gold);background:#fffaf0;border-radius:22px;padding:12px 22px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+  .tcard h2{font-weight:700;font-size:clamp(25px,7vw,33px);line-height:1.04;color:var(--red)}
+  .tcard h2.q{font-style:italic;font-weight:600;color:var(--ink);font-size:clamp(21px,5.6vw,27px);line-height:1.15}
+  .tcard h2.q.long{font-size:clamp(17px,4.6vw,21px)}
+  .tcard p{font-size:clamp(18px,4.8vw,21px);line-height:1.25;color:#3b342e;margin-top:6px}
+  .tcard .ref{font-size:15px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-top:8px}
+  .tcard .kick{font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .tcard .wbtn{margin-top:10px}
+  .tcard .x{position:absolute;top:0;right:0;width:44px;height:44px;border:0;background:transparent;cursor:pointer;color:var(--muted);font-size:26px;line-height:1;font-family:inherit}
+  .tcard .pbar{width:78%;height:9px;border-radius:5px;background:var(--track);margin-top:8px;overflow:hidden}
+  .tcard .pbar i{display:block;height:9px;background:var(--gold)}
+  .tcard .cd{position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--gold-soft)}
+  .tcard .cd i{display:block;height:5px;background:var(--red);transform-origin:left;animation:cdn var(--cdur,9s) linear forwards}
+  .tcard.held .cd i{animation:none;transform:scaleX(0)}
+  @keyframes cdn{to{transform:scaleX(0)}}
+  @media (prefers-reduced-motion:reduce){.tcard .cd i{animation:none}}
+  .demo .body p{font-size:18px;color:#3b342e;margin-bottom:10px}
+  .demo .body .wbtn{display:block;width:100%;margin-top:8px;font-size:18px}
+  .demo .body .wbtn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--gold-soft)}
+</style>
+</head>
+<body>
+<main class="app" id="app">
+  <div class="slot" id="slot" hidden></div>
+  <div class="logo" id="logoBox"><img src="logo.png" alt="Walking with Jesus" width="771" height="598"></div>
+  <div class="vbox" id="vbox" hidden></div>
+  <div class="watchrow" id="watchRow" hidden><button type="button" class="wpill" id="watchBtn"><i class="wic"></i><span id="watchTxt">Watch</span></button></div>
+
+  <section class="player">
+    <label class="pick season"><span class="shown"><span id="seasonLabel">Choose a season</span><i class="chev"></i></span>
+      <select id="season" aria-label="Choose a season"></select></label>
+
+    <label class="pick epnum"><span class="shown"><span id="epLabel">Episode</span><i class="chev"></i></span>
+      <select id="episode" aria-label="Choose an episode"></select></label>
+
+    <div class="ticker static" id="ticker" aria-live="off"><span class="track" id="track">Loading…</span></div>
+
+    <div class="bar">
+      <input type="range" id="seek" min="0" max="100" step="1" value="0" aria-label="Seek">
+      <div class="times"><span id="tNow">0:00</span><span id="tLeft">−0:00</span></div>
+    </div>
+
+    <div class="transport" id="transport" data-ctl="b">
+      <button class="skip" id="prev" aria-label="Previous episode"><svg viewBox="0 0 24 24"><path d="M6 5h2.4v14H6zM20 5v14L9.5 12z"/></svg></button>
+      <button class="skip j" id="back15" aria-label="Back 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg></button>
+      <button class="play" id="play" aria-label="Play">
+        <svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="ic-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <button class="skip j" id="fwd15" aria-label="Forward 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(24 0) scale(-1 1)"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/></g><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg></button>
+      <button class="skip" id="next" aria-label="Next episode"><svg viewBox="0 0 24 24"><path d="M15.6 5H18v14h-2.4zM4 5l10.5 7L4 19z"/></svg></button>
+    </div>
+
+    <div class="speeds" id="speeds" role="group" aria-label="Playback speed"></div>
+    <div class="msg" id="msg"></div>
+  </section>
+
+  <div class="first" id="firstLinks">
+    <a href="https://wwjpodcast.github.io/seniors/"><div><b>Videos for Seniors</b><span>Big video. One tap to play.</span></div></a>
+    <a href="https://wwjpodcast.github.io/new/"><div><b>New to the faith?</b><span>A gentle place to begin.</span></div></a>
+  </div>
+
+  <nav class="more" aria-label="More">
+    <details class="cat" id="catAbout">
+      <summary>About</summary>
+      <div class="body desc">
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tabEp" aria-selected="true" aria-controls="epDesc">Episode</button>
+          <button type="button" role="tab" id="tabShow" aria-selected="false" aria-controls="showDesc">Show</button>
+          <button type="button" role="tab" id="tabPractice" aria-selected="false" aria-controls="practiceDesc">Practice</button>
+        </div>
+        <div id="epDesc" role="tabpanel" aria-labelledby="tabEp"></div>
+        <div id="showDesc" role="tabpanel" aria-labelledby="tabShow" hidden></div>
+        <div id="practiceDesc" role="tabpanel" aria-labelledby="tabPractice" hidden>
+          <p class="b">The Practice</p>
+          <p>Fifteen minutes in the Gospels, five days a week. In one month, it’s a habit. In three, you notice the difference. In six, you’re asking your family to try it. Give it a year and His words come to mind right when you need them.</p>
+          <p>We take vitamins, exercise, sleep, and brush our teeth every day, because the results come from keeping at it. The soul is no different. The Gospels are the story all of Scripture points to or stands on, so they’re the best place to let Jesus change us.</p>
+          <p>This doesn’t replace the rest of your Bible, or your church. It makes room for Jesus. “If a man love me, he will keep my words: and my Father will love him, and we will come unto him, and make our abode with him.” (John 14:23)</p>
+          <p>Read the Gospels or listen, but try it. Fifteen minutes a day. Jesus will do the rest.</p>
+        </div>
+        <p class="fine" style="text-align:center"><a href="https://wwjpodcast.github.io/">Walking with Jesus Website</a></p>
+        <p class="fine" style="text-align:center"><button type="button" class="linkbtn" id="replayWelcome">Replay the welcome</button></p>
+      </div>
+    </details>
+    <details class="cat" id="catHow">
+      <summary>How it works</summary>
+      <div class="body how">
+        <div class="hrow">
+          <svg class="hic" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 38c-3 0-5-2-5-5 0-4 2-9 5-9s5 4 5 8c0 4-2 6-5 6z"/><path d="M36 24c-3 0-5-2-5-5 0-4 2-9 5-9s5 4 5 8c0 4-2 6-5 6z"/><g fill="var(--gold)" stroke="none"><circle cx="10.5" cy="20" r="1.7"/><circle cx="14.5" cy="18.3" r="1.7"/><circle cx="18.5" cy="20" r="1.7"/><circle cx="32.5" cy="6" r="1.7"/><circle cx="36.5" cy="4.3" r="1.7"/><circle cx="40.5" cy="6" r="1.7"/></g></svg>
+          <div><h4>Time with Christ shapes us.</h4><p>We become like what we spend time with. Hear what He said and did, again and again, and it changes how you think, love, and live.</p></div>
+        </div>
+        <div class="hrow">
+          <svg class="hic" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M26 22V6a16 16 0 0 1 16 16z" fill="var(--gold)" fill-opacity=".55" stroke="none"/><circle cx="26" cy="22" r="16"/><path d="M26 22V10"/><path d="M26 22h10"/><g fill="currentColor" stroke="none"><circle cx="14" cy="47" r="2"/><circle cx="20" cy="47" r="2"/><circle cx="26" cy="47" r="2"/><circle cx="32" cy="47" r="2"/><circle cx="38" cy="47" r="2"/></g></svg>
+          <div><h4>Fifteen minutes, five days a week.</h4><p>On a commute, at lunch, or before bed. Small and steady is easier to keep than heroic.</p></div>
+        </div>
+        <div class="hrow">
+          <svg class="hic" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9C16 9 18 26 30 26"/><path d="M4 19C14 19 18 26 30 26"/><path d="M4 33C14 33 18 26 30 26"/><path d="M4 43C16 43 18 26 30 26"/><path d="M30 26h18" stroke="var(--gold)" stroke-width="3.4"/></svg>
+          <div><h4>All four Gospels, in order.</h4><p>Matthew, Mark, Luke, and John woven into one story, so you never hear the same event four times.</p></div>
+        </div>
+        <div class="hrow">
+          <svg class="hic" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 45C18 45 12 33 25 31S34 19 46 8" stroke="var(--gold)" stroke-width="2.6" stroke-dasharray="1 5"/><g fill="currentColor" stroke="none"><circle cx="9" cy="44.5" r="3.2"/><circle cx="22" cy="32" r="3.2"/><circle cx="35" cy="22.5" r="3.2"/><circle cx="45.5" cy="9" r="3.2"/></g></svg>
+          <div><h4>What it grows into.</h4><p>In one month, it&rsquo;s a habit. In three, you notice the difference. In six, you&rsquo;re asking your family to try it. Give it a year and His words come to mind right when you need them.</p></div>
+        </div>
+      </div>
+    </details>
+    <details class="cat" id="catFaq">
+      <summary>FAQ</summary>
+      <div class="body">
+<details class="q"><summary>How do I add this to my home screen?</summary><div class="a"><p><b>iPhone or iPad (Safari):</b> tap the Share button (the square with an arrow), scroll down, tap <b>Add to Home Screen</b>, then <b>Add</b>.</p>
+<p><b>Android (Chrome):</b> tap the ⋮ menu, then <b>Add to Home screen</b> or <b>Install app</b>.</p>
+<p><b>Computer:</b> bookmark this page (Ctrl+D, or Cmd+D on a Mac).</p>
+<p>It then opens like an app, with its own icon.</p></div></details>
+<details class="q"><summary>Will it remember where I stopped?</summary><div class="a"><p>Yes. On this device it keeps your place in every episode, your listening speed, and the last episode you played in each harmony.</p>
+<p>If you clear your browser data or switch to another device, you will start fresh.</p></div></details>
+<details class="q"><summary>I already know the story of Jesus’ life. Why listen again?</summary><div class="a"><p>You don&rsquo;t stop spending time with someone because you already know their story. This isn&rsquo;t about new information; it&rsquo;s about time in His company, day after day.</p>
+        <p>Hearing familiar passages in order, and read aloud, also tends to bring out details we&rsquo;ve skimmed past.</p></div></details>
+<details class="q"><summary>Why the King James Version?</summary><div class="a"><p>The KJV is in the public domain, so the text can be read freely without licensing limits. Its rhythm was also shaped for being read aloud, which suits listening.</p>
+        <p>Many listeners grew up with it, and many are meeting it for the first time. Either way, you hear the Gospels as they have been spoken for centuries.</p></div></details>
+<details class="q"><summary>Why Monday through Friday, not daily?</summary><div class="a"><p>Walking with Jesus is built to be a habit you can keep. Five days gives you a steady rhythm without the pressure of a never-miss-a-day streak.</p>
+        <p>Weekends are left open for church, family, rest, and catching up on anything you missed. Every episode stays available, so you can go at your own pace.</p></div></details>
+<details class="q"><summary>Who is reading? Are the voices real?</summary><div class="a"><p>The voices are AI-generated, and we say so plainly. The words are not generated: every passage is the King James text, read in full.</p></div></details>
+      </div>
+    </details>
+    <details class="cat" id="catFollow">
+      <summary>Follow &amp; Share</summary>
+      <div class="body">
+        <p class="grp">Subscribe</p>
+        <div class="links">
+          <a href="https://www.youtube.com/playlist?list=PLU5XeYmL8DoI" target="_blank" rel="noopener">YouTube</a>
+          <a href="https://podcasts.apple.com/us/podcast/walking-with-jesus/id6792097599" target="_blank" rel="noopener">Apple Podcasts</a>
+          <a href="https://open.spotify.com/show/033RbKV8qKtzNk5Xm9vwkf?si=3d7e5f653ca64b2e" target="_blank" rel="noopener">Spotify</a>
+          <a href="https://music.amazon.com/podcasts/b4e7eb21-3535-4715-9d53-a08a24759a83/walking-with-jesus?ref=dm_sh_QuG3jyTjA0O8yWjN9l6n3ygSo" target="_blank" rel="noopener">Amazon Music</a>
+          <a href="https://www.iheart.com/podcast/1333-walking-with-jesus-339200567" target="_blank" rel="noopener">iHeart</a>
+          <a href="https://rss.com/podcasts/walking-with-jesus/" target="_blank" rel="noopener">More ways</a>
+        </div>
+        <p class="grp">Follow</p>
+        <div class="links">
+          <a href="https://www.facebook.com/profile.php?id=61592566504721" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://www.instagram.com/wwjesuspodcast/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+        <p class="grp">Share</p>
+        <button class="sharebtn" id="shareBtn" type="button">Share this player</button>
+        <p class="toast" id="toast" role="status" aria-live="polite"></p>
+        <p class="grp">Contact</p>
+        <div class="links">
+          <a href="mailto:wwjesuspodcast@gmail.com">Questions or feedback? Email us</a>
+        </div>
+      </div>
+    </details>
+    <details class="cat demo" id="catDemo">
+      <summary>Demo controls</summary>
+      <div class="body">
+        <p>This is a test page, not shown in search. These buttons are only here for you to preview things.</p>
+        <button type="button" class="wbtn" id="demoWelcome">Replay the welcome cards</button>
+        <button type="button" class="wbtn alt" id="demoCard">Preview the next end-of-episode card</button>
+        <button type="button" class="wbtn alt" id="demoReset">Forget this device and start fresh</button>
+      </div>
+    </details>
+  </nav>
+  <footer class="legal">
+    <p>&copy; 2026 Walking with Jesus Podcast</p>
+  </footer>
+</main>
+
+<audio id="audio" preload="metadata"></audio>
+
+<script>
+(() => {
+  'use strict';
+  /* ---------- config ---------- */
+  const FEED_URL   = 'https://media.rss.com/walking-with-jesus/feed.xml';
+  const FEED_PROXY = '';   // optional: a Cloudflare Worker URL that relays the feed with CORS headers
+  const ENC_BASE   = 'https://content.rss.com/episodes/';
+  const SEASONS = [
+    { id: 1, label: 'Mark + John Harmony',     weeks: '4 weeks',  total: 20 },
+    { id: 2, label: 'Matthew + John Harmony',  weeks: '5 weeks',  total: 25 },
+    { id: 3, label: 'Luke + John Harmony',     weeks: '5 weeks',  total: 25 },
+    { id: 4, label: 'Four Gospel Harmony',     weeks: '10 weeks', total: 50 },
+  ];
+  const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
+  const STORE_KEY = 'wwj.player.v1', FEED_CACHE = 'wwj.feed.v3', SHOW_CACHE = 'wwj.show.v1';
+
+  /* ---------- helpers ---------- */
+  const $ = id => document.getElementById(id);
+  const audio = $('audio'), app = $('app');
+  const fmt = s => { s = Math.max(0, Math.floor(s || 0)); const h = Math.floor(s/3600), m = Math.floor(s%3600/60), x = s%60;
+    return (h ? h + ':' + String(m).padStart(2,'0') : m) + ':' + String(x).padStart(2,'0'); };
+  const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+  const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+  let store = Object.assign({ speed: 1, season: null, pos: {}, last: {}, done: {} }, lsGet(STORE_KEY) || {});
+  const save = () => lsSet(STORE_KEY, store);
+
+  let eps = {};            // season id -> [{n,title,url,dur}] ascending
+  let cur = { s: null, n: null };
+  let pendingSeek = 0, lastSave = 0;
+
+  /* ---------- feed ---------- */
+  // The verses are written into each episode description. The wording differs by season, so try each known form.
+  function extractRefs(html) {
+    const d = new DOMParser().parseFromString(html || '', 'text/html');
+    const paras = [...d.querySelectorAll('p')].map(p => p.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean);
+    const clean = s => s.replace(/\s+/g, ' ').replace(/[\s.]+$/, '').trim();
+    const txt = paras.join('\n'); let m;
+    if ((m = txt.match(/Today[’']s Scripture:\s*([^\n]+)/i))) return clean(m[1]);
+    if ((m = txt.match(/Passages:\s*([^\n]+)/i))) return clean(m[1]);
+    const f = paras[0] || '';
+    if (/^[1-3]?\s?[A-Z][a-z]+\s\d+/.test(f) && f.length < 260) return clean(f);
+    if ((m = txt.match(/Today[’']s episode covers:\s*([^\n]+)/i))) return clean(m[1].replace(/\s*\(.*$/, ''));
+    return '';
+  }
+  // Description as plain paragraphs (text only, so nothing from the feed is ever treated as markup).
+  const SHOW_FALLBACK = ['Hear Jesus here.','“My sheep hear my voice, and I know them, and they follow me...” — John 10:27','Make hearing Jesus a daily practice.','Walking with Jesus gives you 15 minutes of the Gospels each weekday, straight from the King James text. No commentary, no sermon. Just Scripture, read aloud. Listen in your podcast app, or right in your browser at wwjpodcast.github.io/hearjesus. It remembers where you left off.'];
+  let showDesc = SHOW_FALLBACK.map((t, i) => ({ t, b: i === 0 }));
+  function descParas(html) {
+    const d = new DOMParser().parseFromString(html || '', 'text/html');
+    return [...d.querySelectorAll('p')].map(p => ({ t: p.textContent.replace(/\s+/g, ' ').trim(), b: !!p.querySelector('strong') && p.children.length === 1 && p.textContent.trim() === p.querySelector('strong').textContent.trim() })).filter(x => x.t);
+  }
+  function parseFeed(text) {
+    const x = new DOMParser().parseFromString(text, 'text/xml');
+    if (x.querySelector('parsererror')) throw new Error('bad xml');
+    const g = (i, n) => { const e = [...i.children].find(c => c.nodeName === n); return e ? e.textContent.trim() : ''; };
+    const out = [];
+    x.querySelectorAll('item').forEach(i => {
+      const s = +g(i,'itunes:season'), n = +g(i,'itunes:episode'), type = g(i,'itunes:episodeType') || 'full';
+      const enc = i.querySelector('enclosure');
+      if (!s || !n || type === 'trailer' || !enc) return;
+      const when = Date.parse(g(i,'pubDate'));            // never list an episode before its release time
+      if (when && when > Date.now()) return;
+      out.push([s, n, g(i,'title'), enc.getAttribute('url'), +g(i,'itunes:duration') || 0, extractRefs(g(i,'description')), descParas(g(i,'description'))]);
+    });
+    if (!out.length) throw new Error('no episodes');
+    const ch = x.querySelector('channel'), cd = ch && [...ch.children].find(c => c.nodeName === 'description');
+    const sd = cd ? descParas(cd.textContent) : []; if (sd.length) { showDesc = sd; lsSet(SHOW_CACHE, sd); }
+    return out;
+  }
+  function build(rows) {
+    const m = {};
+    rows.forEach(([s,n,title,url,dur,refs,desc]) => { (m[s] = m[s] || []).push({ n, title, url, dur, refs: refs || '', desc: desc || [] }); });
+    Object.values(m).forEach(a => a.sort((p,q) => p.n - q.n));
+    return m;
+  }
+  async function grab(url) {
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 9000);
+    try { const r = await fetch(url, { signal: ctl.signal, cache: 'no-cache' }); if (!r.ok) throw new Error(r.status); return await r.text(); }
+    finally { clearTimeout(t); }
+  }
+  // Order: live feed -> optional relay -> episodes.json (a copy of the feed kept next to this page).
+  async function loadLive() {
+    const urls = [FEED_URL].concat(FEED_PROXY ? [FEED_PROXY] : []);
+    for (const u of urls) { try { const rows = parseFeed(await grab(u)); lsSet(FEED_CACHE, rows); return rows; } catch (e) {} }
+    const snap = JSON.parse(await grab('episodes.json'));
+    const rows = snap.filter(r => r[5] !== 'trailer').map(r => [r[0], r[1], r[2], ENC_BASE + r[3], r[4], r[6] || '']);
+    if (!rows.length) throw new Error('empty');
+    return rows;
+  }
+
+  /* ---------- UI ---------- */
+  const seasonSel = $('season'), epSel = $('episode'), seek = $('seek');
+  // The dropdown list shows the length; the listening screen shows the name alone.
+  SEASONS.forEach(s => seasonSel.add(new Option(s.label + ' (' + s.weeks + ')', s.id)));
+  const seasonInfo = id => SEASONS.find(s => s.id === id);
+  // Per-series paragraph shown under the show description (About > Show). Matched by the series name in the
+  // dropdown label, so a series added to SEASONS later (or a rerun under a new season number) picks up its
+  // paragraph automatically. A series with no match here simply shows the show description alone.
+  const SERIES_DESC = [
+    { re: /four gospel/i, t: 'This is the complete story, with all four Gospels woven into one account. You get Mark\u2019s action, Matthew\u2019s eyewitness testimony, Luke\u2019s careful history, and the unique witness of John, the beloved disciple. Where the Gospels tell the same event, you hear it from every angle, and where only one of them records a moment, you hear that too. Every event and every word of Jesus is heard in order, from the first chapter to the last.' },
+    { re: /\bmark\b/i, t: 'Mark is the shortest of the four Gospels, and it moves fast. Jesus is always on the road, healing, casting out demons, and calming storms, and the word \u201cimmediately\u201d keeps the story moving. John, the beloved disciple, writes from the closest circle around Jesus. The great majority of what he records appears in none of the other Gospels. Blending Mark\u2019s action with John\u2019s intimate account gives you a fast-moving story that pauses at the special moments, from the Jordan River to the empty tomb.' },
+    { re: /matthew/i, t: 'Matthew was one of the twelve apostles, so his Gospel is an eyewitness account. He heard the Sermon on the Mount, watched the miracles, and sat at the table when Jesus called him from the tax booth. John, the beloved disciple, adds what the others leave out, since most of his Gospel is found nowhere else. Matthew\u2019s firsthand testimony and John\u2019s close-up view are both told by men who walked with Jesus, and together they tell one continuous story of His life and ministry.' },
+    { re: /luke/i, t: 'Luke was a physician and a historian, and he tells us he traced everything carefully from the beginning. His Gospel has a high level of exactness, with names, places, and details set down in order. John, the beloved disciple, brings what appears in no other Gospel, because most of what he writes is unique to him. Luke\u2019s careful history gives the story its footing and John\u2019s account gives it depth, all along the full arc of Jesus\u2019 life.' },
+    { re: /miracle/i, t: 'Jesus healed the sick, calmed storms, fed thousands, and raised the dead. This series gathers the miracles from all four Gospels and places them in the order they happened, each one read straight from the King James text. John calls them signs, and Matthew, Mark, and Luke show the crowds, the disciples, and the moments of quiet faith around them. Hear what Jesus did, and see why people followed Him.' },
+    { re: /parable/i, t: 'Jesus often taught in stories: a sower, a lost sheep, a good neighbor, a faithful servant. This short series gathers His parables from the Gospels and sets them in the general order He told them, each one read straight from the King James text. A brief bridge sets the scene before each story, with no commentary. You hear the parables the way His listeners did.' },
+    { re: /final days|last days|passion/i, t: 'The last days of Jesus\u2019 life, told from all four Gospels as one account. The series follows the final week day by day, from His entry into Jerusalem through the cross to the empty tomb. Each Gospel adds something the others do not, so you hear the whole account, read straight from the King James text.' },
+  ];
+  const seriesDesc = label => { const m = SERIES_DESC.find(x => x.re.test(label || '')); return m ? m.t : ''; };
+
+  SPEEDS.forEach(v => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = (v === 1 ? '1' : String(v)) + '×'; b.dataset.v = v;
+    b.addEventListener('click', () => setSpeed(v));
+    $('speeds').appendChild(b);
+  });
+  function setSpeed(v) {
+    store.speed = v; audio.playbackRate = v; save(); paintTime();
+    [...$('speeds').children].forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.v === v)));
+  }
+
+  function fillEpisodes() {
+    const list = eps[cur.s] || [];
+    epSel.innerHTML = '';
+    list.forEach(e => epSel.add(new Option((store.done[cur.s + '-' + e.n] ? '✓  ' : '') + e.n + ' — ' + e.title, e.n)));
+    epSel.value = cur.n;
+  }
+  function paintLabels() {
+    const list = eps[cur.s] || [], i = list.findIndex(e => e.n === cur.n), total = seasonInfo(cur.s).total;
+    $('seasonLabel').textContent = seasonInfo(cur.s).label;
+    seasonSel.value = cur.s;
+    $('epLabel').textContent = 'Episode ' + cur.n + ' of ' + Math.max(total, list.length);
+    $('prev').disabled = false;
+    $('next').disabled = i < 0 || i >= list.length - 1;
+  }
+
+  // Paused: the title alone, centered. Playing: the title, then its verses, scrolling right to left.
+  function setTicker(e, running) {
+    const t = $('ticker'), tr = $('track');
+    tr.textContent = '';
+    t.classList.remove('run'); t.classList.add('static');
+    const add = (cls, txt) => { const s = document.createElement('span'); s.className = cls; s.textContent = txt; tr.appendChild(s); };
+    add('t', e.title);
+    if (running) {
+      if (e.refs) { add('sep', '·'); add('r', e.refs); }
+      add('gap', '');
+      t.classList.remove('static'); t.classList.add('run');
+      const c = t.clientWidth, w = tr.offsetWidth, speed = 62;       // px per second
+      tr.style.setProperty('--from', c + 'px');
+      tr.style.setProperty('--to', (-w) + 'px');
+      tr.style.setProperty('--dur', Math.max(8, (c + w) / speed) + 's');
+    }
+  }
+  const curEp = () => (eps[cur.s] || []).find(e => e.n === cur.n);
+  const refreshTicker = () => { const e = curEp(); if (e) setTicker(e, !audio.paused && !audio.ended); };
+
+  function paintTime() {
+    const d = audio.duration && isFinite(audio.duration) ? audio.duration : (curEp() ? curEp().dur : 0);
+    const t = audio.currentTime || 0;
+    seek.max = d || 100; seek.value = t;
+    seek.style.setProperty('--p', d ? (t / d * 100) + '%' : '0%');
+    $('tNow').textContent = fmt(t / (store.speed || 1));
+    $('tLeft').textContent = '−' + fmt(Math.max(0, d - t) / (store.speed || 1));   // time left at the current speed
+  }
+
+  /* ---------- progress memory ---------- */
+  function saveProgress() {
+    if (cur.s == null || !audio.src) return;
+    const k = cur.s + '-' + cur.n, d = audio.duration;
+    if (isFinite(d) && audio.currentTime > 3) {
+      if (audio.currentTime >= d - 8) { store.done[k] = true; delete store.pos[k]; }
+      else store.pos[k] = Math.floor(audio.currentTime);
+    }
+    store.last[cur.s] = cur.n; store.season = cur.s; save();
+  }
+
+  /* ---------- load / navigate ---------- */
+  function loadEpisode(s, n, autoplay) {
+    if (watching) stopWatch(false);
+    if (cur.s != null) saveProgress();
+    cur = { s, n };
+    const e = curEp(); if (!e) return;
+    const k = s + '-' + n, p = store.pos[k] || 0;
+    pendingSeek = p > 3 && (!e.dur || p < e.dur - 10) ? p : 0;
+    audio.src = e.url; audio.load();
+    audio.playbackRate = store.speed;
+    store.last[s] = n; store.season = s; save();
+    fillEpisodes(); paintLabels(); paintTime();
+    setTicker(e, false);
+    seek.max = e.dur || 100; seek.value = pendingSeek;
+    $('tNow').textContent = fmt(pendingSeek / (store.speed || 1)); $('tLeft').textContent = '−' + fmt(Math.max(0, (e.dur || 0) - pendingSeek) / (store.speed || 1));
+    seek.style.setProperty('--p', e.dur ? (pendingSeek / e.dur * 100) + '%' : '0%');
+    updateMediaSession(); paintDesc(); if (typeof updateWatch === 'function') updateWatch();
+    if (autoplay) audio.play().catch(() => {});
+  }
+  function pickSeason(s) {
+    const list = eps[s] || []; if (!list.length) return;
+    const n = list.some(e => e.n === store.last[s]) ? store.last[s] : list[0].n;
+    audio.pause(); loadEpisode(s, n, false);
+  }
+  function step(dir, autoplay) {
+    const list = eps[cur.s] || [], i = list.findIndex(e => e.n === cur.n), j = i + dir;
+    if (j < 0 || j >= list.length) return false;
+    loadEpisode(cur.s, list[j].n, autoplay); return true;
+  }
+
+  /* ---------- events ---------- */
+  $('play').addEventListener('click', () => { audio.paused ? audio.play().catch(() => {}) : audio.pause(); });
+  $('prev').addEventListener('click', () => { if (audio.currentTime > 5) audio.currentTime = 0; else step(-1, !audio.paused); });
+  $('next').addEventListener('click', () => step(1, !audio.paused));
+  seasonSel.addEventListener('change', () => pickSeason(+seasonSel.value));
+  epSel.addEventListener('change', () => loadEpisode(cur.s, +epSel.value, !audio.paused));
+  seek.addEventListener('input', () => { audio.currentTime = +seek.value; paintTime(); });
+
+  audio.addEventListener('loadedmetadata', () => {
+    if (pendingSeek) { audio.currentTime = pendingSeek; pendingSeek = 0; }
+    audio.playbackRate = store.speed; paintTime();
+  });
+  audio.addEventListener('play',  () => { app.classList.add('playing'); $('play').setAttribute('aria-label','Pause'); audio.playbackRate = store.speed; refreshTicker(); setPlaybackState(); });
+  audio.addEventListener('pause', () => { app.classList.remove('playing'); $('play').setAttribute('aria-label','Play'); refreshTicker(); saveProgress(); setPlaybackState(); });
+  audio.addEventListener('timeupdate', () => {
+    paintTime();
+    const now = Date.now(); if (now - lastSave > 5000) { lastSave = now; saveProgress(); }
+  });
+  audio.addEventListener('ended', () => {
+    const k = cur.s + '-' + cur.n; store.done[k] = true; delete store.pos[k]; save();
+    if (!step(1, true)) { app.classList.remove('playing'); fillEpisodes(); refreshTicker(); }
+    else fillEpisodes();
+  });
+  audio.addEventListener('error', () => msg('That episode would not load. Check your connection and try again.'));
+  window.addEventListener('resize', () => { if (!audio.paused) refreshTicker(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveProgress(); });
+  window.addEventListener('pagehide', saveProgress);
+
+  function msg(t, retry) {
+    const m = $('msg'); m.textContent = t || '';
+    if (retry) { const b = document.createElement('button'); b.textContent = 'Try again'; b.onclick = start; m.append(' ', b); }
+  }
+
+  /* ---------- lock screen / headphone controls ---------- */
+  function updateMediaSession() {
+    if (!('mediaSession' in navigator)) return;
+    const e = curEp(); if (!e) return;
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: e.title, artist: 'Walking with Jesus', album: seasonInfo(cur.s).label,
+      artwork: [
+        { src: new URL('icon-192.png?v=2', document.baseURI).href, sizes: '192x192', type: 'image/png' },
+        { src: new URL('icon-512.png?v=2', document.baseURI).href, sizes: '512x512', type: 'image/png' }
+      ]
+    });
+  }
+  function setPlaybackState() { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = audio.paused ? 'paused' : 'playing'; }
+  if ('mediaSession' in navigator) {
+    const h = (a, f) => { try { navigator.mediaSession.setActionHandler(a, f); } catch {} };
+    h('play', () => audio.play()); h('pause', () => audio.pause());
+    h('seekbackward', d => { audio.currentTime = Math.max(0, audio.currentTime - ((d && d.seekOffset) || 15)); });
+    h('seekforward',  d => { audio.currentTime = audio.currentTime + ((d && d.seekOffset) || 15); });
+    h('previoustrack', () => step(-1, true)); h('nexttrack', () => step(1, true));
+    h('seekto', d => { if (d.seekTime != null) audio.currentTime = d.seekTime; });
+  }
+
+  /* ---------- 15-second jumps ---------- */
+  const jump = d => { const t = audio.currentTime + d, m = isFinite(audio.duration) ? audio.duration : t; audio.currentTime = Math.max(0, Math.min(t, m)); paintTime(); saveProgress(); };
+  $('back15').addEventListener('click', () => jump(-15));
+  $('fwd15').addEventListener('click', () => jump(15));
+
+  /* ---------- Watch: the episode's YouTube video in place of the logo ---------- */
+  let videos = {}, yt = null, watching = false, ytReady = null;
+  fetch('videos.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : {}).then(j => { videos = j || {}; updateWatch(); }).catch(() => {});
+  const vidId = () => (videos[cur.s] || {})[cur.n];
+  function updateWatch() { $('watchRow').hidden = !(watching || vidId()); }
+  function loadYT() {
+    if (ytReady) return ytReady;
+    ytReady = new Promise((res, rej) => {
+      if (window.YT && YT.Player) return res();
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { if (prev) prev(); res(); };
+      const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; sc.onerror = rej; document.head.appendChild(sc);
+      setTimeout(rej, 8000);
+    });
+    ytReady.catch(() => { ytReady = null; });
+    return ytReady;
+  }
+  let ytTime = null, ytState = -1;
+  window.addEventListener('message', ev => {
+    if (!/youtube(-nocookie)?\.com$/.test(new URL(ev.origin).hostname)) return;
+    let d; try { d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data; } catch (e) { return; }
+    if (!d || !d.info) return;
+    if (typeof d.info.currentTime === 'number') ytTime = d.info.currentTime;
+    if (typeof d.info.playerState === 'number') ytState = d.info.playerState;
+  });
+  // A plain iframe: Safari does all the sizing. Position comes back through YouTube's postMessage feed.
+  function mountVideo(id, t, auto) {
+    const box = $('vbox'); box.hidden = false; ytTime = t; ytState = -1;
+    box.innerHTML = '<div class="vin"><iframe src="https://www.youtube.com/embed/' + id + '?start=' + t + '&autoplay=' + (auto ? 1 : 0) +
+      '&playsinline=1&rel=0&modestbranding=1&cc_load_policy=0&enablejsapi=1&origin=' + encodeURIComponent(location.origin) +
+      '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen title="Episode video"></iframe></div>';
+    yt = box.querySelector('iframe');
+    yt.addEventListener('load', () => { try { yt.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (e) {} });
+  }
+  async function startWatch() {
+    const id = vidId(); if (!id) return;
+    const t = Math.floor(audio.currentTime || pendingSeek || 0);
+    audio.pause();
+    watching = true; $('app').classList.add('watching'); $('watchTxt').textContent = 'Back to audio';
+    mountVideo(id, t, true);
+  }
+  function stopWatch(handBack) {
+    if (!watching) return;
+    let t = ytTime, wasPlaying = ytState === 1;
+    yt = null; watching = false;
+    $('vbox').innerHTML = ''; $('vbox').hidden = true;
+    $('app').classList.remove('watching'); $('watchTxt').textContent = 'Watch';
+    if (handBack && t != null) {
+      const d = audio.duration && isFinite(audio.duration) ? audio.duration : (curEp() ? curEp().dur : t);
+      t = Math.max(0, Math.min(t, d - 1));
+      if (audio.readyState >= 1) { audio.currentTime = t; paintTime(); }
+      else {
+        pendingSeek = t; store.pos[cur.s + '-' + cur.n] = t; save();
+        const e = curEp(); seek.value = t; seek.style.setProperty('--p', d ? (t / d * 100) + '%' : '0%');
+        $('tNow').textContent = fmt(t / (store.speed || 1)); $('tLeft').textContent = '−' + fmt(Math.max(0, d - t) / (store.speed || 1));
+      }
+      if (audio.readyState >= 1) saveProgress();
+      if (wasPlaying) audio.play().catch(() => {});
+    }
+    updateWatch();
+  }
+  $('watchBtn').addEventListener('click', () => watching ? stopWatch(true) : startWatch());
+
+  /* ---------- About sub-tabs ---------- */
+  const TABS = [['tabEp', 'epDesc'], ['tabShow', 'showDesc'], ['tabPractice', 'practiceDesc']];
+  function aboutTab(id) {
+    TABS.forEach(([t, d]) => { $(t).setAttribute('aria-selected', String(t === id)); $(d).hidden = t !== id; });
+  }
+  TABS.forEach(([t]) => $(t).addEventListener('click', () => aboutTab(t)));
+
+  /* ---------- bottom categories: one open at a time ---------- */
+  const cats = [...document.querySelectorAll('.cat')];
+  cats.forEach(c => c.addEventListener('toggle', () => {
+    if (!c.open) return;
+    cats.forEach(o => { if (o !== c) o.open = false; });
+    setTimeout(() => c.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+  }));
+  const shareBtn = $('shareBtn'), toast = $('toast');
+  if (shareBtn) shareBtn.addEventListener('click', async () => {
+    const url = 'https://wwjpodcast.github.io/hearjesus/';
+    const say = t => { toast.textContent = t; setTimeout(() => { toast.textContent = ''; }, 3500); };
+    try {
+      if (navigator.share) { await navigator.share({ title: 'Walking with Jesus', text: 'Hear Jesus here.', url }); return; }
+      await navigator.clipboard.writeText(url); say('Link copied.');
+    } catch (e) { if (e && e.name !== 'AbortError') say(url); }
+  });
+
+  /* ---------- start ---------- */
+  function show(rows) {
+    eps = build(rows);
+    if (cur.s == null) {
+      const s = eps[store.season] ? store.season : (SEASONS.find(x => eps[x.id]) || {}).id;
+      if (s == null) return;
+      pickSeason(s);
+    } else { fillEpisodes(); paintLabels(); }
+    paintDesc();
+  }
+  function paintDesc() {
+    const fill = (el, list, none) => {
+      el.textContent = '';
+      (list && list.length ? list : [{ t: none, b: false }]).forEach(x => { const p = document.createElement('p'); p.textContent = x.t; if (x.b) p.className = 'b'; el.appendChild(p); });
+    };
+    const e = curEp();
+    fill($('epDesc'), e && e.desc, 'The episode description is not available right now.');
+    fill($('showDesc'), showDesc, '');
+    const si = cur.s != null && seasonInfo(cur.s), sd = si && seriesDesc(si.label);
+    if (sd) {
+      const h = document.createElement('h3'); h.textContent = si.label;
+      const p = document.createElement('p'); p.textContent = sd;
+      $('showDesc').append(h, p);
+    }
+  }
+  async function start() {
+    msg('');
+    const sc = lsGet(SHOW_CACHE); if (Array.isArray(sc) && sc.length) showDesc = sc;
+    const cached = lsGet(FEED_CACHE);
+    if (cached) { try { show(cached); } catch {} }
+    try { show(await loadLive()); }
+    catch (e) { if (!cached) msg('Could not load the episode list. ', true); }
+  }
+  setSpeed(store.speed);
+  start();
+})();
+
+  /* ?debug=1 : on-screen measurements, for chasing the iPhone landscape video bug */
+  if (/[?&]debug=1/.test(location.search)) {
+    const o = document.createElement('div');
+    o.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99999;background:rgba(0,0,0,.85);color:#0f0;font:11px/1.3 monospace;padding:6px 8px;pointer-events:none';
+    document.body.appendChild(o);
+    const rc = e => { if (!e) return '-'; const r = e.getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map(n => n.toFixed(0)).join(','); };
+    const tick = () => { const vv = window.visualViewport || {}; const cs = getComputedStyle(document.documentElement);
+      o.innerHTML = 'WIN ' + innerWidth + 'x' + innerHeight + ' VV ' + (vv.width || 0).toFixed(0) + 'x' + (vv.height || 0).toFixed(0) + ' off ' + (vv.offsetLeft || 0).toFixed(0) + ',' + (vv.offsetTop || 0).toFixed(0) + ' scale ' + (vv.scale || 1) + '<br>' +
+        'vbox ' + rc($('vbox')) + ' | vin ' + rc(document.querySelector('.vin')) + ' | iframe ' + rc(document.querySelector('.vin iframe')) + '<br>' +
+        'app ' + rc($('app')) + ' | scrollW ' + document.documentElement.scrollWidth + ' | dvh ' + (document.documentElement.clientHeight) + ' | ang ' + (screen.orientation ? screen.orientation.angle : window.orientation); };
+    setInterval(tick, 700); tick();
+  }
+</script>
+<script>
+/* ===== DEMO: welcome cards + end-of-episode card bank (additive; the player code above is untouched) ===== */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const app = $('app'), slot = $('slot'), audio = $('audio');
+  const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+  const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+  const lsDel = k => { try { localStorage.removeItem(k); } catch {} };
+  const PLAYER = 'https://wwjpodcast.github.io/hearjesus/';
+  const SHARE_TEXT = "I've been hearing the Gospels, 15 minutes a day. Just press play, nothing to download:";
+  const WKEY = 'wwj.welcome.v1', CKEY = 'wwj.cards.v1', PKEY = 'wwj.player.v1';
+  const TOTAL = { 1: 20, 2: 25, 3: 25, 4: 50 };
+  const NAMES = { 1: 'Mark + John Harmony', 2: 'Matthew + John Harmony', 3: 'Luke + John Harmony', 4: 'Four Gospel Harmony' };
+  const q = /[?&]cards=every/.test(location.search);
+
+  function h(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  let timer = null;
+  function openSlot(node) { clearTimeout(timer); slot.textContent = ''; slot.appendChild(node); slot.hidden = false; app.classList.add('slotting'); }
+  function closeSlot() { clearTimeout(timer); slot.hidden = true; slot.textContent = ''; app.classList.remove('slotting'); slot.dataset.kind = ''; }
+
+  /* ---------- welcome cards (first visit, skippable, once per device) ---------- */
+  let step = 0;
+  const WELCOME = [
+    { img: '/demo/hear-jesus-here.svg' },
+    { h: 'Go at your pace.', p: 'Pick a series, choose your speed, and it remembers where you stopped.' },
+    { h: 'Everything else is below.', p: 'Questions, follow, share, and large-print videos for seniors. Just scroll.' }
+  ];
+  function finishWelcome() { lsSet(WKEY, true); closeSlot(); }
+  function renderWelcome() {
+    const c = WELCOME[step], wc = h('div', 'wcard'), main = h('div', 'wmain');
+    if (c.img) { const im = h('img', 'wimg'); im.src = c.img; im.alt = 'Hear Jesus here.'; main.appendChild(im); }
+    else { const t = h('div', 'tcard'); t.append(h('h2', '', c.h), h('p', '', c.p)); main.appendChild(t); }
+    const nav = h('div', 'wnav'), skip = h('button', 'wskip', 'Skip'), dots = h('div', 'dots'), next = h('button', 'wbtn', step === WELCOME.length - 1 ? 'Start' : 'Next');
+    skip.type = 'button'; next.type = 'button';
+    WELCOME.forEach((_, i) => dots.appendChild(h('i', i === step ? 'on' : '')));
+    skip.onclick = finishWelcome;
+    next.onclick = () => { if (step >= WELCOME.length - 1) finishWelcome(); else { step++; renderWelcome(); } };
+    nav.append(skip, dots, next); wc.append(main, nav);
+    openSlot(wc); slot.dataset.kind = 'welcome';
+  }
+  function welcome() { step = 0; renderWelcome(); }
+  if (!lsGet(WKEY) || /[?&]welcome=1/.test(location.search)) welcome();
+
+  /* ---------- end-of-episode card bank ---------- */
+  let cs = Object.assign({ n: 0, seen: [], sent: false }, lsGet(CKEY) || {});
+  const saveC = () => lsSet(CKEY, cs);
+  const standalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  let deferred = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; });
+
+  const BANK = [
+    { id: 'v-1027', g: 'A', t: 'verse', q: '“My sheep hear my voice, and I know them, and they follow me...”', ref: 'John 10:27' },
+    { id: 'v-1017', g: 'A', t: 'verse', q: '“So then faith cometh by hearing, and hearing by the word of God.”', ref: 'Romans 10:17' },
+    { id: 'v-1423', g: 'A', t: 'verse', q: '“If a man love me, he will keep my words: and my Father will love him, and we will come unto him, and make our abode with him.”', ref: 'John 14:23', long: true },
+    { id: 'v-119', g: 'A', t: 'verse', q: '“Thy word is a lamp unto my feet, and a light unto my path.”', ref: 'Psalm 119:105' },
+    { id: 'b-15', g: 'A', t: 'benefit', h: 'You just spent fifteen minutes with Jesus.', p: 'We become like what we spend time with.' },
+    { id: 'b-small', g: 'A', t: 'benefit', h: 'Small and steady beats heroic.', p: 'Fifteen minutes, five days a week.' },
+    { id: 'b-year', g: 'A', t: 'benefit', h: 'His words, right when you need them.', p: 'Keep showing up. Give it a year and they come to mind on their own.' },
+    { id: 'i-send', g: 'B', t: 'invite', kick: 'Share it', h: 'Know someone who needs this?', p: 'Send them the player. One tap, nothing to download.', btn: 'Send to someone' },
+    { id: 'r-daily', g: 'C', t: 'remind', kick: 'Make it a habit', h: 'Same time tomorrow?', p: 'Get a daily reminder with the link inside.', btn: 'Remind me daily' },
+    { id: 'r-home', g: 'C', t: 'home', kick: 'Make it a habit', h: 'Make it one tap tomorrow.', p: 'Put Walking with Jesus on your home screen.', btn: 'Add to Home Screen' }
+  ];
+
+  function pickCard() {
+    const ok = BANK.filter(c => !(c.t === 'invite' && cs.sent) && !(c.t === 'home' && standalone()) && !cs.seen.slice(-5).includes(c.id));
+    const groups = { A: 5, B: 3, C: 2 }, avail = Object.keys(groups).filter(g => ok.some(c => c.g === g));
+    if (!avail.length) return null;
+    let r = Math.random() * avail.reduce((s, g) => s + groups[g], 0), g = avail[0];
+    for (const k of avail) { if ((r -= groups[k]) <= 0) { g = k; break; } }
+    const pool = ok.filter(c => c.g === g); return pool[Math.floor(Math.random() * pool.length)];
+  }
+  function progressCard() {
+    const p = lsGet(PKEY) || {}, s = p.season, done = p.done || {};
+    if (!s || !TOTAL[s]) return null;
+    const n = Object.keys(done).filter(k => k.split('-')[0] == s).length, tot = TOTAL[s];
+    if (n && n >= tot) return { id: 'p-fin', t: 'progress', done: true, name: NAMES[s], n, tot };
+    if (n && n % 5 === 0) return { id: 'p-' + n, t: 'progress', name: NAMES[s], n, tot };
+    return null;
+  }
+
+  function note(card, text) { const p = card.querySelector('p'); if (p) p.textContent = text; }
+  async function sendIt(card) {
+    try {
+      if (navigator.share) { await navigator.share({ title: 'Walking with Jesus', text: SHARE_TEXT, url: PLAYER }); cs.sent = true; saveC(); closeSlot(); return; }
+      await navigator.clipboard.writeText(SHARE_TEXT + ' ' + PLAYER); cs.sent = true; saveC(); note(card, 'Link copied. Paste it into a message.');
+    } catch (e) { if (e && e.name !== 'AbortError') note(card, PLAYER); }
+  }
+  function remindMe(card) {
+    const d = new Date(); d.setDate(d.getDate() + 1);
+    const p2 = n => String(n).padStart(2, '0'), day = d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate());
+    const now = new Date(), stamp = now.getUTCFullYear() + p2(now.getUTCMonth() + 1) + p2(now.getUTCDate()) + 'T' + p2(now.getUTCHours()) + p2(now.getUTCMinutes()) + '00Z';
+    const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Walking with Jesus//EN', 'BEGIN:VEVENT', 'UID:wwj-daily@wwjpodcast.github.io', 'DTSTAMP:' + stamp,
+      'DTSTART:' + day + 'T070000', 'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR', 'DURATION:PT15M', 'SUMMARY:Walking with Jesus',
+      'DESCRIPTION:Fifteen minutes with Jesus. ' + PLAYER, 'URL:' + PLAYER, 'BEGIN:VALARM', 'TRIGGER:PT0M', 'ACTION:DISPLAY', 'DESCRIPTION:Walking with Jesus', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })); a.download = 'walking-with-jesus.ics';
+    document.body.appendChild(a); a.click(); a.remove(); note(card, 'Open the file to add it to your calendar. You can change the time there.');
+  }
+  function addHome(card) {
+    if (deferred) { deferred.prompt(); return; }
+    note(card, /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'Tap the Share button, then Add to Home Screen.' : 'Open your browser menu (the three dots), then Add to Home screen or Install app.');
+  }
+
+  function showCard(c, opts) {
+    opts = opts || {};
+    const card = h('div', 'tcard'), x = h('button', 'x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close this card'); x.onclick = closeSlot;
+    card.appendChild(x);
+    if (c.t === 'verse') { card.append(h('h2', 'q' + (c.long ? ' long' : ''), c.q), h('div', 'ref', c.ref)); }
+    else if (c.t === 'progress') {
+      card.append(h('div', 'kick', c.name));
+      if (c.done) { card.append(h('h2', '', 'You finished it.'), h('p', '', 'All ' + c.tot + ' episodes of ' + c.name + '. Pick your next series from the menu at the top.')); }
+      else { card.append(h('h2', '', 'Episode ' + c.n + ' of ' + c.tot)); const b = h('div', 'pbar'), f = h('i'); f.style.width = Math.round(c.n / c.tot * 100) + '%'; b.appendChild(f); card.append(b, h('p', '', (c.tot - c.n) + ' to go. Keep walking.')); }
+    } else {
+      if (c.kick) card.appendChild(h('div', 'kick', c.kick));
+      card.append(h('h2', '', c.h), h('p', '', c.p));
+      if (c.btn) { const b = h('button', 'wbtn', c.btn); b.type = 'button'; b.onclick = () => { if (c.t === 'invite') sendIt(card); else if (c.t === 'remind') remindMe(card); else addHome(card); }; card.appendChild(b); }
+    }
+    const cd = h('div', 'cd', '<i></i>'); card.appendChild(cd);
+    const hold = () => { card.classList.add('held'); clearTimeout(timer); };
+    card.addEventListener('pointerdown', hold);
+    const secs = c.btn ? 14 : 9; card.style.setProperty('--cdur', secs + 's');
+    openSlot(card); slot.dataset.kind = 'card';
+    timer = setTimeout(closeSlot, secs * 1000);
+    if (!opts.preview) { cs.seen.push(c.id); cs.seen = cs.seen.slice(-12); saveC(); }
+  }
+
+  audio.addEventListener('ended', () => {
+    cs.n++; saveC();
+    if (app.classList.contains('watching') || slot.dataset.kind === 'welcome') return;
+    const c = progressCard() || ((q || cs.n % 2 === 0) ? pickCard() : null);
+    if (c) showCard(c);
+  });
+
+  /* ---------- demo controls ---------- */
+  const preview = [...BANK, { id: 'p-6', t: 'progress', name: 'Mark + John Harmony', n: 6, tot: 20 }];
+  let pi = 0;
+  $('replayWelcome').addEventListener('click', () => { welcome(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  $('demoWelcome').addEventListener('click', () => { welcome(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  $('demoCard').addEventListener('click', () => { showCard(preview[pi++ % preview.length], { preview: true }); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  $('demoReset').addEventListener('click', () => { [WKEY, CKEY].forEach(lsDel); location.reload(); });
+})();
+</script>
+</body>
+</html>

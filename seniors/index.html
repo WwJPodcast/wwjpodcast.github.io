@@ -128,7 +128,7 @@ header h1{font-size:1.8rem}
 .rot{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;padding:8px 12px;border-radius:12px;background:rgba(227,181,91,.16);color:var(--gold-light);font-size:1rem;font-weight:600;text-align:center}
 .rot svg{flex:0 0 26px;width:26px;height:26px}
 .rot.gone{display:none}
-@media (min-width:700px){.rot{display:none}}
+@media (pointer:fine){.rot{display:none}}
 .cb .i-pause{display:none}
 .stage.playing .cb.pp .i-play{display:none}
 .stage.playing .cb.pp .i-pause{display:block}
@@ -137,7 +137,7 @@ header h1{font-size:1.8rem}
 .ep.cur .vid{outline:4px solid var(--gold);outline-offset:3px}
 #list{margin-bottom:10px}
 /* phone held sideways: video fills the screen, controls stay in a slim bar */
-@media (orientation:landscape) and (max-height:520px){
+@media (orientation:landscape) and (max-height:520px),(orientation:landscape) and (pointer:coarse){
   .slot{position:static}
   .stage{position:fixed;left:0;top:0;right:0;bottom:0;height:100vh;height:100dvh;z-index:100;background:#000;display:flex;flex-direction:column}
   .vwrap{flex:1 1 auto;min-height:0;aspect-ratio:auto}
@@ -353,7 +353,7 @@ document.getElementById('share').addEventListener('click', function(){
   }
 
   /* ---- keep the page from jumping when the phone turns sideways and back ---- */
-  var land=window.matchMedia('(orientation:landscape) and (max-height:520px)');
+  var land=window.matchMedia('(orientation:landscape) and (max-height:520px),(orientation:landscape) and (pointer:coarse)');
   function seen(){if(land.matches){var r=$('rot');if(r)r.classList.add('gone');try{localStorage.setItem('wwj-seniors-rotated','1');}catch(e){}}}
   try{if(localStorage.getItem('wwj-seniors-rotated')==='1')$('rot').classList.add('gone');}catch(e){}
   if(land.addEventListener)land.addEventListener('change',seen);else if(land.addListener)land.addListener(seen);

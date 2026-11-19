@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- NOTE: no viewport-fit=cover here (it broke the old YouTube embeds on iPhone landscape; keep it off). -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Slow Scripture for Seniors — Walking with Jesus</title>
+<meta name="description" content="Large print. Slow scroll. The whole story of Jesus, in order. Tap a picture and it plays.">
+<meta name="apple-mobile-web-app-title" content="Watch">
+<link rel="apple-touch-icon" href="../../hearjesus/apple-touch-icon.png">
+<meta property="og:title" content="Slow Scripture for Seniors">
+<meta property="og:description" content="Large print. Slow scroll. The whole story of Jesus, in order.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://wwjpodcast.github.io/seniors/preview/">
+<meta property="og:image" content="https://wwjpodcast.github.io/pl-seniors.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://wwjpodcast.github.io/pl-seniors.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1b2a49;--gold:#b8862b;--gold-light:#e3b55b;--red:#88231d;--cream:#fbf7ec;--parchment:#f6efe0;--paper:#fffaf0;--ink:#1d2433;--muted:#4a5266;--line:#e2d6bb;--green:#5f6b35;
+--serif:'Lora',Georgia,'Times New Roman',serif;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);background:var(--parchment);color:var(--ink);font-size:20px;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;padding:0 20px}
+header{background:linear-gradient(180deg,#243659,#1b2a49);padding:28px 0 32px;text-align:center}
+.logo-box{background:var(--cream);border-radius:20px;width:min(62%,230px);margin:0 auto 20px;padding:12px}
+.logo-box img{display:block;width:100%;height:auto}
+header h1{font-family:var(--serif);color:#fff;font-size:2rem;line-height:1.2}
+header p{font-family:var(--serif);color:var(--gold-light);font-size:1.2rem;margin-top:8px}
+section{padding:30px 0 6px}
+p{margin-bottom:14px}
+h2{font-family:var(--serif);color:var(--navy);font-size:1.6rem;line-height:1.25;margin-bottom:14px}
+.thumb{display:block;width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin-bottom:20px}
+.big{display:flex;align-items:center;justify-content:center;gap:10px;min-height:76px;border-radius:18px;background:var(--red);color:#fff;font-weight:700;font-size:1.45rem;text-decoration:none;text-align:center;padding:12px 18px;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.big:active{transform:translateY(2px);box-shadow:none}
+.note{color:var(--muted);font-size:1rem;margin-top:12px;text-align:center}
+.steps{list-style:none;padding:0;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:16px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.steps li::before{content:counter(s);flex:0 0 auto;width:46px;height:46px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:1.5rem;display:flex;align-items:center;justify-content:center}
+.steps b{display:block;font-size:1.25rem;color:var(--navy);margin-bottom:2px}
+.how{display:block;width:100%;height:auto;border-radius:14px;margin:6px 0 16px}
+.share{width:100%;min-height:60px;border-radius:16px;border:2px solid var(--navy);background:transparent;color:var(--navy);font-weight:700;font-size:1.2rem;font-family:inherit}
+.gold{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--gold-light);border-color:var(--gold-light);color:var(--navy);font-family:var(--serif);text-decoration:none}
+.gold em{font-style:italic}
+.pk-play{position:relative;flex:0 0 32px;width:32px;height:32px;border-radius:50%;background:var(--navy)}
+.pk-play::after{content:"";position:absolute;left:12px;top:8px;border-style:solid;border-width:8px 0 8px 12px;border-color:transparent transparent transparent var(--gold-light)}
+footer{text-align:center;color:var(--muted);font-size:1rem;padding:20px 20px 44px}
+footer a{color:var(--navy)}
+
+header{padding:22px 0 26px}
+.logo-box{width:min(40%,150px);margin:0 auto 14px;padding:8px;border-radius:16px}
+header h1{font-size:1.8rem}
+.sub-unused{margin:18px 0 0;background:var(--paper);border:2px solid var(--navy);border-radius:16px}
+.sub summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:12px 18px;font-weight:700;font-size:1.25rem;color:var(--navy);cursor:pointer}
+.sub summary::-webkit-details-marker{display:none}
+.sub summary::after{content:"+";font-size:2rem;line-height:1}
+.sub[open] summary::after{content:"\2212"}
+.sub .inner{padding:4px 16px 16px}
+.hint{font-family:var(--serif);color:var(--navy);font-size:1.3rem;text-align:center;margin:22px 0 0}
+.ep{padding:22px 0 6px;border-bottom:2px solid var(--line)}
+.num{font-weight:700;color:var(--navy);font-size:1.5rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.vid{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;margin-bottom:22px}
+.vid button{all:unset;display:block;width:100%;height:100%;cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent}
+.vid img{display:block;width:100%;height:100%;object-fit:cover}
+.vid .play{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:rgba(27,42,73,.88);border:4px solid #fff}
+.vid .play::after{content:"";position:absolute;left:32px;top:21px;border-style:solid;border-width:19px 0 19px 30px;border-color:transparent transparent transparent #fff}
+.vid video{position:absolute;inset:0;width:100%;height:100%;display:block;background:#000;object-fit:contain}
+.vid button.cover{position:absolute;inset:0}
+.vmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;padding:12px;margin:0;font-size:1.1rem}
+.msg{padding:30px 0;text-align:center;color:var(--muted)}
+#list{margin-bottom:10px}
+@media (orientation:landscape) and (max-height:520px){
+  .wrap{max-width:min(100%,calc((100dvh - 24px) * 1.7778 + 40px))}
+}
+.faq{margin:16px 0 0;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 2px;font-size:1rem;color:var(--muted);cursor:pointer}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"\25BE";font-size:1rem}
+.faq details[open] summary::after{content:"\25B4"}
+.faq details[open] summary{color:var(--navy);font-weight:700}
+.faq .inner{padding:2px 2px 16px;font-size:1rem}
+.faq .inner p{margin-bottom:12px}
+.big.small{min-height:56px;font-size:1.15rem;box-shadow:none}
+.hint{font-size:1.1rem;margin:14px 0 0}
+.faq{border-top:0;margin-top:14px}
+.faq-top{padding:10px 2px}
+.faq-top{font-size:1rem}
+.faq>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;color:var(--muted);cursor:pointer;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.faq>summary::-webkit-details-marker{display:none}
+.faq>summary::after{content:"\25BE"}
+.faq[open]>summary::after{content:"\25B4"}
+.faq[open]>summary{color:var(--navy);font-weight:700;border-bottom:0}
+.faq-list{border-bottom:0}
+.faq .share{min-height:56px;font-size:1.15rem}
+.faq>summary{justify-content:center;gap:10px}
+#resume{margin:20px 0 0;flex-direction:column;gap:2px;line-height:1.2}
+#resume[hidden]{display:none}
+#resume small{display:block;font-size:1.15rem;font-weight:500}
+.fab{position:fixed;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:10px;padding:0 14px;z-index:20;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s}
+.fab.show{opacity:1;visibility:visible}
+.fab button{pointer-events:auto;min-height:60px;padding:0 16px;border-radius:30px;border:2px solid #fff;background:var(--navy);color:#fff;font:700 1.15rem var(--sans);box-shadow:0 4px 14px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent}
+.fab button:active{transform:scale(.97)}
+@media (orientation:landscape) and (max-height:520px){.fab{bottom:8px}.fab button{min-height:44px;padding:0 16px;font-size:1rem}}
+
+/* ===== pinned player ===== */
+.slot{position:sticky;top:0;z-index:30;margin:0 -20px}
+.stage{background:var(--navy)}
+.vwrap{background:#000;width:100%;aspect-ratio:16/9}
+.stage video{width:100%;height:100%;display:block;background:#000;object-fit:contain}
+.ctl{padding:8px 14px 12px;color:#fff}
+.meta{display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-height:26px}
+#now{font-family:var(--serif);font-weight:700;font-size:1.2rem}
+#status{color:var(--gold-light);font-size:.95rem;text-align:right}
+.seekrow{display:flex;align-items:center;gap:10px;font-size:.95rem;font-variant-numeric:tabular-nums;color:#dfe5f2}
+.seekrow span{flex:0 0 3.2em}
+.seekrow span:last-child{text-align:right}
+#seek{flex:1;height:34px;accent-color:var(--gold-light);min-width:0}
+.btns{display:flex;justify-content:space-around;align-items:flex-start;margin-top:4px}
+.cb{all:unset;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:92px;cursor:pointer;color:#fff;-webkit-tap-highlight-color:transparent;font:600 .95rem var(--sans)}
+.cb svg{width:56px;height:56px;display:block}
+.cb:active{transform:scale(.96)}
+.cb.pp svg{width:64px;height:64px;padding:12px;border-radius:50%;background:var(--gold-light);color:var(--navy)}
+.cb .i-pause{display:none}
+.stage.playing .cb.pp .i-play{display:none}
+.stage.playing .cb.pp .i-pause{display:block}
+.num .np{display:none;margin-left:12px;padding:3px 12px;border-radius:999px;background:var(--gold-light);color:var(--navy);font-size:1rem;letter-spacing:0;text-transform:none;vertical-align:middle}
+.ep.cur .np{display:inline-block}
+.ep.cur .vid{outline:4px solid var(--gold);outline-offset:3px}
+#list{margin-bottom:10px}
+/* phone held sideways: video fills the screen, controls stay in a slim bar */
+@media (orientation:landscape) and (max-height:520px){
+  .slot{position:static}
+  .stage{position:fixed;left:0;top:0;right:0;bottom:0;height:100vh;height:100dvh;z-index:100;background:#000;display:flex;flex-direction:column}
+  .vwrap{flex:1 1 auto;min-height:0;aspect-ratio:auto}
+  .ctl{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:4px 14px;background:var(--navy)}
+  .btns{order:1;margin:0;gap:6px}
+  .seekrow{order:2;flex:1}
+  .meta{order:3;flex-direction:column;align-items:flex-end;gap:0;min-width:96px}
+  #now{font-size:1rem}
+  #status{font-size:.8rem}
+  .cb{min-width:0}
+  .cb span{display:none}
+  .cb svg{width:44px;height:44px}
+  .cb.pp svg{width:48px;height:48px;padding:9px}
+  .fab{display:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="logo-box"><img src="../../logo.png" width="520" height="406" alt="Walking with Jesus"></div>
+    <h1>Slow Scripture<br>for Seniors</h1>
+    <p>Large print. Slow scroll.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="slot" id="slot"><div class="stage" id="stage">
+    <div class="vwrap"><video id="v" playsinline webkit-playsinline preload="none"></video></div>
+    <div class="ctl">
+      <div class="meta"><span id="now">Episode 1</span><span id="status" aria-live="polite"></span></div>
+      <div class="seekrow"><span id="tNow">0:00</span><input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="Position in episode" disabled><span id="tLeft"></span></div>
+      <div class="btns">
+        <button type="button" class="cb" id="back15" aria-label="Back 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg><span>Back 15</span></button>
+        <button type="button" class="cb pp" id="play" aria-label="Play"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span id="playLbl">Play</span></button>
+        <button type="button" class="cb" id="fwd15" aria-label="Forward 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(24 0) scale(-1 1)"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/></g><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg><span>Forward 15</span></button>
+      </div>
+    </div>
+  </div></div>
+
+  <details class="faq">
+    <summary class="faq-top">FAQ</summary>
+    <div class="faq-list">
+    <details>
+      <summary>How do I subscribe on YouTube?</summary>
+      <div class="inner">
+        <p>Tap the button, and the YouTube app opens. If it asks, tap <em>Open</em>. Then tap <b>Play all</b>, or tap <b>Subscribe</b> to get every new episode.</p>
+        <a class="big small" href="https://www.youtube.com/playlist?list=PLG_jhvvWTLgw" target="_blank" rel="noopener">&#9654;&nbsp; Open on YouTube</a>
+      </div>
+    </details>
+    <details>
+      <summary>Can I just listen, without watching?</summary>
+      <div class="inner">
+        <p>Yes. Audio only, with no screen to watch. Handy in the car, or when you want to rest your eyes. It remembers where you stopped.</p>
+        <a class="big gold small" href="../../hearjesus/"><span class="pk-play" aria-hidden="true"></span><span>Hear Jesus <em>here</em></span></a>
+      </div>
+    </details>
+    <details>
+      <summary>How do I put this on my home screen?</summary>
+      <div class="inner">
+        <p><b>iPhone:</b> tap the Share button (the square with an arrow), then <b>Add to Home Screen</b>.</p>
+        <p><b>Android:</b> tap the three dots at the top, then <b>Add to Home screen</b>.</p>
+        <p>Then, any day, tap the icon and the videos are right there.</p>
+      </div>
+    </details>
+    <details>
+      <summary>How do I share this with someone?</summary>
+      <div class="inner">
+        <p>Know someone who would love this? Tap the button to send them this page.</p>
+        <button class="share" id="share">Share this page</button>
+      </div>
+    </details>
+    <details>
+      <summary>Where can I find more Walking with Jesus?</summary>
+      <div class="inner">
+        <p>The main website has the audio podcast, the listening player, and everything else in one place.</p>
+        <a class="big gold small" href="../../">Visit the main website</a>
+      </div>
+    </details>
+    </div>
+  </details>
+
+  <div id="list"><p class="msg">Loading&hellip;</p></div>
+
+</main>
+
+<footer><a href="../../">Visit the main page</a></footer>
+
+<div class="fab" id="fab"><button type="button" id="toTop">&uarr; Top</button><button type="button" id="toNew">Newest &darr;</button></div>
+
+<script>
+document.getElementById('share').addEventListener('click', function(){
+  var url = location.href.split('#')[0];
+  if (navigator.share) { navigator.share({title:'Slow Scripture for Seniors', url:url}).catch(function(){}); }
+  else if (navigator.clipboard) { navigator.clipboard.writeText(url).then(function(){ var b=document.getElementById('share'); b.textContent='Link copied'; setTimeout(function(){b.textContent='Share this page'},2000); }); }
+});
+(function(){
+  var R2='https://pub-306859672a3d4fa4a0d0662093095c81.r2.dev/';   // the ONE line to change if the video address ever moves
+  var FIRST=1, LAST=50;                                              // Season 4 episodes that have a video
+  var STATE_KEY='wwj-seniors-state', OLD_KEY='wwj-grandma-last';     // OLD_KEY = the place the earlier page remembered
+  function pad(n){return (n<10?'0':'')+n;}
+  function vurl(n){return R2+'s4ep'+pad(n)+'_FULL.mp4';}
+  function thumb(n){return '../thumbs/s4-ep'+pad(n)+'.jpg';}
+  var $=function(id){return document.getElementById(id);};
+  var v=$('v'), stage=$('stage'), slot=$('slot'), list=$('list'), seek=$('seek'), tNow=$('tNow'), tLeft=$('tLeft'), now=$('now'), status=$('status'), playBtn=$('play'), playLbl=$('playLbl');
+  var cur=0, loadedN=0, resumeAt=0, lastSave=0, seeking=false;
+  function fmt(s){s=Math.max(0,Math.floor(s||0));var m=Math.floor(s/60),r=s%60;return m+':'+(r<10?'0':'')+r;}
+  function setStatus(t){status.textContent=t||'';}
+
+  /* ---- remember where each person was (episode + minute) ---- */
+  function loadState(){
+    var st=null; try{st=JSON.parse(localStorage.getItem(STATE_KEY));}catch(e){}
+    if(st&&st.n>=FIRST&&st.n<=LAST) return st;
+    var o=0; try{o=parseInt(localStorage.getItem(OLD_KEY),10)||0;}catch(e){}
+    return (o>=FIRST&&o<=LAST)?{n:o,t:0}:{n:FIRST,t:0};
+  }
+  function saveState(force){
+    if(!cur) return; var t=Date.now(); if(!force&&t-lastSave<5000) return; lastSave=t;
+    try{localStorage.setItem(STATE_KEY,JSON.stringify({n:cur,t:Math.floor(v.currentTime||0)}));}catch(e){}
+  }
+  function resumeFor(n){var st=loadState();return (st.n===n&&st.t>3)?st.t:0;}
+
+  /* ---- the episode list (thumbnails) ---- */
+  list.innerHTML='';
+  for(var n=FIRST;n<=LAST;n++){(function(n){
+    var s=document.createElement('section');
+    s.className='ep'; s.id='ep'+n; s.dataset.n=n;
+    s.innerHTML='<div class="num">Episode '+n+'<span class="np">Now playing</span></div><div class="vid"><button type="button" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="'+thumb(n)+'"></button></div>';
+    s.querySelector('button').addEventListener('click',function(){
+      if(n===cur&&loadedN===cur) toggle(); else startEpisode(n,resumeFor(n));
+    });
+    list.appendChild(s);
+  })(n);}
+  function mark(){var all=list.children;for(var i=0;i<all.length;i++){all[i].classList.toggle('cur',Number(all[i].dataset.n)===cur);}}
+
+  /* ---- choosing / starting an episode ---- */
+  function select(n){
+    cur=n; v.poster=thumb(n); now.textContent='Episode '+n; mark(); setStatus('');
+    seek.value=0; tNow.textContent='0:00'; tLeft.textContent=''; updateSession();
+  }
+  function playIt(){var p=v.play(); if(p&&p.catch) p.catch(function(){setStatus('Tap Play to start.');});}
+  function startEpisode(n,at){
+    select(n); resumeAt=at||0; loadedN=n; seek.disabled=true;
+    v.src=vurl(n); playIt(); saveState(true);
+  }
+  function toggle(){
+    if(!cur) return;
+    if(loadedN!==cur){ startEpisode(cur,resumeFor(cur)); return; }
+    if(v.paused) playIt(); else v.pause();
+  }
+  function jump(d){
+    if(loadedN!==cur||!isFinite(v.duration)) return;
+    v.currentTime=Math.max(0,Math.min(v.currentTime+d,v.duration-0.5));
+  }
+
+  /* ---- video events ---- */
+  v.addEventListener('loadedmetadata',function(){
+    seek.disabled=false;
+    if(resumeAt>3&&resumeAt<(v.duration||1e9)-5){try{v.currentTime=resumeAt;}catch(e){}}
+    resumeAt=0;
+  });
+  v.addEventListener('play',function(){stage.classList.add('playing');playBtn.setAttribute('aria-label','Pause');playLbl.textContent='Pause';setStatus('');if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing';});
+  v.addEventListener('pause',function(){stage.classList.remove('playing');playBtn.setAttribute('aria-label','Play');playLbl.textContent='Play';saveState(true);if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';});
+  v.addEventListener('waiting',function(){setStatus('Loading…');});
+  v.addEventListener('playing',function(){setStatus('');});
+  v.addEventListener('timeupdate',function(){
+    if(!seeking&&v.duration) seek.value=Math.round(v.currentTime/v.duration*1000);
+    tNow.textContent=fmt(v.currentTime); tLeft.textContent='−'+fmt((v.duration||0)-v.currentTime);
+    saveState(false);
+  });
+  v.addEventListener('ended',function(){
+    if(cur<LAST){ startEpisode(cur+1,0); }
+    else { setStatus('That was the last episode.'); try{localStorage.setItem(STATE_KEY,JSON.stringify({n:cur,t:0}));}catch(e){} }
+  });
+  v.addEventListener('error',function(){
+    if(!loadedN) return;
+    setStatus('This video could not load. Tap Play to try again.'); loadedN=0;
+    stage.classList.remove('playing'); playLbl.textContent='Play';
+  });
+  v.addEventListener('click',toggle);
+
+  /* ---- buttons and slider ---- */
+  playBtn.addEventListener('click',toggle);
+  $('back15').addEventListener('click',function(){jump(-15);});
+  $('fwd15').addEventListener('click',function(){jump(15);});
+  seek.addEventListener('input',function(){seeking=true;if(v.duration){var t=seek.value/1000*v.duration;tNow.textContent=fmt(t);tLeft.textContent='−'+fmt(v.duration-t);}});
+  seek.addEventListener('change',function(){if(v.duration){v.currentTime=seek.value/1000*v.duration;}seeking=false;});
+  document.addEventListener('visibilitychange',function(){if(document.hidden)saveState(true);});
+  window.addEventListener('pagehide',function(){saveState(true);});
+
+  /* ---- lock screen / headphone controls ---- */
+  function updateSession(){
+    if(!('mediaSession' in navigator)||!cur) return;
+    try{navigator.mediaSession.metadata=new MediaMetadata({title:'Episode '+cur,artist:'Walking with Jesus',album:'Slow Scripture for Seniors',artwork:[{src:new URL(thumb(cur),location.href).href,sizes:'960x540',type:'image/jpeg'}]});}catch(e){}
+  }
+  if('mediaSession' in navigator){
+    var h=function(a,f){try{navigator.mediaSession.setActionHandler(a,f);}catch(e){}};
+    h('play',function(){toggle();}); h('pause',function(){v.pause();});
+    h('seekbackward',function(){jump(-15);}); h('seekforward',function(){jump(15);});
+    h('nexttrack',function(){if(cur<LAST)startEpisode(cur+1,0);}); h('previoustrack',function(){if(cur>FIRST)startEpisode(cur-1,0);});
+  }
+
+  /* ---- keep the page from jumping when the phone turns sideways and back ---- */
+  var land=window.matchMedia('(orientation:landscape) and (max-height:520px)');
+  function holdSpace(){ if(!land.matches) slot.style.minHeight=stage.offsetHeight+'px'; }
+  if('ResizeObserver' in window) new ResizeObserver(holdSpace).observe(stage);
+  window.addEventListener('resize',holdSpace); holdSpace();
+
+  /* ---- Top / Newest buttons ---- */
+  var fab=$('fab'), ticking=false;
+  window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;fab.classList.toggle('show',(window.scrollY||document.documentElement.scrollTop)>600);});}},{passive:true});
+  $('toTop').addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  $('toNew').addEventListener('click',function(){var last=list.lastElementChild;if(last)last.scrollIntoView({behavior:'smooth',block:'start'});});
+
+  /* ---- start: show where this person left off (does not auto-play) ---- */
+  var st=loadState(); select(st.n);
+})();
+</script>
+</body>
+</html>

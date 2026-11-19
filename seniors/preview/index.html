@@ -121,10 +121,11 @@ header h1{font-size:1.8rem}
 .seekrow span:last-child{text-align:right}
 #seek{flex:1;height:34px;accent-color:var(--gold-light);min-width:0}
 .btns{display:flex;justify-content:space-around;align-items:flex-start;margin-top:4px}
-.cb{all:unset;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:92px;cursor:pointer;color:#fff;-webkit-tap-highlight-color:transparent;font:600 .95rem var(--sans)}
+.cb{all:unset;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:78px;cursor:pointer;color:#fff;-webkit-tap-highlight-color:transparent;font:600 .95rem var(--sans)}
 .cb svg{width:56px;height:56px;display:block}
 .cb:active{transform:scale(.96)}
 .cb.pp svg{width:64px;height:64px;padding:12px;border-radius:50%;background:var(--gold-light);color:var(--navy)}
+.cb.sp b{display:flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;border:3px solid var(--gold-light);color:var(--gold-light);font:700 1.25rem var(--sans)}
 .cb .i-pause{display:none}
 .stage.playing .cb.pp .i-play{display:none}
 .stage.playing .cb.pp .i-pause{display:block}
@@ -147,6 +148,7 @@ header h1{font-size:1.8rem}
   .cb span{display:none}
   .cb svg{width:44px;height:44px}
   .cb.pp svg{width:48px;height:48px;padding:9px}
+  .cb.sp b{width:48px;height:48px;font-size:1rem}
   .fab{display:none}
 }
 </style>
@@ -170,6 +172,7 @@ header h1{font-size:1.8rem}
         <button type="button" class="cb" id="back15" aria-label="Back 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg><span>Back 15</span></button>
         <button type="button" class="cb pp" id="play" aria-label="Play"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span id="playLbl">Play</span></button>
         <button type="button" class="cb" id="fwd15" aria-label="Forward 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(24 0) scale(-1 1)"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/></g><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg><span>Forward 15</span></button>
+        <button type="button" class="cb sp" id="speed" aria-label="Playback speed 1 times. Tap to change."><b id="spTxt">1&times;</b><span>Speed</span></button>
       </div>
     </div>
   </div></div>
@@ -323,6 +326,14 @@ document.getElementById('share').addEventListener('click', function(){
   seek.addEventListener('change',function(){if(v.duration){v.currentTime=seek.value/1000*v.duration;}seeking=false;});
   document.addEventListener('visibilitychange',function(){if(document.hidden)saveState(true);});
   window.addEventListener('pagehide',function(){saveState(true);});
+
+  /* ---- speed button: 1x -> 1.25x -> 1.5x -> back to 1x; remembered ---- */
+  var SPEEDS=[1,1.25,1.5], spI=0, spBtn=$('speed'), spTxt=$('spTxt');
+  try{var sv=parseFloat(localStorage.getItem('wwj-seniors-speed'));var k=SPEEDS.indexOf(sv);if(k>=0)spI=k;}catch(e){}
+  function applySpeed(){var r=SPEEDS[spI];v.defaultPlaybackRate=r;v.playbackRate=r;spTxt.innerHTML=r+'&times;';spBtn.setAttribute('aria-label','Playback speed '+r+' times. Tap to change.');}
+  spBtn.addEventListener('click',function(){spI=(spI+1)%SPEEDS.length;applySpeed();try{localStorage.setItem('wwj-seniors-speed',String(SPEEDS[spI]));}catch(e){}});
+  v.addEventListener('loadedmetadata',applySpeed);
+  applySpeed();
 
   /* ---- lock screen / headphone controls ---- */
   function updateSession(){

@@ -193,18 +193,18 @@
   .wc2 .wbot p{font-size:clamp(20px,5.4vw,24px);line-height:1.3;color:#3b342e}
   .wc2 .wbot svg{display:block;margin:8px auto 0;width:34px;height:22px;color:var(--gold);animation:bob 1.6s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
-  /* end-of-episode card: appears in the closing verse, covers everything above the progress bar */
-  .ecard{position:absolute;left:26px;right:26px;top:max(18px,env(safe-area-inset-top));z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-         padding:28px 26px;border:1.5px solid var(--gold);border-radius:22px;background:#fffaf0;opacity:0;transition:opacity 1.2s ease;cursor:pointer}
+  /* verse cards: opening (verse, then "Welcome") and closing (verse, then blessing); cover everything above the progress bar */
+  .ecard{position:absolute;left:26px;right:26px;top:max(18px,env(safe-area-inset-top));z-index:20;display:flex;flex-direction:column;align-items:center;text-align:center;
+         padding:26px 24px 22px;border:1.5px solid var(--gold);border-radius:22px;background:#fffaf0;opacity:0;transition:opacity 1.2s ease;cursor:pointer}
   .ecard.on{opacity:1}
   .ecard.fast{transition-duration:.5s}
-  .ecard .eq{font-style:italic;font-weight:600;color:var(--ink);font-size:clamp(28px,8vw,38px);line-height:1.18;max-width:420px}
-  .ecard .eref{font-size:16px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-top:16px}
-  .ecard hr{width:56px;border:0;border-top:1.5px solid var(--gold);margin:26px 0 16px}
-  .ecard .ekick{font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-  .ecard .enext{font-weight:700;font-size:clamp(21px,5.8vw,26px);line-height:1.15;color:var(--red);margin-top:6px;max-width:400px}
+  .ecard .ebody{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%}
+  .ecard .eq{font-style:italic;font-weight:600;color:var(--ink);font-size:clamp(34px,9.8vw,46px);line-height:1.16;max-width:430px}
+  .ecard .eref{font-size:17px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-top:18px}
+  .ecard .eline{flex:0 0 auto;min-height:1.3em;font-style:italic;font-weight:600;color:var(--red);font-size:clamp(20px,5.3vw,28px);line-height:1.2;text-wrap:balance;opacity:0;transition:opacity 1s ease}
+  .ecard .eline.on{opacity:1}
   .ecard .ex{position:absolute;top:2px;right:2px;width:44px;height:44px;border:0;background:transparent;cursor:pointer;color:var(--muted);font-size:26px;line-height:1;font-family:inherit}
-  @media (prefers-reduced-motion:reduce){.wov,.wov .wc,.ecard{transition-duration:.01s}.wc2 .warrow,.wc2 .wbot svg{animation:none}}
+  @media (prefers-reduced-motion:reduce){.wov,.wov .wc,.ecard,.ecard .eline{transition-duration:.01s}.wc2 .warrow,.wc2 .wbot svg{animation:none}}
   .demo .body p{font-size:18px;color:#3b342e;margin-bottom:10px}
   .demo .body .wbtn{display:block;width:100%;margin-top:8px;font-size:18px;min-height:46px;padding:0 24px;border-radius:23px;border:0;background:var(--red);color:#fff;font-family:inherit;font-weight:600;cursor:pointer}
   .demo .body .wbtn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--gold-soft)}
@@ -346,6 +346,7 @@
         <p>This is a test page, not shown in search. These buttons are only here for you to preview things.</p>
         <button type="button" class="wbtn" id="demoWelcome">Replay the welcome cards</button>
         <button type="button" class="wbtn alt" id="demoEnd">Jump to the last 20 seconds of this episode</button>
+        <button type="button" class="wbtn alt" id="demoIntro">Preview the opening card (sample)</button>
         <button type="button" class="wbtn alt" id="demoCard">Preview the end card (sample)</button>
         <button type="button" class="wbtn alt" id="demoReset">Forget this device and start fresh</button>
       </div>
@@ -813,62 +814,75 @@
   }
   if (!lsGet(WKEY) || /[?&]welcome=1/.test(location.search)) welcome();
 
-  /* ---------- end card: shows in the closing verse (~15 s before the end), gone the moment the episode ends ---------- */
-  /* SAMPLE ONLY. The real build maps each episode to its closing (A-L) and uses a per-closing offset from the end. */
-  const END_SECS = 15;
-  const SAMPLE = { q: 'Thy word is a lamp unto my feet, and a light unto my path.', ref: 'Psalm 119:105' };
-  let ecard = null, dismissed = false, previewTimer = null;
-  function nextTitle() {
-    const sel = $('episode'); if (!sel) return '';
-    const o = sel.options[sel.selectedIndex + 1];
-    return o ? o.textContent.replace(/^\s*\d+\s*[—–-]\s*/, '') : '';
-  }
+  /* ---------- verse cards: opening (verse, then "Welcome") and closing (verse, then blessing) ---------- */
+  /* SAMPLES ONLY. The real build maps each episode to its opening (01-12) and closing (A-L) and uses per-hook /
+     per-closing timings measured from the audio. Opening times are seconds from the start; closing times are seconds before the end. */
+  const INTRO = { q: 'Faith cometh by hearing, and hearing by the word of God.', ref: 'Romans 10:17', line: 'Welcome to Walking with Jesus!', lineAt: 8, end: 13 };
+  const OUTRO = { q: 'Thy word is a lamp unto my feet, and a light unto my path.', ref: 'Psalm 119:105', line: 'May God bless your journey.', lineAt: 5, start: 15 };
+  let ecard = null, ekind = '', eline = null, introDone = false, outroDismissed = false, previewTimers = [];
   function fitCard() {
     if (!ecard) return;
     const bar = document.querySelector('.bar'), top = parseFloat(getComputedStyle(ecard).top) || 18;
-    ecard.style.height = Math.max(240, bar.offsetTop - top - 10) + 'px';
+    ecard.style.height = Math.max(260, bar.offsetTop - top - 10) + 'px';
   }
-  function showEnd() {
-    if (ecard) return;
-    ecard = h('div', 'ecard'); ecard.setAttribute('role', 'button'); ecard.setAttribute('aria-label', 'Closing verse. Tap to close.');
-    ecard.append(h('div', 'eq', SAMPLE.q), h('div', 'eref', SAMPLE.ref));
-    const nt = nextTitle();
-    if (nt) { ecard.append(h('hr'), h('div', 'ekick', 'Next episode'), h('div', 'enext', nt)); }
-    const x = h('button', 'ex', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close'); ecard.appendChild(x);
-    ecard.addEventListener('click', () => { dismissed = true; hideEnd(true); });
+  function showCard(kind) {
+    if (ecard && ekind === kind) return;
+    if (ecard) hideCard(true);
+    const D = kind === 'intro' ? INTRO : OUTRO;
+    ecard = h('div', 'ecard'); ekind = kind;
+    ecard.setAttribute('role', 'button'); ecard.setAttribute('aria-label', 'Verse. Tap to close.');
+    const body = h('div', 'ebody'); body.append(h('div', 'eq', D.q), h('div', 'eref', D.ref));
+    eline = h('div', 'eline', D.line);
+    const x = h('button', 'ex', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close');
+    ecard.append(body, eline, x);
+    ecard.addEventListener('click', () => { if (kind === 'outro') outroDismissed = true; hideCard(true); });
     app.appendChild(ecard); fitCard();
     requestAnimationFrame(() => requestAnimationFrame(() => ecard && ecard.classList.add('on')));
   }
-  function hideEnd(fast) {
-    clearTimeout(previewTimer);
+  function lineOn() { if (eline) eline.classList.add('on'); }
+  function hideCard(fast) {
+    previewTimers.forEach(clearTimeout); previewTimers = [];
     if (!ecard) return;
-    const c = ecard; ecard = null;
+    const c = ecard; ecard = null; eline = null; ekind = '';
     if (fast) c.classList.add('fast');
     c.classList.remove('on');
     setTimeout(() => c.remove(), fast ? 600 : 1300);
   }
   audio.addEventListener('timeupdate', () => {
-    const d = audio.duration; if (!isFinite(d) || d < END_SECS + 20) return;
-    const rem = d - audio.currentTime;
-    if (rem > END_SECS + 1) { dismissed = false; if (ecard) hideEnd(true); return; }
-    if (rem > 0.3 && !dismissed && !ecard && !wov && !app.classList.contains('watching')) showEnd();
+    const d = audio.duration, t = audio.currentTime;
+    if (wov || app.classList.contains('watching')) return;
+    /* opening: playing from the start */
+    if (t > INTRO.end + 1) introDone = false;
+    if (!introDone && !audio.paused && t < 2.5) { introDone = true; showCard('intro'); }
+    if (ekind === 'intro') { if (t >= INTRO.lineAt) lineOn(); if (t >= INTRO.end || t > INTRO.end + 1) hideCard(false); return; }
+    /* closing: the last ~15 s */
+    if (!isFinite(d) || d < OUTRO.start + 20) return;
+    const rem = d - t;
+    if (rem > OUTRO.start + 1) { outroDismissed = false; if (ekind === 'outro') hideCard(true); return; }
+    if (rem > 0.3 && !outroDismissed) { showCard('outro'); if (rem <= OUTRO.lineAt) lineOn(); }
   });
-  audio.addEventListener('ended', () => hideEnd(true));
-  audio.addEventListener('loadstart', () => { dismissed = false; hideEnd(true); });
+  audio.addEventListener('ended', () => hideCard(true));
+  audio.addEventListener('loadstart', () => { introDone = false; outroDismissed = false; hideCard(true); });
   window.addEventListener('resize', fitCard);
 
   /* ---------- demo controls ---------- */
   const top0 = () => window.scrollTo({ top: 0, behavior: 'smooth' });
   $('replayWelcome').addEventListener('click', () => { welcome(); top0(); });
   $('demoWelcome').addEventListener('click', () => { welcome(); top0(); });
-  $('demoCard').addEventListener('click', () => {
-    top0(); hideEnd(true); dismissed = false;
-    setTimeout(() => { showEnd(); previewTimer = setTimeout(() => hideEnd(false), END_SECS * 1000); }, 450);
-  });
+  function preview(kind) {
+    top0(); hideCard(true); outroDismissed = false;
+    setTimeout(() => {
+      showCard(kind);
+      const D = kind === 'intro' ? INTRO : OUTRO, total = kind === 'intro' ? INTRO.end : OUTRO.start, at = kind === 'intro' ? INTRO.lineAt : OUTRO.start - OUTRO.lineAt;
+      previewTimers.push(setTimeout(lineOn, at * 1000), setTimeout(() => hideCard(false), total * 1000));
+    }, 450);
+  }
+  $('demoCard').addEventListener('click', () => preview('outro'));
+  $('demoIntro').addEventListener('click', () => preview('intro'));
   $('demoEnd').addEventListener('click', () => {
     const b = $('demoEnd'), d = audio.duration;
     if (!isFinite(d) || !audio.src) { const t = b.textContent; b.textContent = 'Press play on an episode first'; setTimeout(() => { b.textContent = t; }, 2200); return; }
-    top0(); dismissed = false; audio.currentTime = Math.max(0, d - 20); audio.play().catch(() => {});
+    top0(); outroDismissed = false; audio.currentTime = Math.max(0, d - 20); audio.play().catch(() => {});
   });
   $('demoReset').addEventListener('click', () => { lsDel(WKEY); location.reload(); });
 })();

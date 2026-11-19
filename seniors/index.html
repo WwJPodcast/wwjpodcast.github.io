@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<!-- NOTE: no viewport-fit=cover here. It breaks YouTube embeds on iPhone landscape. -->
+<!-- NOTE: no viewport-fit=cover here (it broke the old YouTube embeds on iPhone landscape; keep it off). -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Slow Scripture for Seniors — Walking with Jesus</title>
 <meta name="description" content="Large print. Slow scroll. The whole story of Jesus, in order. Tap a picture and it plays.">
@@ -105,6 +105,51 @@ header h1{font-size:1.8rem}
 .fab button{pointer-events:auto;min-height:60px;padding:0 16px;border-radius:30px;border:2px solid #fff;background:var(--navy);color:#fff;font:700 1.15rem var(--sans);box-shadow:0 4px 14px rgba(0,0,0,.35);-webkit-tap-highlight-color:transparent}
 .fab button:active{transform:scale(.97)}
 @media (orientation:landscape) and (max-height:520px){.fab{bottom:8px}.fab button{min-height:44px;padding:0 16px;font-size:1rem}}
+
+/* ===== pinned player ===== */
+.slot{position:sticky;top:0;z-index:30;margin:0 -20px}
+.stage{background:var(--navy)}
+.vwrap{background:#000;width:100%;aspect-ratio:16/9}
+.stage video{width:100%;height:100%;display:block;background:#000;object-fit:contain}
+.ctl{padding:8px 14px 12px;color:#fff}
+.meta{display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-height:26px}
+#now{font-family:var(--serif);font-weight:700;font-size:1.2rem}
+#status{color:var(--gold-light);font-size:.95rem;text-align:right}
+.seekrow{display:flex;align-items:center;gap:10px;font-size:.95rem;font-variant-numeric:tabular-nums;color:#dfe5f2}
+.seekrow span{flex:0 0 3.2em}
+.seekrow span:last-child{text-align:right}
+#seek{flex:1;height:34px;accent-color:var(--gold-light);min-width:0}
+.btns{display:flex;justify-content:space-around;align-items:flex-start;margin-top:4px}
+.cb{all:unset;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:78px;cursor:pointer;color:#fff;-webkit-tap-highlight-color:transparent;font:600 .95rem var(--sans)}
+.cb svg{width:56px;height:56px;display:block}
+.cb:active{transform:scale(.96)}
+.cb.pp svg{width:64px;height:64px;padding:12px;border-radius:50%;background:var(--gold-light);color:var(--navy)}
+.cb.sp b{display:flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;border:3px solid var(--gold-light);color:var(--gold-light);font:700 1.25rem var(--sans)}
+.cb .i-pause{display:none}
+.stage.playing .cb.pp .i-play{display:none}
+.stage.playing .cb.pp .i-pause{display:block}
+.num .np{display:none;margin-left:12px;padding:3px 12px;border-radius:999px;background:var(--gold-light);color:var(--navy);font-size:1rem;letter-spacing:0;text-transform:none;vertical-align:middle}
+.ep.cur .np{display:inline-block}
+.ep.cur .vid{outline:4px solid var(--gold);outline-offset:3px}
+#list{margin-bottom:10px}
+/* phone held sideways: video fills the screen, controls stay in a slim bar */
+@media (orientation:landscape) and (max-height:520px){
+  .slot{position:static}
+  .stage{position:fixed;left:0;top:0;right:0;bottom:0;height:100vh;height:100dvh;z-index:100;background:#000;display:flex;flex-direction:column}
+  .vwrap{flex:1 1 auto;min-height:0;aspect-ratio:auto}
+  .ctl{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:4px 14px;background:var(--navy)}
+  .btns{order:1;margin:0;gap:6px}
+  .seekrow{order:2;flex:1}
+  .meta{order:3;flex-direction:column;align-items:flex-end;gap:0;min-width:96px}
+  #now{font-size:1rem}
+  #status{font-size:.8rem}
+  .cb{min-width:0}
+  .cb span{display:none}
+  .cb svg{width:44px;height:44px}
+  .cb.pp svg{width:48px;height:48px;padding:9px}
+  .cb.sp b{width:48px;height:48px;font-size:1rem}
+  .fab{display:none}
+}
 </style>
 </head>
 <body>
@@ -117,6 +162,20 @@ header h1{font-size:1.8rem}
 </header>
 
 <main class="wrap">
+  <div class="slot" id="slot"><div class="stage" id="stage">
+    <div class="vwrap"><video id="v" playsinline webkit-playsinline preload="none"></video></div>
+    <div class="ctl">
+      <div class="meta"><span id="now">Episode 1</span><span id="status" aria-live="polite"></span></div>
+      <div class="seekrow"><span id="tNow">0:00</span><input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="Position in episode" disabled><span id="tLeft"></span></div>
+      <div class="btns">
+        <button type="button" class="cb" id="back15" aria-label="Back 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg><span>Back 15</span></button>
+        <button type="button" class="cb pp" id="play" aria-label="Play"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg><span id="playLbl">Play</span></button>
+        <button type="button" class="cb" id="fwd15" aria-label="Forward 15 seconds"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(24 0) scale(-1 1)"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5A8 8 0 1 1 4.6 10"/></g><path fill="currentColor" d="M12.6 1.6 7.6 5l5 3.4z"/></g><g transform="translate(12 13) scale(.86) translate(-12.5 -13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 10.7 10.3 9.6V16.4"/><path d="M16.5 9.7H13.5L13.2 12.6C13.6 12.3 14.1 12.2 14.6 12.2 15.8 12.2 16.6 13 16.6 14.3 16.6 15.6 15.8 16.4 14.5 16.4 13.6 16.4 13 16.1 12.7 15.5"/></g></svg><span>Forward 15</span></button>
+        <button type="button" class="cb sp" id="speed" aria-label="Playback speed 1 times. Tap to change."><b id="spTxt">1&times;</b><span>Speed</span></button>
+      </div>
+    </div>
+  </div></div>
+
   <details class="faq">
     <summary class="faq-top">FAQ</summary>
     <div class="faq-list">
@@ -159,8 +218,6 @@ header h1{font-size:1.8rem}
     </div>
   </details>
 
-  <a class="big" id="resume" href="#" hidden></a>
-
   <div id="list"><p class="msg">Loading&hellip;</p></div>
 
 </main>
@@ -176,65 +233,133 @@ document.getElementById('share').addEventListener('click', function(){
   else if (navigator.clipboard) { navigator.clipboard.writeText(url).then(function(){ var b=document.getElementById('share'); b.textContent='Link copied'; setTimeout(function(){b.textContent='Share this page'},2000); }); }
 });
 (function(){
-  var list=document.getElementById('list'), KEY='wwj-grandma-last';
-  function save(n){try{localStorage.setItem(KEY,String(n));}catch(e){}}
-  var fab=document.getElementById('fab'), ticking=false;
-  var hold=0;
-  document.getElementById('toTop').addEventListener('click',function(){hold=Date.now()+2500;window.scrollTo({top:0,behavior:'smooth'});});
-  function onScroll(){
-    ticking=false;
-    var y=window.scrollY||document.documentElement.scrollTop;
-    fab.classList.toggle('show',y>600);
-    if(y<300||Date.now()<hold)return;
-    var line=window.innerHeight*0.3, secs=list.children;
-    for(var i=0;i<secs.length;i++){
-      var r=secs[i].getBoundingClientRect();
-      if(r.top<=line&&r.bottom>line){ if(secs[i].dataset.n)save(secs[i].dataset.n); break; }
-    }
-  }
-  window.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(onScroll);} },{passive:true});
   var R2='https://pub-306859672a3d4fa4a0d0662093095c81.r2.dev/';   // the ONE line to change if the video address ever moves
   var FIRST=1, LAST=50;                                              // Season 4 episodes that have a video
-  function vurl(n){return R2+'s4ep'+(n<10?'0':'')+n+'_FULL.mp4';}
-  function thumb(n){return 'thumbs/s4-ep'+(n<10?'0':'')+n+'.jpg';}
-  function pauseOthers(except){var all=list.querySelectorAll('video');for(var i=0;i<all.length;i++){if(all[i]!==except&&!all[i].paused)all[i].pause();}}
+  var STATE_KEY='wwj-seniors-state', OLD_KEY='wwj-grandma-last';     // OLD_KEY = the place the earlier page remembered
+  function pad(n){return (n<10?'0':'')+n;}
+  function vurl(n){return R2+'s4ep'+pad(n)+'_FULL.mp4';}
+  function thumb(n){return 'thumbs/s4-ep'+pad(n)+'.jpg';}
+  var $=function(id){return document.getElementById(id);};
+  var v=$('v'), stage=$('stage'), slot=$('slot'), list=$('list'), seek=$('seek'), tNow=$('tNow'), tLeft=$('tLeft'), now=$('now'), status=$('status'), playBtn=$('play'), playLbl=$('playLbl');
+  var cur=0, loadedN=0, resumeAt=0, lastSave=0, seeking=false;
+  function fmt(s){s=Math.max(0,Math.floor(s||0));var m=Math.floor(s/60),r=s%60;return m+':'+(r<10?'0':'')+r;}
+  function setStatus(t){status.textContent=t||'';}
+
+  /* ---- remember where each person was (episode + minute) ---- */
+  function loadState(){
+    var st=null; try{st=JSON.parse(localStorage.getItem(STATE_KEY));}catch(e){}
+    if(st&&st.n>=FIRST&&st.n<=LAST) return st;
+    var o=0; try{o=parseInt(localStorage.getItem(OLD_KEY),10)||0;}catch(e){}
+    return (o>=FIRST&&o<=LAST)?{n:o,t:0}:{n:FIRST,t:0};
+  }
+  function saveState(force){
+    if(!cur) return; var t=Date.now(); if(!force&&t-lastSave<5000) return; lastSave=t;
+    try{localStorage.setItem(STATE_KEY,JSON.stringify({n:cur,t:Math.floor(v.currentTime||0)}));}catch(e){}
+  }
+  function resumeFor(n){var st=loadState();return (st.n===n&&st.t>3)?st.t:0;}
+
+  /* ---- the episode list (thumbnails) ---- */
   list.innerHTML='';
   for(var n=FIRST;n<=LAST;n++){(function(n){
     var s=document.createElement('section');
     s.className='ep'; s.id='ep'+n; s.dataset.n=n;
-    s.innerHTML='<div class="num">Episode '+n+'</div><div class="vid"></div>';
-    var box=s.querySelector('.vid');
-    function cover(){
-      box.innerHTML='<button type="button" class="cover" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="'+thumb(n)+'"></button>';
-      box.querySelector('button').addEventListener('click',play);
-    }
-    function play(){
-      var v=document.createElement('video');
-      v.controls=true; v.autoplay=true; v.setAttribute('playsinline',''); v.preload='auto'; v.src=vurl(n);
-      v.addEventListener('error',function(){
-        box.innerHTML='<p class="vmsg">This video could not load.<br>Please try again in a moment.</p>';
-        setTimeout(cover,3500);
-      });
-      v.addEventListener('play',function(){ pauseOthers(v); save(n); });
-      pauseOthers(v);
-      box.innerHTML=''; box.appendChild(v);
-      var p=v.play(); if(p&&p.catch)p.catch(function(){});
-      save(n);
-    }
-    cover();
+    s.innerHTML='<div class="num">Episode '+n+'<span class="np">Now playing</span></div><div class="vid"><button type="button" aria-label="Play episode '+n+'"><img loading="lazy" alt="" src="'+thumb(n)+'"></button></div>';
+    s.querySelector('button').addEventListener('click',function(){
+      if(n===cur&&loadedN===cur) toggle(); else startEpisode(n,resumeFor(n));
+    });
     list.appendChild(s);
   })(n);}
-  var saved=0; try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
-  var target=document.getElementById('ep'+saved);
-  if(saved>1 && target){
-    var rb=document.getElementById('resume');
-    rb.innerHTML='Continue where you left off<small>Episode '+saved+'</small>';
-    rb.hidden=false;
-    rb.addEventListener('click',function(e){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});});
+  function mark(){var all=list.children;for(var i=0;i<all.length;i++){all[i].classList.toggle('cur',Number(all[i].dataset.n)===cur);}}
+
+  /* ---- choosing / starting an episode ---- */
+  function select(n){
+    cur=n; v.poster=thumb(n); now.textContent='Episode '+n; mark(); setStatus('');
+    seek.value=0; tNow.textContent='0:00'; tLeft.textContent=''; updateSession();
   }
-  document.getElementById('toNew').addEventListener('click',function(){
-    var last=list.lastElementChild; hold=Date.now()+2500; if(last)last.scrollIntoView({behavior:'smooth',block:'start'});
+  function playIt(){var p=v.play(); if(p&&p.catch) p.catch(function(){setStatus('Tap Play to start.');});}
+  function startEpisode(n,at){
+    select(n); resumeAt=at||0; loadedN=n; seek.disabled=true;
+    v.src=vurl(n); playIt(); saveState(true);
+  }
+  function toggle(){
+    if(!cur) return;
+    if(loadedN!==cur){ startEpisode(cur,resumeFor(cur)); return; }
+    if(v.paused) playIt(); else v.pause();
+  }
+  function jump(d){
+    if(loadedN!==cur||!isFinite(v.duration)) return;
+    v.currentTime=Math.max(0,Math.min(v.currentTime+d,v.duration-0.5));
+  }
+
+  /* ---- video events ---- */
+  v.addEventListener('loadedmetadata',function(){
+    seek.disabled=false;
+    if(resumeAt>3&&resumeAt<(v.duration||1e9)-5){try{v.currentTime=resumeAt;}catch(e){}}
+    resumeAt=0;
   });
+  v.addEventListener('play',function(){stage.classList.add('playing');playBtn.setAttribute('aria-label','Pause');playLbl.textContent='Pause';setStatus('');if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing';});
+  v.addEventListener('pause',function(){stage.classList.remove('playing');playBtn.setAttribute('aria-label','Play');playLbl.textContent='Play';saveState(true);if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';});
+  v.addEventListener('waiting',function(){setStatus('Loading…');});
+  v.addEventListener('playing',function(){setStatus('');});
+  v.addEventListener('timeupdate',function(){
+    if(!seeking&&v.duration) seek.value=Math.round(v.currentTime/v.duration*1000);
+    tNow.textContent=fmt(v.currentTime); tLeft.textContent='−'+fmt((v.duration||0)-v.currentTime);
+    saveState(false);
+  });
+  v.addEventListener('ended',function(){
+    if(cur<LAST){ startEpisode(cur+1,0); }
+    else { setStatus('That was the last episode.'); try{localStorage.setItem(STATE_KEY,JSON.stringify({n:cur,t:0}));}catch(e){} }
+  });
+  v.addEventListener('error',function(){
+    if(!loadedN) return;
+    setStatus('This video could not load. Tap Play to try again.'); loadedN=0;
+    stage.classList.remove('playing'); playLbl.textContent='Play';
+  });
+  v.addEventListener('click',toggle);
+
+  /* ---- buttons and slider ---- */
+  playBtn.addEventListener('click',toggle);
+  $('back15').addEventListener('click',function(){jump(-15);});
+  $('fwd15').addEventListener('click',function(){jump(15);});
+  seek.addEventListener('input',function(){seeking=true;if(v.duration){var t=seek.value/1000*v.duration;tNow.textContent=fmt(t);tLeft.textContent='−'+fmt(v.duration-t);}});
+  seek.addEventListener('change',function(){if(v.duration){v.currentTime=seek.value/1000*v.duration;}seeking=false;});
+  document.addEventListener('visibilitychange',function(){if(document.hidden)saveState(true);});
+  window.addEventListener('pagehide',function(){saveState(true);});
+
+  /* ---- speed button: 1x -> 1.25x -> 1.5x -> back to 1x; remembered ---- */
+  var SPEEDS=[1,1.25,1.5], spI=0, spBtn=$('speed'), spTxt=$('spTxt');
+  try{var sv=parseFloat(localStorage.getItem('wwj-seniors-speed'));var k=SPEEDS.indexOf(sv);if(k>=0)spI=k;}catch(e){}
+  function applySpeed(){var r=SPEEDS[spI];v.defaultPlaybackRate=r;v.playbackRate=r;spTxt.innerHTML=r+'&times;';spBtn.setAttribute('aria-label','Playback speed '+r+' times. Tap to change.');}
+  spBtn.addEventListener('click',function(){spI=(spI+1)%SPEEDS.length;applySpeed();try{localStorage.setItem('wwj-seniors-speed',String(SPEEDS[spI]));}catch(e){}});
+  v.addEventListener('loadedmetadata',applySpeed);
+  applySpeed();
+
+  /* ---- lock screen / headphone controls ---- */
+  function updateSession(){
+    if(!('mediaSession' in navigator)||!cur) return;
+    try{navigator.mediaSession.metadata=new MediaMetadata({title:'Episode '+cur,artist:'Walking with Jesus',album:'Slow Scripture for Seniors',artwork:[{src:new URL(thumb(cur),location.href).href,sizes:'960x540',type:'image/jpeg'}]});}catch(e){}
+  }
+  if('mediaSession' in navigator){
+    var h=function(a,f){try{navigator.mediaSession.setActionHandler(a,f);}catch(e){}};
+    h('play',function(){toggle();}); h('pause',function(){v.pause();});
+    h('seekbackward',function(){jump(-15);}); h('seekforward',function(){jump(15);});
+    h('nexttrack',function(){if(cur<LAST)startEpisode(cur+1,0);}); h('previoustrack',function(){if(cur>FIRST)startEpisode(cur-1,0);});
+  }
+
+  /* ---- keep the page from jumping when the phone turns sideways and back ---- */
+  var land=window.matchMedia('(orientation:landscape) and (max-height:520px)');
+  function holdSpace(){ if(!land.matches) slot.style.minHeight=stage.offsetHeight+'px'; }
+  if('ResizeObserver' in window) new ResizeObserver(holdSpace).observe(stage);
+  window.addEventListener('resize',holdSpace); holdSpace();
+
+  /* ---- Top / Newest buttons ---- */
+  var fab=$('fab'), ticking=false;
+  window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;fab.classList.toggle('show',(window.scrollY||document.documentElement.scrollTop)>600);});}},{passive:true});
+  $('toTop').addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  $('toNew').addEventListener('click',function(){var last=list.lastElementChild;if(last)last.scrollIntoView({behavior:'smooth',block:'start'});});
+
+  /* ---- start: show where this person left off (does not auto-play) ---- */
+  var st=loadState(); select(st.n);
 })();
 </script>
 </body>

@@ -172,34 +172,42 @@
   .hic{flex:0 0 52px;width:52px;height:52px;color:var(--red)}
   .hrow h4{font-size:22px;font-weight:700;line-height:1.1}
   .hrow p{font-size:19px;line-height:1.35;color:#3b342e;margin-top:3px}
-  .slot{flex:0 0 auto;height:var(--stage);display:flex;align-items:stretch;justify-content:center;padding:4px 0}
-  .slot[hidden]{display:none}
-  .app.slotting .logo{display:none}
-  .wcard{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:0}
-  .wmain{flex:1 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
-  .wimg{display:block;height:100%;max-height:100%;width:auto;max-width:100%;aspect-ratio:1/1}
-  .wnav{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px}
-  .wskip{min-height:44px;padding:0 6px;background:none;border:0;color:var(--muted);font-family:inherit;font-size:18px;font-style:italic;cursor:pointer}
-  .wbtn{min-height:46px;padding:0 24px;border-radius:23px;border:0;background:var(--red);color:#fff;font-family:inherit;font-weight:600;font-size:19px;cursor:pointer}
-  .dots{display:flex;gap:7px}
-  .dots i{width:8px;height:8px;border-radius:50%;background:var(--gold-soft)}
-  .dots i.on{background:var(--red)}
-  .tcard{position:relative;width:100%;height:100%;box-sizing:border-box;border:1.5px solid var(--gold);background:#fffaf0;border-radius:22px;padding:12px 22px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
-  .tcard h2{font-weight:700;font-size:clamp(25px,7vw,33px);line-height:1.04;color:var(--red)}
-  .tcard h2.q{font-style:italic;font-weight:600;color:var(--ink);font-size:clamp(21px,5.6vw,27px);line-height:1.15}
-  .tcard h2.q.long{font-size:clamp(17px,4.6vw,21px)}
-  .tcard p{font-size:clamp(18px,4.8vw,21px);line-height:1.25;color:#3b342e;margin-top:6px}
-  .tcard .ref{font-size:15px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-top:8px}
-  .tcard .kick{font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-  .tcard .wbtn{margin-top:10px}
-  .tcard .x{position:absolute;top:0;right:0;width:44px;height:44px;border:0;background:transparent;cursor:pointer;color:var(--muted);font-size:26px;line-height:1;font-family:inherit}
-  .tcard .pbar{width:78%;height:9px;border-radius:5px;background:var(--track);margin-top:8px;overflow:hidden}
-  .tcard .pbar i{display:block;height:9px;background:var(--gold)}
-  .tcard .cd{position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--gold-soft)}
-  .tcard .cd i{display:block;height:5px;background:var(--red);transform-origin:left;animation:cdn var(--cdur,9s) linear forwards}
-  .tcard.held .cd i{animation:none;transform:scaleX(0)}
-  @keyframes cdn{to{transform:scaleX(0)}}
-  @media (prefers-reduced-motion:reduce){.tcard .cd i{animation:none}}
+  .app{position:relative}
+  /* welcome overlay: full-screen cards that dissolve into one another */
+  .wov{position:fixed;inset:0;z-index:50;background:var(--cream);opacity:1;transition:opacity .9s ease;cursor:pointer}
+  .wov.out{opacity:0;pointer-events:none}
+  .wov .wc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;opacity:0;transition:opacity .9s ease;pointer-events:none}
+  .wov .wc.on{opacity:1;pointer-events:auto}
+  .wc1{justify-content:center}
+  .wc1 img{display:block;width:min(94vw,80vh,640px);width:min(94vw,80dvh,640px);height:auto;aspect-ratio:1/1}
+  .wc2{justify-content:space-between;text-align:center;padding:max(9vh,34px) 30px max(7vh,30px)}
+  .wc2 .wtop{max-width:440px}
+  .wc2 h2{font-weight:700;font-size:clamp(30px,8.4vw,42px);line-height:1.05;color:var(--red)}
+  .wc2 .wtop p{font-size:clamp(20px,5.4vw,24px);line-height:1.3;color:#3b342e;margin-top:10px}
+  .wc2 .wmid{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .wc2 .warrow{width:44px;height:64px;color:var(--red);animation:bob 1.6s ease-in-out infinite}
+  .wc2 .dpill{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border:1.5px solid var(--gold);border-radius:999px;background:#fffaf0;font-weight:600;font-size:clamp(20px,5.8vw,28px);line-height:1.1;box-shadow:0 4px 14px rgba(196,160,89,.22)}
+  .wc2 .dpill i{width:12px;height:12px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-3px) rotate(45deg);opacity:.7}
+  .wc2 .wtap{font-size:16px;font-style:italic;color:var(--muted);margin-top:6px}
+  .wc2 .wbot{max-width:440px}
+  .wc2 .wbot p{font-size:clamp(20px,5.4vw,24px);line-height:1.3;color:#3b342e}
+  .wc2 .wbot svg{display:block;margin:8px auto 0;width:34px;height:22px;color:var(--gold);animation:bob 1.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+  /* end-of-episode card: appears in the closing verse, covers everything above the progress bar */
+  .ecard{position:absolute;left:26px;right:26px;top:max(18px,env(safe-area-inset-top));z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+         padding:28px 26px;border:1.5px solid var(--gold);border-radius:22px;background:#fffaf0;opacity:0;transition:opacity 1.2s ease;cursor:pointer}
+  .ecard.on{opacity:1}
+  .ecard.fast{transition-duration:.5s}
+  .ecard .eq{font-style:italic;font-weight:600;color:var(--ink);font-size:clamp(28px,8vw,38px);line-height:1.18;max-width:420px}
+  .ecard .eref{font-size:16px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-top:16px}
+  .ecard hr{width:56px;border:0;border-top:1.5px solid var(--gold);margin:26px 0 16px}
+  .ecard .ekick{font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .ecard .enext{font-weight:700;font-size:clamp(21px,5.8vw,26px);line-height:1.15;color:var(--red);margin-top:6px;max-width:400px}
+  .ecard .ex{position:absolute;top:2px;right:2px;width:44px;height:44px;border:0;background:transparent;cursor:pointer;color:var(--muted);font-size:26px;line-height:1;font-family:inherit}
+  @media (prefers-reduced-motion:reduce){.wov,.wov .wc,.ecard{transition-duration:.01s}.wc2 .warrow,.wc2 .wbot svg{animation:none}}
+  .demo .body p{font-size:18px;color:#3b342e;margin-bottom:10px}
+  .demo .body .wbtn{display:block;width:100%;margin-top:8px;font-size:18px;min-height:46px;padding:0 24px;border-radius:23px;border:0;background:var(--red);color:#fff;font-family:inherit;font-weight:600;cursor:pointer}
+  .demo .body .wbtn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--gold-soft)}
   .demo .body p{font-size:18px;color:#3b342e;margin-bottom:10px}
   .demo .body .wbtn{display:block;width:100%;margin-top:8px;font-size:18px}
   .demo .body .wbtn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--gold-soft)}
@@ -207,7 +215,6 @@
 </head>
 <body>
 <main class="app" id="app">
-  <div class="slot" id="slot" hidden></div>
   <div class="logo" id="logoBox"><img src="logo.png" alt="Walking with Jesus" width="771" height="598"></div>
   <div class="vbox" id="vbox" hidden></div>
   <div class="watchrow" id="watchRow" hidden><button type="button" class="wpill" id="watchBtn"><i class="wic"></i><span id="watchTxt">Watch</span></button></div>
@@ -338,7 +345,8 @@
       <div class="body">
         <p>This is a test page, not shown in search. These buttons are only here for you to preview things.</p>
         <button type="button" class="wbtn" id="demoWelcome">Replay the welcome cards</button>
-        <button type="button" class="wbtn alt" id="demoCard">Preview the next end-of-episode card</button>
+        <button type="button" class="wbtn alt" id="demoEnd">Jump to the last 20 seconds of this episode</button>
+        <button type="button" class="wbtn alt" id="demoCard">Preview the end card (sample)</button>
         <button type="button" class="wbtn alt" id="demoReset">Forget this device and start fresh</button>
       </div>
     </details>
@@ -754,145 +762,115 @@
   }
 </script>
 <script>
-/* ===== DEMO: welcome cards + end-of-episode card bank (additive; the player code above is untouched) ===== */
+/* ===== DEMO: full-screen welcome cards + end card synced to the closing verse (additive; the player code above is untouched) ===== */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
-  const app = $('app'), slot = $('slot'), audio = $('audio');
+  const app = $('app'), audio = $('audio');
   const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
   const lsDel = k => { try { localStorage.removeItem(k); } catch {} };
-  const PLAYER = 'https://wwjpodcast.github.io/hearjesus/';
-  const SHARE_TEXT = "I've been hearing the Gospels, 15 minutes a day. Just press play, nothing to download:";
-  const WKEY = 'wwj.welcome.v1', CKEY = 'wwj.cards.v1', PKEY = 'wwj.player.v1';
-  const TOTAL = { 1: 20, 2: 25, 3: 25, 4: 50 };
-  const NAMES = { 1: 'Mark + John Harmony', 2: 'Matthew + John Harmony', 3: 'Luke + John Harmony', 4: 'Four Gospel Harmony' };
-  const q = /[?&]cards=every/.test(location.search);
-
+  const WKEY = 'wwj.welcome.v2';
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function h(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
-  let timer = null;
-  function openSlot(node) { clearTimeout(timer); slot.textContent = ''; slot.appendChild(node); slot.hidden = false; app.classList.add('slotting'); }
-  function closeSlot() { clearTimeout(timer); slot.hidden = true; slot.textContent = ''; app.classList.remove('slotting'); slot.dataset.kind = ''; }
 
-  /* ---------- welcome cards (first visit, skippable, once per device) ---------- */
-  let step = 0;
-  const WELCOME = [
-    { img: '/demo/hear-jesus-here.svg' },
-    { h: 'Go at your pace.', p: 'Pick a series, choose your speed, and it remembers where you stopped.' },
-    { h: 'Everything else is below.', p: 'Questions, follow, share, and large-print videos for seniors. Just scroll.' }
-  ];
-  function finishWelcome() { lsSet(WKEY, true); closeSlot(); }
-  function renderWelcome() {
-    const c = WELCOME[step], wc = h('div', 'wcard'), main = h('div', 'wmain');
-    if (c.img) { const im = h('img', 'wimg'); im.src = c.img; im.alt = 'Hear Jesus here.'; main.appendChild(im); }
-    else { const t = h('div', 'tcard'); t.append(h('h2', '', c.h), h('p', '', c.p)); main.appendChild(t); }
-    const nav = h('div', 'wnav'), skip = h('button', 'wskip', 'Skip'), dots = h('div', 'dots'), next = h('button', 'wbtn', step === WELCOME.length - 1 ? 'Start' : 'Next');
-    skip.type = 'button'; next.type = 'button';
-    WELCOME.forEach((_, i) => dots.appendChild(h('i', i === step ? 'on' : '')));
-    skip.onclick = finishWelcome;
-    next.onclick = () => { if (step >= WELCOME.length - 1) finishWelcome(); else { step++; renderWelcome(); } };
-    nav.append(skip, dots, next); wc.append(main, nav);
-    openSlot(wc); slot.dataset.kind = 'welcome';
+  /* ---------- welcome: card 1 = full-screen logo card, card 2 = merged card; both dissolve ---------- */
+  let wov = null, wstage = 0, wtimer = null;
+  const FADE = REDUCED ? 20 : 900;
+  function finishWelcome() {
+    if (!wov) return;
+    clearTimeout(wtimer); lsSet(WKEY, true);
+    const o = wov; wov = null; o.classList.add('out');
+    setTimeout(() => { o.remove(); document.documentElement.style.overflow = ''; }, FADE + 50);
   }
-  function welcome() { step = 0; renderWelcome(); }
+  function advance() {
+    if (!wov) return;
+    clearTimeout(wtimer);
+    if (wstage === 1) {
+      wstage = 2;
+      const lab = $('seasonLabel'); const t = lab && lab.textContent && !/^choose/i.test(lab.textContent) ? lab.textContent : 'Four Gospel Harmony';
+      wov.querySelector('.dpill span').textContent = t;
+      wov.querySelector('.wc1').classList.remove('on'); wov.querySelector('.wc2').classList.add('on');
+      wtimer = setTimeout(finishWelcome, 14000);
+    } else finishWelcome();
+  }
+  function welcome() {
+    if (wov) wov.remove();
+    clearTimeout(wtimer); wstage = 1;
+    wov = h('div', 'wov'); wov.setAttribute('role', 'dialog'); wov.setAttribute('aria-label', 'Welcome to Walking with Jesus');
+    const c1 = h('div', 'wc wc1 on'), im = h('img'); im.src = '/demo/hear-jesus-here.svg'; im.alt = 'Hear Jesus here.'; c1.appendChild(im);
+    const c2 = h('div', 'wc wc2');
+    c2.innerHTML =
+      '<div class="wtop"><h2>Go at your pace.</h2><p>Pick the harmony you want to hear, choose your speed, and it remembers where you stopped.</p></div>' +
+      '<div class="wmid"><svg class="warrow" viewBox="0 0 44 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 4v52M8 42l14 16 14-16"/></svg>' +
+      '<div class="dpill"><span>Four Gospel Harmony</span><i></i></div><div class="wtap">Tap anywhere to begin</div></div>' +
+      '<div class="wbot"><p>Everything else is just below. Scroll for questions, sharing, and large-print videos.</p>' +
+      '<svg viewBox="0 0 34 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l13 14L30 4"/></svg></div>';
+    wov.append(c1, c2); wov.addEventListener('click', advance);
+    document.documentElement.style.overflow = 'hidden';
+    document.body.appendChild(wov);
+    wtimer = setTimeout(advance, 3600);
+  }
   if (!lsGet(WKEY) || /[?&]welcome=1/.test(location.search)) welcome();
 
-  /* ---------- end-of-episode card bank ---------- */
-  let cs = Object.assign({ n: 0, seen: [], sent: false }, lsGet(CKEY) || {});
-  const saveC = () => lsSet(CKEY, cs);
-  const standalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
-  let deferred = null;
-  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; });
-
-  const BANK = [
-    { id: 'v-1027', g: 'A', t: 'verse', q: '“My sheep hear my voice, and I know them, and they follow me...”', ref: 'John 10:27' },
-    { id: 'v-1017', g: 'A', t: 'verse', q: '“So then faith cometh by hearing, and hearing by the word of God.”', ref: 'Romans 10:17' },
-    { id: 'v-1423', g: 'A', t: 'verse', q: '“If a man love me, he will keep my words: and my Father will love him, and we will come unto him, and make our abode with him.”', ref: 'John 14:23', long: true },
-    { id: 'v-119', g: 'A', t: 'verse', q: '“Thy word is a lamp unto my feet, and a light unto my path.”', ref: 'Psalm 119:105' },
-    { id: 'b-15', g: 'A', t: 'benefit', h: 'You just spent fifteen minutes with Jesus.', p: 'We become like what we spend time with.' },
-    { id: 'b-small', g: 'A', t: 'benefit', h: 'Small and steady beats heroic.', p: 'Fifteen minutes, five days a week.' },
-    { id: 'b-year', g: 'A', t: 'benefit', h: 'His words, right when you need them.', p: 'Keep showing up. Give it a year and they come to mind on their own.' },
-    { id: 'i-send', g: 'B', t: 'invite', kick: 'Share it', h: 'Know someone who needs this?', p: 'Send them the player. One tap, nothing to download.', btn: 'Send to someone' },
-    { id: 'r-daily', g: 'C', t: 'remind', kick: 'Make it a habit', h: 'Same time tomorrow?', p: 'Get a daily reminder with the link inside.', btn: 'Remind me daily' },
-    { id: 'r-home', g: 'C', t: 'home', kick: 'Make it a habit', h: 'Make it one tap tomorrow.', p: 'Put Walking with Jesus on your home screen.', btn: 'Add to Home Screen' }
-  ];
-
-  function pickCard() {
-    const ok = BANK.filter(c => !(c.t === 'invite' && cs.sent) && !(c.t === 'home' && standalone()) && !cs.seen.slice(-5).includes(c.id));
-    const groups = { A: 5, B: 3, C: 2 }, avail = Object.keys(groups).filter(g => ok.some(c => c.g === g));
-    if (!avail.length) return null;
-    let r = Math.random() * avail.reduce((s, g) => s + groups[g], 0), g = avail[0];
-    for (const k of avail) { if ((r -= groups[k]) <= 0) { g = k; break; } }
-    const pool = ok.filter(c => c.g === g); return pool[Math.floor(Math.random() * pool.length)];
+  /* ---------- end card: shows in the closing verse (~15 s before the end), gone the moment the episode ends ---------- */
+  /* SAMPLE ONLY. The real build maps each episode to its closing (A-L) and uses a per-closing offset from the end. */
+  const END_SECS = 15;
+  const SAMPLE = { q: 'Thy word is a lamp unto my feet, and a light unto my path.', ref: 'Psalm 119:105' };
+  let ecard = null, dismissed = false, previewTimer = null;
+  function nextTitle() {
+    const sel = $('episode'); if (!sel) return '';
+    const o = sel.options[sel.selectedIndex + 1];
+    return o ? o.textContent.replace(/^\s*\d+\s*[—–-]\s*/, '') : '';
   }
-  function progressCard() {
-    const p = lsGet(PKEY) || {}, s = p.season, done = p.done || {};
-    if (!s || !TOTAL[s]) return null;
-    const n = Object.keys(done).filter(k => k.split('-')[0] == s).length, tot = TOTAL[s];
-    if (n && n >= tot) return { id: 'p-fin', t: 'progress', done: true, name: NAMES[s], n, tot };
-    if (n && n % 5 === 0) return { id: 'p-' + n, t: 'progress', name: NAMES[s], n, tot };
-    return null;
+  function fitCard() {
+    if (!ecard) return;
+    const bar = document.querySelector('.bar'), top = parseFloat(getComputedStyle(ecard).top) || 18;
+    ecard.style.height = Math.max(240, bar.offsetTop - top - 10) + 'px';
   }
-
-  function note(card, text) { const p = card.querySelector('p'); if (p) p.textContent = text; }
-  async function sendIt(card) {
-    try {
-      if (navigator.share) { await navigator.share({ title: 'Walking with Jesus', text: SHARE_TEXT, url: PLAYER }); cs.sent = true; saveC(); closeSlot(); return; }
-      await navigator.clipboard.writeText(SHARE_TEXT + ' ' + PLAYER); cs.sent = true; saveC(); note(card, 'Link copied. Paste it into a message.');
-    } catch (e) { if (e && e.name !== 'AbortError') note(card, PLAYER); }
+  function showEnd() {
+    if (ecard) return;
+    ecard = h('div', 'ecard'); ecard.setAttribute('role', 'button'); ecard.setAttribute('aria-label', 'Closing verse. Tap to close.');
+    ecard.append(h('div', 'eq', SAMPLE.q), h('div', 'eref', SAMPLE.ref));
+    const nt = nextTitle();
+    if (nt) { ecard.append(h('hr'), h('div', 'ekick', 'Next episode'), h('div', 'enext', nt)); }
+    const x = h('button', 'ex', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close'); ecard.appendChild(x);
+    ecard.addEventListener('click', () => { dismissed = true; hideEnd(true); });
+    app.appendChild(ecard); fitCard();
+    requestAnimationFrame(() => requestAnimationFrame(() => ecard && ecard.classList.add('on')));
   }
-  function remindMe(card) {
-    const d = new Date(); d.setDate(d.getDate() + 1);
-    const p2 = n => String(n).padStart(2, '0'), day = d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate());
-    const now = new Date(), stamp = now.getUTCFullYear() + p2(now.getUTCMonth() + 1) + p2(now.getUTCDate()) + 'T' + p2(now.getUTCHours()) + p2(now.getUTCMinutes()) + '00Z';
-    const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Walking with Jesus//EN', 'BEGIN:VEVENT', 'UID:wwj-daily@wwjpodcast.github.io', 'DTSTAMP:' + stamp,
-      'DTSTART:' + day + 'T070000', 'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR', 'DURATION:PT15M', 'SUMMARY:Walking with Jesus',
-      'DESCRIPTION:Fifteen minutes with Jesus. ' + PLAYER, 'URL:' + PLAYER, 'BEGIN:VALARM', 'TRIGGER:PT0M', 'ACTION:DISPLAY', 'DESCRIPTION:Walking with Jesus', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })); a.download = 'walking-with-jesus.ics';
-    document.body.appendChild(a); a.click(); a.remove(); note(card, 'Open the file to add it to your calendar. You can change the time there.');
+  function hideEnd(fast) {
+    clearTimeout(previewTimer);
+    if (!ecard) return;
+    const c = ecard; ecard = null;
+    if (fast) c.classList.add('fast');
+    c.classList.remove('on');
+    setTimeout(() => c.remove(), fast ? 600 : 1300);
   }
-  function addHome(card) {
-    if (deferred) { deferred.prompt(); return; }
-    note(card, /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'Tap the Share button, then Add to Home Screen.' : 'Open your browser menu (the three dots), then Add to Home screen or Install app.');
-  }
-
-  function showCard(c, opts) {
-    opts = opts || {};
-    const card = h('div', 'tcard'), x = h('button', 'x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close this card'); x.onclick = closeSlot;
-    card.appendChild(x);
-    if (c.t === 'verse') { card.append(h('h2', 'q' + (c.long ? ' long' : ''), c.q), h('div', 'ref', c.ref)); }
-    else if (c.t === 'progress') {
-      card.append(h('div', 'kick', c.name));
-      if (c.done) { card.append(h('h2', '', 'You finished it.'), h('p', '', 'All ' + c.tot + ' episodes of ' + c.name + '. Pick your next series from the menu at the top.')); }
-      else { card.append(h('h2', '', 'Episode ' + c.n + ' of ' + c.tot)); const b = h('div', 'pbar'), f = h('i'); f.style.width = Math.round(c.n / c.tot * 100) + '%'; b.appendChild(f); card.append(b, h('p', '', (c.tot - c.n) + ' to go. Keep walking.')); }
-    } else {
-      if (c.kick) card.appendChild(h('div', 'kick', c.kick));
-      card.append(h('h2', '', c.h), h('p', '', c.p));
-      if (c.btn) { const b = h('button', 'wbtn', c.btn); b.type = 'button'; b.onclick = () => { if (c.t === 'invite') sendIt(card); else if (c.t === 'remind') remindMe(card); else addHome(card); }; card.appendChild(b); }
-    }
-    const cd = h('div', 'cd', '<i></i>'); card.appendChild(cd);
-    const hold = () => { card.classList.add('held'); clearTimeout(timer); };
-    card.addEventListener('pointerdown', hold);
-    const secs = c.btn ? 14 : 9; card.style.setProperty('--cdur', secs + 's');
-    openSlot(card); slot.dataset.kind = 'card';
-    timer = setTimeout(closeSlot, secs * 1000);
-    if (!opts.preview) { cs.seen.push(c.id); cs.seen = cs.seen.slice(-12); saveC(); }
-  }
-
-  audio.addEventListener('ended', () => {
-    cs.n++; saveC();
-    if (app.classList.contains('watching') || slot.dataset.kind === 'welcome') return;
-    const c = progressCard() || ((q || cs.n % 2 === 0) ? pickCard() : null);
-    if (c) showCard(c);
+  audio.addEventListener('timeupdate', () => {
+    const d = audio.duration; if (!isFinite(d) || d < END_SECS + 20) return;
+    const rem = d - audio.currentTime;
+    if (rem > END_SECS + 1) { dismissed = false; if (ecard) hideEnd(true); return; }
+    if (rem > 0.3 && !dismissed && !ecard && !wov && !app.classList.contains('watching')) showEnd();
   });
+  audio.addEventListener('ended', () => hideEnd(true));
+  audio.addEventListener('loadstart', () => { dismissed = false; hideEnd(true); });
+  window.addEventListener('resize', fitCard);
 
   /* ---------- demo controls ---------- */
-  const preview = [...BANK, { id: 'p-6', t: 'progress', name: 'Mark + John Harmony', n: 6, tot: 20 }];
-  let pi = 0;
-  $('replayWelcome').addEventListener('click', () => { welcome(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-  $('demoWelcome').addEventListener('click', () => { welcome(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-  $('demoCard').addEventListener('click', () => { showCard(preview[pi++ % preview.length], { preview: true }); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-  $('demoReset').addEventListener('click', () => { [WKEY, CKEY].forEach(lsDel); location.reload(); });
+  const top0 = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  $('replayWelcome').addEventListener('click', () => { welcome(); top0(); });
+  $('demoWelcome').addEventListener('click', () => { welcome(); top0(); });
+  $('demoCard').addEventListener('click', () => {
+    top0(); hideEnd(true); dismissed = false;
+    setTimeout(() => { showEnd(); previewTimer = setTimeout(() => hideEnd(false), END_SECS * 1000); }, 450);
+  });
+  $('demoEnd').addEventListener('click', () => {
+    const b = $('demoEnd'), d = audio.duration;
+    if (!isFinite(d) || !audio.src) { const t = b.textContent; b.textContent = 'Press play on an episode first'; setTimeout(() => { b.textContent = t; }, 2200); return; }
+    top0(); dismissed = false; audio.currentTime = Math.max(0, d - 20); audio.play().catch(() => {});
+  });
+  $('demoReset').addEventListener('click', () => { lsDel(WKEY); location.reload(); });
 })();
 </script>
 </body>

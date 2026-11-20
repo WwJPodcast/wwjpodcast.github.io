@@ -180,18 +180,19 @@
   .wov .wc.on{opacity:1;pointer-events:auto}
   .wc1{justify-content:center}
   .wc1 img{display:block;width:min(94vw,80vh,640px);width:min(94vw,80dvh,640px);height:auto;aspect-ratio:1/1}
-  .wc2{justify-content:space-between;text-align:center;padding:max(9vh,34px) 30px max(7vh,30px)}
+  .wc2{justify-content:flex-start;text-align:center;padding:max(6vh,28px) 30px max(6vh,26px)}
   .wc2 .wtop{max-width:440px}
   .wc2 h2{font-weight:700;font-size:clamp(30px,8.4vw,42px);line-height:1.05;color:var(--red)}
-  .wc2 .wtop p{font-size:clamp(20px,5.4vw,24px);line-height:1.3;color:#3b342e;margin-top:10px}
-  .wc2 .wmid{display:flex;flex-direction:column;align-items:center;gap:10px}
-  .wc2 .warrow{width:44px;height:64px;color:var(--red);animation:bob 1.6s ease-in-out infinite}
-  .wc2 .dpill{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border:1.5px solid var(--gold);border-radius:999px;background:#fffaf0;font-weight:600;font-size:clamp(20px,5.8vw,28px);line-height:1.1;box-shadow:0 4px 14px rgba(196,160,89,.22)}
-  .wc2 .dpill i{width:12px;height:12px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-3px) rotate(45deg);opacity:.7}
-  .wc2 .wtap{font-size:16px;font-style:italic;color:var(--muted);margin-top:6px}
-  .wc2 .wbot{max-width:440px}
-  .wc2 .wbot p{font-size:clamp(20px,5.4vw,24px);line-height:1.3;color:#3b342e}
+  .wc2 .wtop p{font-size:clamp(19px,5.2vw,24px);line-height:1.3;color:#3b342e;margin-top:10px}
+  .wc2 .warrow{position:absolute;left:50%;width:36px;margin-left:-18px;color:var(--red);animation:bob 1.6s ease-in-out infinite}
+  .wc2 .wtap{position:absolute;left:0;right:0;font-size:16px;font-style:italic;color:var(--muted)}
+  .wc2 .wbot{max-width:440px;margin-top:auto}
+  .wc2 .wbot p{font-size:clamp(19px,5.2vw,24px);line-height:1.3;color:#3b342e}
   .wc2 .wbot svg{display:block;margin:8px auto 0;width:34px;height:22px;color:var(--gold);animation:bob 1.6s ease-in-out infinite}
+  /* replica of the real season selector, laid exactly over it (same classes, same type, same box) */
+  .wov .wdrop{position:fixed;margin:0;pointer-events:none;opacity:0;transition:opacity .9s ease}
+  .wov .wdrop.on{opacity:1}
+  .wov .wdrop::before{content:"";position:absolute;inset:-8px -16px;z-index:-1;border:1.5px solid var(--gold);border-radius:999px;background:rgba(255,250,240,.85);box-shadow:0 4px 14px rgba(196,160,89,.22)}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
   /* verse cards: opening (verse, then "Welcome") and closing (verse, then blessing); cover everything above the progress bar */
   .ecard{position:absolute;left:26px;right:26px;top:max(18px,env(safe-area-inset-top));z-index:20;display:flex;flex-direction:column;align-items:center;text-align:center;
@@ -203,6 +204,10 @@
   .ecard .eref{font-size:17px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-top:18px}
   .ecard .eline{flex:0 0 auto;min-height:1.3em;font-style:italic;font-weight:600;color:var(--red);font-size:clamp(20px,5.3vw,28px);line-height:1.2;text-wrap:balance;}
   .ecard .ex{position:absolute;top:2px;right:2px;width:44px;height:44px;border:0;background:transparent;cursor:pointer;color:var(--muted);font-size:26px;line-height:1;font-family:inherit}
+  .ecard.tcard{padding:0;overflow:hidden;background:#2a2118;border-color:var(--gold)}
+  .ecard .tbg{position:absolute;inset:-24px;background-size:cover;background-position:center;filter:blur(20px) brightness(.75)}
+  .ecard .timg{position:relative;display:block;height:100%;width:auto;max-width:100%;object-fit:contain;margin:0 auto}
+  .ecard.tcard .ex{color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6);z-index:2}
   @media (prefers-reduced-motion:reduce){.wov,.wov .wc,.ecard,.ecard .eline{transition-duration:.01s}.wc2 .warrow,.wc2 .wbot svg{animation:none}}
   .demo .body p{font-size:18px;color:#3b342e;margin-bottom:10px}
   .demo .body .wbtn{display:block;width:100%;margin-top:8px;font-size:18px;min-height:46px;padding:0 24px;border-radius:23px;border:0;background:var(--red);color:#fff;font-family:inherit;font-weight:600;cursor:pointer}
@@ -343,10 +348,12 @@
       <summary>Demo controls</summary>
       <div class="body">
         <p>This is a test page, not shown in search. These buttons are only here for you to preview things.</p>
-        <button type="button" class="wbtn" id="demoWelcome">Replay the welcome cards</button>
+        <button type="button" class="wbtn" id="demoS4">Go to Four Gospel Harmony, episode 1</button>
+        <p>Cards are built for the first five episodes of Four Gospel Harmony. Other episodes show no cards for now.</p>
+        <button type="button" class="wbtn alt" id="demoWelcome">Replay the welcome cards</button>
         <button type="button" class="wbtn alt" id="demoEnd">Jump to the last 20 seconds of this episode</button>
-        <button type="button" class="wbtn alt" id="demoIntro">Preview the opening card (sample)</button>
-        <button type="button" class="wbtn alt" id="demoCard">Preview the end card (sample)</button>
+        <button type="button" class="wbtn alt" id="demoIntro">Preview the opening cards of this episode</button>
+        <button type="button" class="wbtn alt" id="demoCard">Preview the end card of this episode</button>
         <button type="button" class="wbtn alt" id="demoReset">Forget this device and start fresh</button>
       </div>
     </details>
@@ -775,21 +782,33 @@
   function h(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 
   /* ---------- welcome: card 1 = full-screen logo card, card 2 = merged card; both dissolve ---------- */
-  let wov = null, wstage = 0, wtimer = null;
+  let wov = null, wstage = 0, wtimer = null, wdrop = null, wmo = null;
   const FADE = REDUCED ? 20 : 900;
   function finishWelcome() {
     if (!wov) return;
     clearTimeout(wtimer); lsSet(WKEY, true);
-    const o = wov; wov = null; o.classList.add('out');
+    const o = wov; wov = null; wdrop = null; if (wmo) { wmo.disconnect(); wmo = null; } o.classList.add('out');
     setTimeout(() => { o.remove(); document.documentElement.style.overflow = ''; }, FADE + 50);
   }
+  /* put the replica exactly over the real season selector, then fit the arrow and the tap line around it */
+  function placeDrop() {
+    if (!wov || !wdrop) return;
+    const real = document.querySelector('.pick.season'); if (!real) return;
+    const r = real.getBoundingClientRect();
+    wdrop.style.left = r.left + 'px'; wdrop.style.top = r.top + 'px'; wdrop.style.width = r.width + 'px'; wdrop.style.height = r.height + 'px';
+    wdrop.querySelector('span span').textContent = $('seasonLabel').textContent;
+    const c2 = wov.querySelector('.wc2'), top = c2.querySelector('.wtop').getBoundingClientRect().bottom, ar = c2.querySelector('.warrow');
+    const room = r.top - 8 - 8 - top - 6, ah = Math.max(0, Math.min(60, room));
+    ar.style.height = ah + 'px'; ar.style.top = (r.top - 16 - ah) + 'px'; ar.style.display = ah < 18 ? 'none' : '';
+    c2.querySelector('.wtap').style.top = (r.bottom + 22) + 'px';
+  }
+  window.addEventListener('resize', placeDrop);
   function advance() {
     if (!wov) return;
     clearTimeout(wtimer);
     if (wstage === 1) {
       wstage = 2;
-      const lab = $('seasonLabel'); const t = lab && lab.textContent && !/^choose/i.test(lab.textContent) ? lab.textContent : 'Four Gospel Harmony';
-      wov.querySelector('.dpill span').textContent = t;
+      placeDrop(); wdrop.classList.add('on');
       wov.querySelector('.wc1').classList.remove('on'); wov.querySelector('.wc2').classList.add('on');
       wtimer = setTimeout(finishWelcome, 14000);
     } else finishWelcome();
@@ -802,62 +821,165 @@
     const c2 = h('div', 'wc wc2');
     c2.innerHTML =
       '<div class="wtop"><h2>Go at your pace.</h2><p>Pick the harmony you want to hear, choose your speed, and it remembers where you stopped.</p></div>' +
-      '<div class="wmid"><svg class="warrow" viewBox="0 0 44 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 4v52M8 42l14 16 14-16"/></svg>' +
-      '<div class="dpill"><span>Four Gospel Harmony</span><i></i></div><div class="wtap">Tap anywhere to begin</div></div>' +
+      '<svg class="warrow" viewBox="0 0 36 60" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3v50M6 40l12 14 12-14"/></svg>' +
+      '<div class="wtap">Tap anywhere to begin</div>' +
       '<div class="wbot"><p>Everything else is just below. Scroll for questions, sharing, and large-print videos.</p>' +
       '<svg viewBox="0 0 34 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l13 14L30 4"/></svg></div>';
-    wov.append(c1, c2); wov.addEventListener('click', advance);
+    wdrop = h('div', 'pick season wdrop', '<span class="shown"><span></span><i class="chev"></i></span>');
+    wov.append(c1, c2, wdrop); wov.addEventListener('click', advance);
+    window.scrollTo(0, 0);
     document.documentElement.style.overflow = 'hidden';
     document.body.appendChild(wov);
+    wmo = new MutationObserver(placeDrop); wmo.observe($('seasonLabel'), { childList: true, characterData: true, subtree: true });
+    placeDrop();
     wtimer = setTimeout(advance, 3600);
   }
   if (!lsGet(WKEY) || /[?&]welcome=1/.test(location.search)) welcome();
 
-  /* ---------- verse cards: opening (verse, then "Welcome") and closing (verse, then blessing) ---------- */
-  /* SAMPLES ONLY. The real build maps each episode to its opening (01-12) and closing (A-L) and uses per-hook /
-     per-closing timings measured from the audio. Opening times are seconds from the start; closing times are seconds before the end. */
-  const INTRO = { q: 'Faith cometh by hearing, and hearing by the word of God.', ref: 'Romans 10:17', line: 'Welcome to Walking with Jesus', end: 13 };
-  const OUTRO = { q: 'Thy word is a lamp unto my feet, and a light unto my path.', ref: 'Psalm 119:105', line: 'May God bless your journey', start: 15 };
-  let ecard = null, ekind = '', eline = null, introDone = false, outroDismissed = false, previewTimers = [];
+  /* ---------- verse cards: opening (verse + welcome, then the episode title card) and closing (verse + blessing) ---------- */
+  /* Per-episode data from the opening/closing table. Opening times are seconds from the start of the audio; closing time is
+     seconds before the end. leave = the welcome line has been spoken (verse card hands off to the title card); introEnd = end of the
+     opening clip (title card fades out as the episode begins). Built for Season 4, episodes 1-5. */
+  const LINE_IN = 'Welcome to Walking with Jesus', LINE_OUT = 'May God bless your journey';
+  const CARDS = {
+ "4-1": {
+  "o": {
+   "q": "Faith cometh by hearing, and hearing by the word of God.",
+   "ref": "Romans 10:17"
+  },
+  "c": {
+   "q": "How sweet are thy words unto my taste — sweeter than honey to my mouth.",
+   "ref": "Psalm 119:103"
+  },
+  "leave": 8.14,
+  "introEnd": 23.88,
+  "outFrom": 13.43,
+  "title": "/demo/cards/s4-01.jpg",
+  "name": "In the Beginning Was the Word"
+ },
+ "4-2": {
+  "o": {
+   "q": "Desire the sincere milk of the word, that ye may grow thereby.",
+   "ref": "1 Peter 2:2"
+  },
+  "c": {
+   "q": "As the hart panteth after the water brooks, so panteth my soul after thee, O God.",
+   "ref": "Psalm 42:1"
+  },
+  "leave": 9.06,
+  "introEnd": 25.39,
+  "outFrom": 13.95,
+  "title": "/demo/cards/s4-02.jpg",
+  "name": "Unto You Is Born a Saviour"
+ },
+ "4-3": {
+  "o": {
+   "q": "Incline your ear, and come unto me: hear, and your soul shall live.",
+   "ref": "Isaiah 55:3"
+  },
+  "c": {
+   "q": "O taste and see that the LORD is good.",
+   "ref": "Psalm 34:8"
+  },
+  "leave": 8.89,
+  "introEnd": 23.64,
+  "outFrom": 10.27,
+  "title": "/demo/cards/s4-03.jpg",
+  "name": "This Is My Beloved Son"
+ },
+ "4-4": {
+  "o": {
+   "q": "He that hath an ear, let him hear what the Spirit saith.",
+   "ref": "Revelation 2:7"
+  },
+  "c": {
+   "q": "Thy word is a lamp unto my feet, and a light unto my path.",
+   "ref": "Psalm 119:105"
+  },
+  "leave": 8.38,
+  "introEnd": 22.99,
+  "outFrom": 11.31,
+  "title": "/demo/cards/s4-04.jpg",
+  "name": "Behold the Lamb of God"
+ },
+ "4-5": {
+  "o": {
+   "q": "O taste and see that the LORD is good.",
+   "ref": "Psalm 34:8"
+  },
+  "c": {
+   "q": "O God, thou art my God — early will I seek thee. My soul thirsteth for thee.",
+   "ref": "Psalm 63:1"
+  },
+  "leave": 6.67,
+  "introEnd": 20.61,
+  "outFrom": 12.18,
+  "title": "/demo/cards/s4-05.jpg",
+  "name": "Ye Must Be Born Again"
+ }
+};
+  const cardsNow = () => CARDS[$('season').value + '-' + $('episode').value] || null;
+  let ecard = null, ekind = '', introDone = false, outroDismissed = false, previewTimers = [];
   function fitCard() {
     if (!ecard) return;
     const bar = document.querySelector('.bar'), top = parseFloat(getComputedStyle(ecard).top) || 18;
     ecard.style.height = Math.max(260, bar.offsetTop - top - 10) + 'px';
+    const q = ecard.querySelector('.eq'), body = ecard.querySelector('.ebody');
+    if (q && body) { /* long verses: step the type down until the verse and its reference fit */
+      q.style.fontSize = ''; let fs = parseFloat(getComputedStyle(q).fontSize);
+      while (body.scrollHeight > body.clientHeight + 1 && fs > 20) { fs -= 2; q.style.fontSize = fs + 'px'; }
+    }
   }
-  function showCard(kind) {
+  function showCard(kind, C) {
     if (ecard && ekind === kind) return;
     if (ecard) hideCard(true);
-    const D = kind === 'intro' ? INTRO : OUTRO;
-    ecard = h('div', 'ecard'); ekind = kind;
-    ecard.setAttribute('role', 'button'); ecard.setAttribute('aria-label', 'Verse. Tap to close.');
-    const body = h('div', 'ebody'); body.append(h('div', 'eq', D.q), h('div', 'eref', D.ref));
-    eline = h('div', 'eline', D.line);
-    const x = h('button', 'ex', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close');
-    ecard.append(body, eline, x);
+    ekind = kind;
+    ecard = h('div', kind === 'title' ? 'ecard tcard' : 'ecard');
+    ecard.setAttribute('role', 'button'); ecard.setAttribute('aria-label', kind === 'title' ? 'Episode title. Tap to close.' : 'Verse. Tap to close.');
+    const x = h('button', 'ex', '\u00d7'); x.type = 'button'; x.setAttribute('aria-label', 'Close');
+    if (kind === 'title') {
+      const bg = h('div', 'tbg'); bg.style.backgroundImage = 'url(' + C.title + ')';
+      const im = h('img', 'timg'); im.src = C.title; im.alt = C.name;
+      ecard.append(bg, im, x);
+    } else {
+      const V = kind === 'intro' ? C.o : C.c;
+      const body = h('div', 'ebody'); body.append(h('div', 'eq', V.q), h('div', 'eref', V.ref));
+      ecard.append(body, h('div', 'eline', kind === 'intro' ? LINE_IN : LINE_OUT), x);
+    }
     ecard.addEventListener('click', () => { if (kind === 'outro') outroDismissed = true; hideCard(true); });
     app.appendChild(ecard); fitCard();
     requestAnimationFrame(() => requestAnimationFrame(() => ecard && ecard.classList.add('on')));
   }
+  /* dissolve from the verse card into the title card (both fade at once) */
+  function toTitle(C) {
+    const old = ecard; ecard = null; ekind = '';
+    if (old) { old.classList.remove('on'); setTimeout(() => old.remove(), 1300); }
+    showCard('title', C);
+  }
   function hideCard(fast) {
     previewTimers.forEach(clearTimeout); previewTimers = [];
     if (!ecard) return;
-    const c = ecard; ecard = null; eline = null; ekind = '';
+    const c = ecard; ecard = null; ekind = '';
     if (fast) c.classList.add('fast');
     c.classList.remove('on');
     setTimeout(() => c.remove(), fast ? 600 : 1300);
   }
   audio.addEventListener('timeupdate', () => {
-    const d = audio.duration, t = audio.currentTime;
-    if (wov || app.classList.contains('watching')) return;
+    const C = cardsNow(), d = audio.duration, t = audio.currentTime;
+    if (!C || wov || app.classList.contains('watching')) return;
     /* opening: playing from the start */
-    if (t > INTRO.end + 1) introDone = false;
-    if (!introDone && !audio.paused && t < 2.5) { introDone = true; showCard('intro'); }
-    if (ekind === 'intro') { if (t >= INTRO.end || t > INTRO.end + 1) hideCard(false); return; }
-    /* closing: the last ~15 s */
-    if (!isFinite(d) || d < OUTRO.start + 20) return;
+    if (t > C.introEnd + 1) introDone = false;
+    if (!introDone && !audio.paused && t < 2.5) { introDone = true; showCard('intro', C); }
+    if (ekind === 'intro' || ekind === 'title') {
+      if (t >= C.introEnd - 0.8) hideCard(false);
+      else if (ekind === 'intro' && t >= C.leave) { if (C.title) toTitle(C); else hideCard(false); }
+      return;
+    }
+    /* closing: the last stretch, from the verse lead-in */
+    if (!isFinite(d) || d < C.outFrom + 20) return;
     const rem = d - t;
-    if (rem > OUTRO.start + 1) { outroDismissed = false; if (ekind === 'outro') hideCard(true); return; }
-    if (rem > 0.3 && !outroDismissed) { showCard('outro'); }
+    if (rem > C.outFrom + 1) { outroDismissed = false; if (ekind === 'outro') hideCard(true); return; }
+    if (rem > 0.3 && !outroDismissed) showCard('outro', C);
   });
   audio.addEventListener('ended', () => hideCard(true));
   audio.addEventListener('loadstart', () => { introDone = false; outroDismissed = false; hideCard(true); });
@@ -868,13 +990,21 @@
   $('replayWelcome').addEventListener('click', () => { welcome(); top0(); });
   $('demoWelcome').addEventListener('click', () => { welcome(); top0(); });
   function preview(kind) {
+    const C = cardsNow() || CARDS['4-1'];
     top0(); hideCard(true); outroDismissed = false;
     setTimeout(() => {
-      showCard(kind);
-      const D = kind === 'intro' ? INTRO : OUTRO, total = kind === 'intro' ? INTRO.end : OUTRO.start;
-      previewTimers.push(setTimeout(() => hideCard(false), total * 1000));
+      showCard(kind, C);
+      if (kind === 'intro') {
+        if (C.title) previewTimers.push(setTimeout(() => toTitle(C), C.leave * 1000));
+        previewTimers.push(setTimeout(() => hideCard(false), (C.introEnd - 0.8) * 1000));
+      } else previewTimers.push(setTimeout(() => hideCard(false), C.outFrom * 1000));
     }, 450);
   }
+  $('demoS4').addEventListener('click', () => {
+    const ss = $('season'), es = $('episode');
+    ss.value = '4'; ss.dispatchEvent(new Event('change'));
+    setTimeout(() => { es.value = '1'; es.dispatchEvent(new Event('change')); top0(); }, 200);
+  });
   $('demoCard').addEventListener('click', () => preview('outro'));
   $('demoIntro').addEventListener('click', () => preview('intro'));
   $('demoEnd').addEventListener('click', () => {

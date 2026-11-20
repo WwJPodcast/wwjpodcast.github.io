@@ -139,6 +139,7 @@
   .vbox[hidden]{display:none}
   .vin{width:min(100%,calc(var(--stage) * 1.7778));aspect-ratio:16/9;background:transparent;border-radius:0;overflow:hidden}
   .vin iframe,.vin>div{width:100%;height:100%;border:0;display:block}
+  .vin video{width:100%;height:100%;display:block;background:#000;object-fit:contain}
   .watchrow{text-align:center;margin:2px 0 8px}
   .wpill{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 18px;border-radius:20px;border:1.5px solid var(--gold);background:transparent;color:var(--ink);font-family:inherit;font-weight:600;font-size:15px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
   .wpill .wic{width:0;height:0;border-left:9px solid var(--red);border-top:6px solid transparent;border-bottom:6px solid transparent}
@@ -727,8 +728,11 @@
   $('back15').addEventListener('click', () => jump(-15));
   $('fwd15').addEventListener('click', () => jump(15));
 
-  /* ---------- Watch: the episode's YouTube video in place of the logo ---------- */
-  let videos = {}, yt = null, watching = false, ytReady = null;
+  /* ---------- Watch: the episode's video (streamed from Cloudflare R2) in place of the logo ---------- */
+  // The ONE line to change if the video address ever moves. Falls back to the YouTube copy if a file won't load.
+  const R2 = 'https://pub-306859672a3d4fa4a0d0662093095c81.r2.dev/';
+  const vurl = (s, n) => R2 + 's' + s + 'ep' + String(n).padStart(2, '0') + '_FULL.mp4';
+  let videos = {}, yt = null, vel = null, watching = false, ytReady = null;
   fetch('videos.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : {}).then(j => { videos = j || {}; updateWatch(); }).catch(() => {});
   const vidId = () => (videos[cur.s] || {})[cur.n];
   function updateWatch() { $('watchRow').hidden = !(watching || vidId()); }
@@ -755,6 +759,25 @@
   // A plain iframe: Safari does all the sizing. Position comes back through YouTube's postMessage feed.
   function mountVideo(id, t, auto) {
     const box = $('vbox'); box.hidden = false; ytTime = t; ytState = -1;
+    const v = document.createElement('video');
+    v.controls = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', ''); v.preload = 'auto';
+    const wrap = document.createElement('div'); wrap.className = 'vin'; wrap.appendChild(v);
+    box.innerHTML = ''; box.appendChild(wrap);
+    vel = v; yt = null;
+    let started = false;
+    v.addEventListener('loadedmetadata', () => { try { if (t > 0) v.currentTime = Math.min(t, Math.max(0, v.duration - 1)); } catch (e) {} });
+    v.addEventListener('playing', () => { started = true; });
+    v.addEventListener('error', () => {
+      // R2 file missing or blocked: fall back to the YouTube copy at the same spot.
+      if (vel !== v || !watching) return;
+      const at = started || v.currentTime ? v.currentTime : t;
+      vel = null; mountYT(id, Math.floor(at), true);
+    });
+    v.src = vurl(cur.s, cur.n);
+    if (auto) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); }
+  }
+  function mountYT(id, t, auto) {
+    const box = $('vbox'); box.hidden = false; ytTime = t; ytState = -1;
     box.innerHTML = '<div class="vin"><iframe src="https://www.youtube.com/embed/' + id + '?start=' + t + '&autoplay=' + (auto ? 1 : 0) +
       '&playsinline=1&rel=0&modestbranding=1&cc_load_policy=0&enablejsapi=1&origin=' + encodeURIComponent(location.origin) +
       '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen title="Episode video"></iframe></div>';
@@ -771,7 +794,8 @@
   function stopWatch(handBack) {
     if (!watching) return;
     let t = ytTime, wasPlaying = ytState === 1;
-    yt = null; watching = false;
+    if (vel) { t = vel.currentTime; wasPlaying = !vel.paused && !vel.ended; try { vel.pause(); } catch (e) {} }
+    vel = null; yt = null; watching = false;
     $('vbox').innerHTML = ''; $('vbox').hidden = true;
     $('app').classList.remove('watching'); $('watchTxt').textContent = 'Watch';
     if (handBack && t != null) {

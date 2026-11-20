@@ -253,8 +253,8 @@
   </section>
 
   <div class="first" id="firstLinks">
-    <a href="https://wwjpodcast.github.io/seniors/"><div><b>Videos for Seniors</b><span>Big video. One tap to play.</span></div></a>
-    <a href="https://wwjpodcast.github.io/new/"><div><b>New to the faith?</b><span>A gentle place to begin.</span></div></a>
+    <a href="https://wwjpodcast.github.io/seniors/"><div><b>Videos for Seniors</b></div></a>
+    <a href="https://wwjpodcast.github.io/new/"><div><b>New to the faith?</b></div></a>
   </div>
 
   <nav class="more" aria-label="More">
@@ -349,7 +349,7 @@
       <div class="body">
         <p>This is a test page, not shown in search. These buttons are only here for you to preview things.</p>
         <button type="button" class="wbtn" id="demoS4">Go to Four Gospel Harmony, episode 1</button>
-        <p>Cards are built for the first five episodes of Four Gospel Harmony. Other episodes show no cards for now.</p>
+        <p>Opening and closing cards are built for every episode of all four harmonies. Episode title cards are built for Four Gospel Harmony.</p>
         <button type="button" class="wbtn alt" id="demoWelcome">Replay the welcome cards</button>
         <button type="button" class="wbtn alt" id="demoEnd">Jump to the last 20 seconds of this episode</button>
         <button type="button" class="wbtn alt" id="demoIntro">Preview the opening cards of this episode</button>
@@ -840,85 +840,18 @@
   /* Per-episode data from the opening/closing table. Opening times are seconds from the start of the audio; closing time is
      seconds before the end. leave = the welcome line has been spoken (verse card hands off to the title card); introEnd = end of the
      opening clip (title card fades out as the episode begins). Built for Season 4, episodes 1-5. */
-  const LINE_IN = 'Welcome to Walking with Jesus', LINE_OUT = 'May God bless your journey';
-  const CARDS = {
- "4-1": {
-  "o": {
-   "q": "Faith cometh by hearing, and hearing by the word of God.",
-   "ref": "Romans 10:17"
-  },
-  "c": {
-   "q": "How sweet are thy words unto my taste — sweeter than honey to my mouth.",
-   "ref": "Psalm 119:103"
-  },
-  "leave": 8.14,
-  "introEnd": 23.88,
-  "outFrom": 13.43,
-  "title": "/demo/cards/s4-01.jpg",
-  "name": "In the Beginning Was the Word"
- },
- "4-2": {
-  "o": {
-   "q": "Desire the sincere milk of the word, that ye may grow thereby.",
-   "ref": "1 Peter 2:2"
-  },
-  "c": {
-   "q": "As the hart panteth after the water brooks, so panteth my soul after thee, O God.",
-   "ref": "Psalm 42:1"
-  },
-  "leave": 9.06,
-  "introEnd": 25.39,
-  "outFrom": 13.95,
-  "title": "/demo/cards/s4-02.jpg",
-  "name": "Unto You Is Born a Saviour"
- },
- "4-3": {
-  "o": {
-   "q": "Incline your ear, and come unto me: hear, and your soul shall live.",
-   "ref": "Isaiah 55:3"
-  },
-  "c": {
-   "q": "O taste and see that the LORD is good.",
-   "ref": "Psalm 34:8"
-  },
-  "leave": 8.89,
-  "introEnd": 23.64,
-  "outFrom": 10.27,
-  "title": "/demo/cards/s4-03.jpg",
-  "name": "This Is My Beloved Son"
- },
- "4-4": {
-  "o": {
-   "q": "He that hath an ear, let him hear what the Spirit saith.",
-   "ref": "Revelation 2:7"
-  },
-  "c": {
-   "q": "Thy word is a lamp unto my feet, and a light unto my path.",
-   "ref": "Psalm 119:105"
-  },
-  "leave": 8.38,
-  "introEnd": 22.99,
-  "outFrom": 11.31,
-  "title": "/demo/cards/s4-04.jpg",
-  "name": "Behold the Lamb of God"
- },
- "4-5": {
-  "o": {
-   "q": "O taste and see that the LORD is good.",
-   "ref": "Psalm 34:8"
-  },
-  "c": {
-   "q": "O God, thou art my God — early will I seek thee. My soul thirsteth for thee.",
-   "ref": "Psalm 63:1"
-  },
-  "leave": 6.67,
-  "introEnd": 20.61,
-  "outFrom": 12.18,
-  "title": "/demo/cards/s4-05.jpg",
-  "name": "Ye Must Be Born Again"
- }
-};
-  const cardsNow = () => CARDS[$('season').value + '-' + $('episode').value] || null;
+  const LINE_IN = 'Welcome to Walking with Jesus', LINE_OUT = 'May God Bless Your Journey';
+const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","Romans 10:17"],"02":["Desire the sincere milk of the word, that ye may grow thereby.","1 Peter 2:2"],"03":["Incline your ear, and come unto me: hear, and your soul shall live.","Isaiah 55:3"],"04":["He that hath an ear, let him hear what the Spirit saith.","Revelation 2:7"],"05":["O taste and see that the LORD is good.","Psalm 34:8"],"06":["My sheep hear my voice, and I know them, and they follow me.","John 10:27"],"07":["Come unto me, all ye that labour and are heavy laden, and I will give you rest.","Matthew 11:28"],"08":["Gather the people together, men, and women, and children, and thy stranger that is within thy gates, that they may hear, and that they may learn…","Deuteronomy 31:12"],"09":["Thy words were found, and I did eat them; and thy word was unto me the joy and rejoicing of mine heart.","Jeremiah 15:16"],"10":["He wakeneth morning by morning, he wakeneth mine ear to hear as the learned.","Isaiah 50:4"],"11":["Take heed therefore how ye hear.","Luke 8:18"],"12":["Receive, I pray thee, the law from his mouth, and lay up his words in thine heart.","Job 22:22"]};
+  const CLOSE = {"A":["And they said one to another, Did not our heart burn within us, while he talked with us by the way, and while he opened to us the scriptures?","Luke 24:32"],"B":["And they said one to another, Did not our heart burn within us, while he talked with us by the way, and while he opened to us the scriptures?","Luke 24:32"],"C":["And they said one to another, Did not our heart burn within us, while he talked with us by the way, and while he opened to us the scriptures?","Luke 24:32"],"D":["And they said one to another, Did not our heart burn within us, while he talked with us by the way, and while he opened to us the scriptures?","Luke 24:32"],"E":["How sweet are thy words unto my taste — sweeter than honey to my mouth.","Psalm 119:103"],"F":["As the hart panteth after the water brooks, so panteth my soul after thee, O God.","Psalm 42:1"],"G":["O taste and see that the LORD is good.","Psalm 34:8"],"H":["Thy word is a lamp unto my feet, and a light unto my path.","Psalm 119:105"],"I":["O God, thou art my God — early will I seek thee. My soul thirsteth for thee.","Psalm 63:1"],"J":["So shall my word be that goeth forth — it shall not return unto me void, but it shall accomplish that which I please.","Isaiah 55:11"],"K":["The word of God is quick, and powerful, and sharper than any twoedged sword.","Hebrews 4:12"],"L":["Is not my word like as a fire, saith the LORD, and like a hammer that breaketh the rock in pieces?","Jeremiah 23:29"],"X:Psalm 42:2":["My soul thirsteth for God, for the living God…","Psalm 42:2"]};
+  const EP = {"1-1":["06","E",7.07,8.07,12.67,"Before Time Began"],"1-2":["01","H",6.58,7.58,10.76,"Born Again"],"1-3":["10","F",9.4,10.4,13.87,"Living Water"],"1-4":["08","K",7.4,8.4,12.59,"Authority to Forgive"],"1-5":["03","J",9.69,10.69,21.55,"Lord of the Sabbath"],"1-11":["02","E",8.29,9.29,11.89,"I Am the Good Shepherd"],"1-12":["11","H",6.77,7.77,12.12,"I Am the Resurrection, and the Life"],"1-13":["01","K",7.82,8.82,13.48,"Hosanna in the Highest"],"1-14":["06","J",8.71,9.71,13.32,"Not One Stone Upon Another"],"1-15":["03","B",9.2,10.2,10.9,"This Do in Remembrance of Me"],"1-6":["07","G",9.52,10.52,10.92,"Peace, Be Still"],"1-7":["09","I",12.63,13.63,12.67,"The Bread of Life"],"1-8":["04","L",8.59,9.59,12.67,"He Hath Done All Things Well"],"1-9":["12","A",10.64,11.64,14.99,"The Mountain and the Valley"],"1-10":["05","F",6.78,7.78,12.36,"I Am the Light of the World"],"1-16":["10","I",9.68,10.68,14.52,"I Am the True Vine"],"1-17":["08","G",8.95,9.95,9.72,"Not My Will, But Thine"],"1-18":["07","L",8.89,9.89,12.93,"Art Thou the King of the Jews?"],"1-19":["09","C",12.3,13.3,13.87,"It Is Finished"],"1-20":["04","D",7.93,8.93,16.62,"Feed My Sheep"],"2-1":["02","E",8.5,9.5,12.04,"The Word Made Flesh"],"2-2":["05","H",7.31,8.31,11.23,"You Must Be Born Again"],"2-3":["11","F",6.42,7.42,14.52,"Come, See a Man"],"2-4":["12","K",9.37,10.37,12.12,"Lord of the Sabbath"],"2-5":["06","J",8.72,9.72,13.88,"Blessed Are You"],"2-6":["01","G",6.78,7.78,8.75,"A House Built on the Rock"],"2-7":["10","I",11.69,12.69,16.27,"Seed, Storm, and Sea"],"2-8":["08","L",9.11,10.11,13.71,"Bread Enough and to Spare"],"2-9":["03","E",9.3,10.3,11.47,"It Is I; Be Not Afraid"],"2-10":["07","H",10.72,11.72,10.71,"Whom Say Ye That I Am?"],"2-11":["09","F",13.18,14.18,12.43,"Whoever Humbles Himself"],"2-12":["04","K",7.82,8.82,11.89,"I Am the Light of the World"],"2-13":["12","J",10.55,11.55,14.21,"Once I Was Blind"],"2-14":["05","I",7.78,8.78,14.29,"With God All Things Are Possible"],"2-15":["02","G",9.25,10.25,8.97,"Lazarus, Come Forth"],"2-16":["11","L",7.28,8.28,13.01,"Hosanna to the Son of David"],"2-17":["06","E",9.18,10.18,12.43,"Sir, We Would See Jesus"],"2-18":["01","H",7.81,8.81,12.51,"Watch Therefore"],"2-19":["10","A",11.25,12.25,11.47,"I Am the Way, the Truth, and the Life"],"2-20":["08","K",9.16,10.16,11.97,"I Am the Vine"],"2-21":["03","B",9.83,10.83,10.45,"Not My Will, But Thine"],"2-22":["07","F",9.77,10.77,12.67,"Condemned to Die"],"2-23":["09","J",12.52,13.52,13.95,"Led Away to Crucify"],"2-24":["04","C",7.95,8.95,10.68,"It Is Finished"],"2-25":["12","D",11.24,12.24,14.81,"Lovest Thou Me?"],"3-1":["01","E",7.2,8.2,13.4,"The Dayspring From on High"],"3-2":["02","F",8.63,9.63,13.09,"Thou Art My Beloved Son"],"3-3":["03","G",10.38,11.38,8.2,"Ye Must Be Born Again"],"3-4":["04","H",8.29,9.29,12.12,"He Must Increase"],"3-5":["05","I",7.07,8.07,12.14,"Launch Out Into the Deep"],"3-6":["06","K",7.9,8.9,11.23,"Lord Even of the Sabbath"],"3-7":["07","L",9.96,10.96,14.37,"Her Sins, Which Are Many, Are Forgiven"],"3-8":["08","E",9.17,10.17,13.09,"Give Ye Them to Eat"],"3-9":["09","F",12.95,13.95,12.75,"It Is I; Be Not Afraid"],"3-10":["10","X:Psalm 42:2",10.66,11.66,8.58,"If Any Man Thirst"],"3-11":["11","I",5.98,6.98,13.71,"I Am the Light of the World"],"3-12":["12","J",11.13,12.13,13.56,"I Am the Good Shepherd"],"3-13":["01","K",8.3,9.3,13.56,"Go Thy Way, and Do Likewise"],"3-14":["02","L",8.81,9.81,12.28,"Fear Not, Little Flock"],"3-15":["03","G",9.42,10.42,9.47,"Compel Them to Come In"],"3-16":["04","F",8.07,9.07,12.83,"This My Son Was Dead, and Is Alive Again"],"3-17":["05","A",6.71,7.71,13.01,"I Am the Resurrection, and the Life"],"3-18":["06","H",8.47,9.47,12.43,"Blessed Is He That Cometh"],"3-19":["07","I",10.09,11.09,14.45,"Not One Stone Upon Another"],"3-20":["08","J",8.79,9.79,12.95,"He Loved Them Unto the End"],"3-21":["09","K",12.73,13.73,12.04,"I Am the Vine, Ye Are the Branches"],"3-22":["10","B",10.22,11.22,12.36,"Not My Will, But Thine, Be Done"],"3-23":["11","L",6.01,7.01,13.24,"Art Thou the King of the Jews?"],"3-24":["12","C",9.65,10.65,13.01,"It Is Finished"],"3-25":["01","D",8.02,9.02,14.41,"He Was Known of Them"],"4-1":["01","E",8.14,23.88,13.43,"In the Beginning Was the Word"],"4-2":["02","F",9.06,25.39,13.95,"Unto You Is Born a Saviour"],"4-3":["03","G",8.89,23.64,10.27,"This Is My Beloved Son"],"4-4":["04","H",8.38,22.99,11.31,"Behold the Lamb of God"],"4-5":["05","I",6.67,20.61,12.18,"Ye Must Be Born Again"],"4-6":["06","J",8.46,24.92,13.48,"Follow Me, and I Will Make You Fishers of Men"],"4-7":["07","K",9.52,23.41,12.28,"Thy Sins Be Forgiven Thee"],"4-8":["08","L",9.32,26.28,13.56,"Rise, Take Up Thy Bed, and Walk"],"4-9":["09","E",12.11,27.4,12.43,"Ye Are the Salt of the Earth"],"4-10":["10","F",10.29,26.91,12.03,"Our Father Which Art in Heaven"],"4-11":["11","G",6.48,21.97,9.8,"Seek Ye First the Kingdom of God"],"4-12":["12","H",10.39,26.36,12.75,"Young Man, I Say Unto Thee, Arise"],"4-13":["01","I",7.15,20.19,14.92,"A House Divided Against Itself"],"4-14":["02","J",8.77,24.69,14.03,"He That Hath Ears to Hear, Let Him Hear"],"4-15":["03","K",9.42,25.73,12.56,"Even the Wind and Sea Obey Him"],"4-16":["04","L",8.23,22.2,14.45,"My Name Is Legion"],"4-17":["05","E",6.91,22.05,13.56,"Damsel, I Say Unto Thee, Arise"],"4-18":["06","F",8.36,23.95,13.48,"Freely Ye Have Received, Freely Give"],"4-19":["07","G",9.9,24.11,10.68,"It Is I; Be Not Afraid"],"4-20":["08","H",8.51,23.17,11.65,"I Am the Bread of Life"],"4-21":["09","I",13.14,29.96,13.17,""],"4-22":["10","J",10.24,25.81,13.95,""],"4-23":["11","K",7.21,24.76,13.09,""],"4-24":["12","L",10.34,26.67,12.83,""],"4-25":["01","E",7.25,20.11,11.0,""],"4-26":["02","F",9.75,27.56,13.01,""],"4-27":["03","G",9.27,24.92,8.67,""],"4-28":["04","H",8.03,23.72,10.11,""],"4-29":["05","I",7.88,26.28,14.29,""],"4-30":["06","J",8.23,22.36,14.18,""],"4-31":["07","K",9.31,23.41,13.4,""],"4-32":["08","L",8.99,24.45,13.48,""],"4-33":["09","E",12.01,28.11,12.75,""],"4-34":["10","A",9.49,23.72,11.65,""],"4-35":["11","F",6.8,22.67,12.54,""],"4-36":["12","G",9.94,25.47,8.75,""],"4-37":["01","H",8.32,23.25,10.76,""],"4-38":["02","I",8.92,24.45,13.95,""],"4-39":["03","J",9.21,25.89,13.95,""],"4-40":["04","K",8.34,24.19,12.16,""],"4-41":["05","B",6.5,20.27,11.89,""],"4-42":["06","L",8.07,22.52,14.11,""],"4-43":["07","E",9.59,22.91,12.59,""],"4-44":["08","F",8.68,25.08,13.09,""],"4-45":["09","G",12.5,28.84,8.98,""],"4-46":["10","H",10.36,25.73,12.43,""],"4-47":["11","C",6.25,19.8,12.93,""],"4-48":["12","I",9.44,23.64,14.37,""],"4-49":["01","J",7.47,20.43,13.95,""],"4-50":["02","D",8.72,22.44,13.73,""]};  /* 'season-episode': [opening, closing, leave, introEnd, closingFromEnd, title] */
+  const cardsFor = k => {
+    const e = EP[k]; if (!e) return null;
+    const ser = k.split('-')[0], n = k.split('-')[1];
+    return { o: { q: OPEN[e[0]][0], ref: OPEN[e[0]][1] }, c: { q: CLOSE[e[1]][0], ref: CLOSE[e[1]][1] },
+             leave: e[2], introEnd: e[3], outFrom: e[4], name: e[5],
+             title: ser === '4' ? '/demo/cards/s4-' + String(n).padStart(2, '0') + '.jpg' : null };
+  };
+  const cardsNow = () => cardsFor($('season').value + '-' + $('episode').value);
   let ecard = null, ekind = '', introDone = false, outroDismissed = false, previewTimers = [];
   function fitCard() {
     if (!ecard) return;
@@ -990,7 +923,7 @@
   $('replayWelcome').addEventListener('click', () => { welcome(); top0(); });
   $('demoWelcome').addEventListener('click', () => { welcome(); top0(); });
   function preview(kind) {
-    const C = cardsNow() || CARDS['4-1'];
+    const C = cardsNow() || cardsFor('4-1');
     top0(); hideCard(true); outroDismissed = false;
     setTimeout(() => {
       showCard(kind, C);

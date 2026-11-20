@@ -299,11 +299,12 @@
   .app{min-height:100vh;min-height:100lvh;padding-bottom:max(32px,env(safe-area-inset-bottom))}
   .app .player{flex:0 0 auto}
   .app>.more{margin-top:22px}
-  /* ===== fonts: same pairing as the main site (Lora headings, system sans for everything else) ===== */
+  /* ===== fonts: Lora throughout (Option C) ===== */
   :root{--serif:'Lora',Georgia,'Times New Roman',serif;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
-  html,body{font-family:var(--sans)}
+  html,body{font-family:var(--serif);font-weight:500}
   h1,h2,h3,.ecard .eq,.ecard .eline,.verse p,.season .shown,.wch h2,.wc2 h2,.wch .wone,.wch .wg b{font-family:var(--serif)}
-  .desc h3,.below .desc h3{font-family:var(--sans)}
+  .desc p,.below .desc p{font-size:18px;line-height:1.5}
+  .q .a{font-size:18px;line-height:1.5}
   /* Lora and the sans run wider than the old face, so the big sizes come down a little */
   .ecard .eq{font-size:clamp(26px,7.6vw,36px);line-height:1.22}
   .ecard .eline{font-size:clamp(18px,4.8vw,24px)}

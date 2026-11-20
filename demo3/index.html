@@ -266,7 +266,7 @@
   .wch p .hw{font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--red)}
   .wc1 .wtap1{position:absolute;left:0;right:0;bottom:max(6vh,28px);text-align:center;font-size:16px;font-style:italic;color:var(--muted)}
   html.nv{background:var(--navy)}
-  .wch .wtap2{display:flex;justify-content:space-between;width:100%;max-width:400px}
+  .wch .wtap2{display:flex;justify-content:space-between;width:100%;max-width:400px;margin-top:46px}
   .wc2 .wtap{display:flex;justify-content:space-between;max-width:440px;margin:0 auto;padding:0 30px}
   .b2 .pp{font-weight:500;font-size:20px;line-height:1.4;color:#3b342e}
   .b2 .pv{font-weight:500;font-style:italic;font-size:19px;line-height:1.4;color:var(--muted)}
@@ -312,8 +312,8 @@
   .wc2 .wtop p,.wc2 .wbot p,.wch p{font-size:clamp(17px,4.6vw,21px);line-height:1.45}
   .season .shown{font-size:clamp(18px,5vw,23px)}
   /* the page itself ends in navy: nothing cream or white can show under the footer or on overscroll */
-  html{background:var(--navy)}
-  body{background:var(--cream)}
+  html{background:var(--cream)}
+  body{background:transparent}
 </style>
 </head>
 <body>
@@ -447,19 +447,6 @@
           <a href="mailto:wwjesuspodcast@gmail.com">Questions or feedback? Email us</a>
         </div>
     </div>
-    <details class="cat demo" id="catDemo">
-      <summary>Demo controls</summary>
-      <div class="body">
-        <p>This is a test page, not shown in search. These buttons are only here for you to preview things.</p>
-        <button type="button" class="wbtn" id="demoS4">Go to Four Gospel Harmony, episode 1</button>
-        <p>Opening and closing cards are built for every episode of all four harmonies. Episode title cards are built for Four Gospel Harmony.</p>
-        <button type="button" class="wbtn alt" id="demoWelcome">Replay the welcome cards</button>
-        <button type="button" class="wbtn alt" id="demoEnd">Jump to the last 20 seconds of this episode</button>
-        <button type="button" class="wbtn alt" id="demoIntro">Preview the opening cards of this episode</button>
-        <button type="button" class="wbtn alt" id="demoCard">Preview the end card of this episode</button>
-        <button type="button" class="wbtn alt" id="demoReset">Forget this device and start fresh</button>
-      </div>
-    </details>
   </div></section>
 
   <footer class="legal"><p>&copy; 2026 Walking with Jesus</p></footer>
@@ -901,6 +888,7 @@
   /* put the replica exactly over the real season selector, then fit the arrow and the tap line around it */
   function placeDrop() {
     if (!wov || !wdrop) return;
+    if (window.scrollY > 0) window.scrollTo(0, 0);
     const real = document.querySelector('.pick.season'); if (!real) return;
     const r = real.getBoundingClientRect();
     wdrop.style.left = r.left + 'px'; wdrop.style.top = r.top + 'px'; wdrop.style.width = r.width + 'px'; wdrop.style.height = r.height + 'px';
@@ -911,13 +899,16 @@
     c2.querySelector('.wtap').style.top = (r.bottom + 22) + 'px';
   }
   window.addEventListener('resize', placeDrop);
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.addEventListener('scroll', () => { if (wov && window.scrollY > 0) { window.scrollTo(0, 0); placeDrop(); } }, { passive: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (wov) placeDrop(); });
   /* cards hold until tapped: right side goes forward, left side goes back */
   function goTo(n) {
     wstage = n;
     wov.querySelector('.wc1').classList.toggle('on', n === 1);
     wov.querySelector('.wch').classList.toggle('on', n === 2);
     wov.querySelector('.wc2').classList.toggle('on', n === 3);
-    if (wdrop) { if (n === 3) { placeDrop(); wdrop.classList.add('on'); } else wdrop.classList.remove('on'); }
+    if (wdrop) { if (n === 3) { placeDrop(); wdrop.classList.add('on'); requestAnimationFrame(placeDrop); } else wdrop.classList.remove('on'); }
   }
   function advance() { if (!wov) return; if (wstage < 3) goTo(wstage + 1); else finishWelcome(); }
   function back() { if (wov && wstage > 1) goTo(wstage - 1); }
@@ -1038,34 +1029,9 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   audio.addEventListener('loadstart', () => { introDone = false; outroDismissed = false; hideCard(true); });
   window.addEventListener('resize', fitCard);
 
-  /* ---------- demo controls ---------- */
+  /* ---------- replay the welcome ---------- */
   const top0 = () => window.scrollTo({ top: 0, behavior: 'smooth' });
   $('replayWelcome').addEventListener('click', () => { welcome(); top0(); });
-  $('demoWelcome').addEventListener('click', () => { welcome(); top0(); });
-  function preview(kind) {
-    const C = cardsNow() || cardsFor('4-1');
-    top0(); hideCard(true); outroDismissed = false;
-    setTimeout(() => {
-      showCard(kind, C);
-      if (kind === 'intro') {
-        if (C.title) previewTimers.push(setTimeout(() => toTitle(C), C.leave * 1000));
-        previewTimers.push(setTimeout(() => hideCard(false), (C.introEnd - 0.8) * 1000));
-      } else previewTimers.push(setTimeout(() => hideCard(false), C.outFrom * 1000));
-    }, 450);
-  }
-  $('demoS4').addEventListener('click', () => {
-    const ss = $('season'), es = $('episode');
-    ss.value = '4'; ss.dispatchEvent(new Event('change'));
-    setTimeout(() => { es.value = '1'; es.dispatchEvent(new Event('change')); top0(); }, 200);
-  });
-  $('demoCard').addEventListener('click', () => preview('outro'));
-  $('demoIntro').addEventListener('click', () => preview('intro'));
-  $('demoEnd').addEventListener('click', () => {
-    const b = $('demoEnd'), d = audio.duration;
-    if (!isFinite(d) || !audio.src) { const t = b.textContent; b.textContent = 'Press play on an episode first'; setTimeout(() => { b.textContent = t; }, 2200); return; }
-    top0(); outroDismissed = false; audio.currentTime = Math.max(0, d - 20); audio.play().catch(() => {});
-  });
-  $('demoReset').addEventListener('click', () => { lsDel(WKEY); location.reload(); });
 })();
 /* bottom edge: the browser's bottom strip follows the navy section once it fills the screen */
 (() => {

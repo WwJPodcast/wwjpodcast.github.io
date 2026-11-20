@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="canonical" href="https://wwjpodcast.github.io/">
-<base href="https://wwjpodcast.github.io/hearjesus/">
+<link rel="canonical" href="https://hearjesus.here/">
+<base href="https://hearjesus.here/hearjesus/">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Walking with Jesus — Hear Jesus here.</title>
 <meta name="description" content="Hear Jesus here. Listen to Walking with Jesus, the Gospels in order, 15 minutes at a time.">
@@ -11,12 +11,12 @@
 <meta property="og:title" content="Hear Jesus here. Podcast Player">
 <meta property="og:description" content="Listen free in your browser. The Gospels, in order, 15 minutes at a time. It remembers where you left off.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://wwjpodcast.github.io/">
-<meta property="og:image" content="https://wwjpodcast.github.io/hearjesus/og-image.jpg?v=2">
+<meta property="og:url" content="https://hearjesus.here/">
+<meta property="og:image" content="https://hearjesus.here/og-hear-jesus-here.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://wwjpodcast.github.io/hearjesus/og-image.jpg?v=2">
+<meta name="twitter:image" content="https://hearjesus.here/og-hear-jesus-here.jpg">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/hearjesus/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/hearjesus/icon-192.png">
@@ -371,7 +371,7 @@
 <div class="below" id="below">
   <section class="b1"><div class="in">
     <div class="routes">
-      <a class="rbtn gold" href="https://wwjpodcast.github.io/seniors/"><span>Videos for Seniors</span><i aria-hidden="true"></i></a>
+      <a class="rbtn gold" href="https://hearjesus.here/seniors/"><span>Videos for Seniors</span><i aria-hidden="true"></i></a>
     </div>
   </div></section>
 
@@ -515,7 +515,7 @@
     return '';
   }
   // Description as plain paragraphs (text only, so nothing from the feed is ever treated as markup).
-  const SHOW_FALLBACK = ['Hear Jesus here.','“My sheep hear my voice, and I know them, and they follow me...” — John 10:27','Make hearing Jesus a daily practice.','Walking with Jesus gives you 15 minutes of the Gospels each weekday, straight from the King James text. No commentary, no sermon. Just Scripture, read aloud. Listen in your podcast app, or right in your browser at wwjpodcast.github.io/hearjesus. It remembers where you left off.'];
+  const SHOW_FALLBACK = ['Hear Jesus here.','“My sheep hear my voice, and I know them, and they follow me...” — John 10:27','Make hearing Jesus a daily practice.','Walking with Jesus gives you 15 minutes of the Gospels each weekday, straight from the King James text. No commentary, no sermon. Just Scripture, read aloud. Listen in your podcast app, or right in your browser at hearjesus.here. It remembers where you left off.'];
   let showDesc = SHOW_FALLBACK.map((t, i) => ({ t, b: i === 0 }));
   function descParas(html) {
     const d = new DOMParser().parseFromString(html || '', 'text/html');
@@ -879,7 +879,7 @@
   }));
   const shareBtn = $('shareBtn'), toast = $('toast');
   if (shareBtn) shareBtn.addEventListener('click', async () => {
-    const url = 'https://wwjpodcast.github.io/';
+    const url = 'https://hearjesus.here/';
     const say = t => { toast.textContent = t; setTimeout(() => { toast.textContent = ''; }, 3500); };
     try {
       if (navigator.share) { await navigator.share({ title: 'Walking with Jesus', text: 'Hear Jesus here.', url }); return; }

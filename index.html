@@ -8,7 +8,7 @@
 <title>Walking with Jesus — Hear Jesus here.</title>
 <meta name="description" content="Hear Jesus here. Listen to Walking with Jesus, the Gospels in order, 15 minutes at a time.">
 <meta name="theme-color" content="#FBF7EC">
-<meta property="og:title" content="Hear Jesus here. Podcast Player">
+<meta property="og:title" content="Walking with Jesus Podcast Player">
 <meta property="og:description" content="Listen free in your browser. The Gospels, in order, 15 minutes at a time. It remembers where you left off.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hearjesus.here/">
@@ -882,7 +882,7 @@
     const url = 'https://hearjesus.here/';
     const say = t => { toast.textContent = t; setTimeout(() => { toast.textContent = ''; }, 3500); };
     try {
-      if (navigator.share) { await navigator.share({ title: 'Walking with Jesus', text: 'Hear Jesus here.', url }); return; }
+      if (navigator.share) { await navigator.share({ title: 'Walking with Jesus Podcast Player', url }); return; }
       await navigator.clipboard.writeText(url); say('Link copied.');
     } catch (e) { if (e && e.name !== 'AbortError') say(url); }
   });

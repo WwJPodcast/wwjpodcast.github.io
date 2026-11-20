@@ -486,7 +486,15 @@
 
   let eps = {};            // season id -> [{n,title,url,dur}] ascending
   let cur = { s: null, n: null };
-  let pendingSeek = 0, lastSave = 0;
+  let pendingSeek = 0, lastSave = 0, vel = null;   // vel = the R2 video element while it is on screen
+  // Lead-in: rough seconds of intro music / nature sound at the start of the video before the voice begins (the
+  // MP3 has none). While watching, the video plays with its own sound and the player's controls drive it; the
+  // lead-in is only used to translate positions when switching between Watch and audio. Per-episode entries
+  // ("season-episode": seconds) override the default. Testing: open the player with ?vlead=7 to override both.
+  const VLEAD_DEFAULT = 5, VLEAD = {};
+  const vleadQ = (() => { try { const q = new URLSearchParams(location.search).get('vlead'); return q === null || q === '' ? null : Math.max(0, parseFloat(q) || 0); } catch (e) { return null; } })();
+  const vlead = (s, n) => vleadQ !== null ? vleadQ : (VLEAD[s + '-' + n] != null ? VLEAD[s + '-' + n] : VLEAD_DEFAULT);
+
 
   /* ---------- feed ---------- */
   // The verses are written into each episode description. The wording differs by season, so try each known form.
@@ -580,7 +588,7 @@
     $('speeds').appendChild(b);
   });
   function setSpeed(v) {
-    store.speed = v; audio.playbackRate = v; save(); paintTime();
+    store.speed = v; audio.playbackRate = v; if (vel) vel.playbackRate = v; save(); paintTime();
     [...$('speeds').children].forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.v === v)));
   }
 
@@ -620,8 +628,9 @@
   const refreshTicker = () => { const e = curEp(); if (e) setTicker(e, !audio.paused && !audio.ended); };
 
   function paintTime() {
-    const d = audio.duration && isFinite(audio.duration) ? audio.duration : (curEp() ? curEp().dur : 0);
-    const t = audio.currentTime || 0;
+    const d = vel ? (vel.duration && isFinite(vel.duration) ? vel.duration : (curEp() ? curEp().dur : 0) + vlead(cur.s, cur.n))
+                  : (audio.duration && isFinite(audio.duration) ? audio.duration : (curEp() ? curEp().dur : 0));
+    const t = vel ? (vel.currentTime || 0) : (audio.currentTime || 0);
     seek.max = d || 100; seek.value = t;
     seek.style.setProperty('--p', d ? (t / d * 100) + '%' : '0%');
     $('tNow').textContent = fmt(t / (store.speed || 1));
@@ -632,9 +641,10 @@
   function saveProgress() {
     if (cur.s == null || !audio.src) return;
     const k = cur.s + '-' + cur.n, d = audio.duration;
-    if (isFinite(d) && audio.currentTime > 3) {
-      if (audio.currentTime >= d - 8) { store.done[k] = true; delete store.pos[k]; }
-      else store.pos[k] = Math.floor(audio.currentTime);
+    const at = vel ? Math.max(0, vel.currentTime - vlead(cur.s, cur.n)) : audio.currentTime;   // position in the audio timeline
+    if (isFinite(d) && at > 3) {
+      if (at >= d - 8) { store.done[k] = true; delete store.pos[k]; }
+      else store.pos[k] = Math.floor(at);
     }
     store.last[cur.s] = cur.n; store.season = cur.s; save();
   }
@@ -642,8 +652,7 @@
   /* ---------- load / navigate ---------- */
   function loadEpisode(s, n, autoplay) {
     const wasWatching = watching && !$('app').classList.contains('ytmode');
-    if (watching) stopWatch(false);
-    if (cur.s != null) saveProgress();
+    if (watching) { saveProgress(); stopWatch(false); } else if (cur.s != null) saveProgress();
     cur = { s, n };
     const e = curEp(); if (!e) return;
     const k = s + '-' + n, p = store.pos[k] || 0;
@@ -658,7 +667,7 @@
     seek.style.setProperty('--p', e.dur ? (pendingSeek / e.dur * 100) + '%' : '0%');
     updateMediaSession(); paintDesc(); if (typeof updateWatch === 'function') updateWatch();
     if (autoplay) audio.play().catch(() => {});
-    if (wasWatching && typeof startWatch === 'function' && (videos[s] || {})[n]) startWatch(false);
+    if (wasWatching && typeof startWatch === 'function' && (videos[s] || {})[n]) startWatch(!!autoplay);
   }
   function pickSeason(s) {
     const list = eps[s] || []; if (!list.length) return;
@@ -672,12 +681,16 @@
   }
 
   /* ---------- events ---------- */
-  $('play').addEventListener('click', () => { audio.paused ? audio.play().catch(() => {}) : audio.pause(); });
-  $('prev').addEventListener('click', () => { if (audio.currentTime > 5) audio.currentTime = 0; else step(-1, !audio.paused); });
-  $('next').addEventListener('click', () => step(1, !audio.paused));
+  const isPlaying = () => vel ? !vel.paused : !audio.paused;
+  $('play').addEventListener('click', () => { const m = vel || audio; m.paused ? m.play().catch(() => {}) : m.pause(); });
+  $('prev').addEventListener('click', () => {
+    if (vel) { if (vel.currentTime > vlead(cur.s, cur.n) + 5) { vel.currentTime = 0; paintTime(); } else step(-1, isPlaying()); return; }
+    if (audio.currentTime > 5) audio.currentTime = 0; else step(-1, !audio.paused);
+  });
+  $('next').addEventListener('click', () => step(1, isPlaying()));
   seasonSel.addEventListener('change', () => pickSeason(+seasonSel.value));
-  epSel.addEventListener('change', () => loadEpisode(cur.s, +epSel.value, !audio.paused));
-  seek.addEventListener('input', () => { audio.currentTime = +seek.value; paintTime(); });
+  epSel.addEventListener('change', () => loadEpisode(cur.s, +epSel.value, isPlaying()));
+  seek.addEventListener('input', () => { if (vel) vel.currentTime = +seek.value; else audio.currentTime = +seek.value; paintTime(); });
 
   audio.addEventListener('loadedmetadata', () => {
     if (pendingSeek) { audio.currentTime = pendingSeek; pendingSeek = 0; }
@@ -727,7 +740,9 @@
   }
 
   /* ---------- 15-second jumps ---------- */
-  const jump = d => { const t = audio.currentTime + d, m = isFinite(audio.duration) ? audio.duration : t; audio.currentTime = Math.max(0, Math.min(t, m)); paintTime(); saveProgress(); };
+  const jump = d => {
+    if (vel) { const dur = isFinite(vel.duration) ? vel.duration : vel.currentTime + d; vel.currentTime = Math.max(0, Math.min(vel.currentTime + d, dur)); paintTime(); saveProgress(); return; }
+    const t = audio.currentTime + d, m = isFinite(audio.duration) ? audio.duration : t; audio.currentTime = Math.max(0, Math.min(t, m)); paintTime(); saveProgress(); };
   $('back15').addEventListener('click', () => jump(-15));
   $('fwd15').addEventListener('click', () => jump(15));
 
@@ -735,13 +750,7 @@
   // The ONE line to change if the video address ever moves. Falls back to the YouTube copy if a file won't load.
   const R2 = 'https://pub-306859672a3d4fa4a0d0662093095c81.r2.dev/';
   const vurl = (s, n) => R2 + 's' + s + 'ep' + String(n).padStart(2, '0') + '_FULL.mp4';
-  // Lead-in: seconds of intro music / nature sound at the start of the video before the voice begins (the audio
-  // file has none). The picture runs this far ahead of the audio. Per-episode entries ("season-episode": seconds)
-  // override the default. For testing, open the player with ?vlead=7 (seconds) to override both.
-  const VLEAD_DEFAULT = 0, VLEAD = {};
-  const vleadQ = (() => { try { const q = new URLSearchParams(location.search).get('vlead'); return q === null || q === '' ? null : Math.max(0, parseFloat(q) || 0); } catch (e) { return null; } })();
-  const vlead = (s, n) => vleadQ !== null ? vleadQ : (VLEAD[s + '-' + n] != null ? VLEAD[s + '-' + n] : VLEAD_DEFAULT);
-  let videos = {}, yt = null, vel = null, watching = false, ytReady = null;
+  let videos = {}, yt = null, watching = false, ytReady = null;
   fetch('videos.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : {}).then(j => { videos = j || {}; updateWatch(); }).catch(() => {});
   const vidId = () => (videos[cur.s] || {})[cur.n];
   function updateWatch() { $('watchRow').hidden = !(watching || vidId()); }
@@ -766,34 +775,41 @@
     if (typeof d.info.playerState === 'number') ytState = d.info.playerState;
   });
   // A plain iframe: Safari does all the sizing. Position comes back through YouTube's postMessage feed.
-  // The R2 video is a silent picture that follows the player's audio, so play/pause, skip, seek, speed and
-  // next/previous all keep working through the normal controls. (If R2 fails, the YouTube copy takes over.)
-  function syncVideo(force) {
-    const v = vel; if (!v) return;
-    const t = (audio.readyState >= 1 ? audio.currentTime : (pendingSeek || 0)) + vlead(cur.s, cur.n);
-    if (v.readyState >= 1 && (force || Math.abs(v.currentTime - t) > 0.4)) { try { v.currentTime = t; } catch (e) {} }
-    if (v.playbackRate !== audio.playbackRate) v.playbackRate = audio.playbackRate;
-    if (!audio.paused && !audio.ended) { if (v.paused) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } }
-    else if (!v.paused) v.pause();
+  // The R2 video plays with its own sound (intro music, nature, voice) and the player's controls drive it. One
+  // <video> element is reused for every episode so iOS keeps allowing sound when the next episode starts itself.
+  let vEl = null;
+  function videoEl() {
+    if (vEl) return vEl;
+    const v = vEl = document.createElement('video');
+    v.controls = false; v.playsInline = true; v.preload = 'auto';
+    v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
+    const on = (ev, fn) => v.addEventListener(ev, () => { if (vel === v) fn(); });
+    on('play',  () => { app.classList.add('playing'); $('play').setAttribute('aria-label', 'Pause'); });
+    on('pause', () => { app.classList.remove('playing'); $('play').setAttribute('aria-label', 'Play'); saveProgress(); });
+    on('loadedmetadata', paintTime);
+    on('timeupdate', () => { paintTime(); const now = Date.now(); if (now - lastSave > 5000) { lastSave = now; saveProgress(); } });
+    on('ended', () => {
+      const k = cur.s + '-' + cur.n; store.done[k] = true; delete store.pos[k]; save();
+      step(1, true); fillEpisodes();
+    });
+    on('error', () => {
+      // R2 file missing or blocked: fall back to the YouTube copy at the same spot.
+      const id = vidId(), at = Math.floor(v.currentTime || 0);
+      vel = null; if (id && watching) mountYT(id, at, true);
+    });
+    return v;
   }
-  ['play', 'playing', 'pause', 'seeked', 'ratechange', 'timeupdate'].forEach(ev =>
-    audio.addEventListener(ev, () => syncVideo(ev === 'seeked')));
-  function mountVideo(id, t) {
-    const box = $('vbox'); box.hidden = false;
-    const v = document.createElement('video');
-    v.muted = true; v.defaultMuted = true; v.controls = false; v.playsInline = true; v.preload = 'auto';
-    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
+  function mountVideo(t, play) {
+    const v = videoEl(), box = $('vbox'); box.hidden = false;
     const wrap = document.createElement('div'); wrap.className = 'vin'; wrap.appendChild(v);
     box.innerHTML = ''; box.appendChild(wrap);
     vel = v; yt = null; $('app').classList.remove('ytmode');
-    v.addEventListener('loadedmetadata', () => syncVideo(true));
-    v.addEventListener('canplay', () => syncVideo(false));
-    v.addEventListener('error', () => {
-      if (vel !== v || !watching) return;
-      vel = null; mountYT(id, Math.floor((audio.currentTime || 0) + vlead(cur.s, cur.n) || t || 0), true);
-    });
+    v.muted = false; v.volume = 1;
     v.src = vurl(cur.s, cur.n);
-    syncVideo(true);
+    v.playbackRate = store.speed || 1;
+    const go = () => { if (t > 0) { try { v.currentTime = Math.min(t, Math.max(0, (v.duration || t + 1) - 1)); } catch (e) {} } paintTime(); };
+    if (v.readyState >= 1) go(); else v.addEventListener('loadedmetadata', function h() { v.removeEventListener('loadedmetadata', h); go(); });
+    if (play) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => { app.classList.remove('playing'); $('play').setAttribute('aria-label', 'Play'); }); }
   }
   function mountYT(id, t, auto) {
     audio.pause(); $('app').classList.add('ytmode');
@@ -806,31 +822,40 @@
   }
   async function startWatch(playNow = true) {
     const id = vidId(); if (!id) return;
+    const a = audio.currentTime || pendingSeek || 0, wasPlaying = !audio.paused;
+    audio.pause();
     watching = true; $('app').classList.add('watching'); $('watchTxt').textContent = 'Back to audio';
-    mountVideo(id, Math.floor((audio.currentTime || pendingSeek || 0) + vlead(cur.s, cur.n)));
-    if (playNow && audio.paused) audio.play().catch(() => {});
+    // From the very start, begin at the video's own beginning so the intro music is heard; otherwise land at the same words.
+    mountVideo(a > 1 ? a + vlead(cur.s, cur.n) : 0, playNow || wasPlaying);
   }
   function stopWatch(handBack) {
     if (!watching) return;
-    let t = ytTime, wasPlaying = ytState === 1;
-    if (vel) { try { vel.pause(); } catch (e) {} t = null; wasPlaying = false; }   // the audio never stopped, so nothing to hand back
+    let t = null, wasPlaying = false;
+    if (vel) {
+      const L = vlead(cur.s, cur.n);
+      wasPlaying = !vel.paused && !vel.ended;
+      t = vel.currentTime <= L ? 0 : vel.currentTime - L;          // position in the audio timeline
+      try { vel.pause(); } catch (e) {}
+    } else if (ytTime != null) {
+      t = Math.max(0, ytTime - vlead(cur.s, cur.n)); wasPlaying = ytState === 1;
+    }
     vel = null; yt = null; watching = false;
     $('vbox').innerHTML = ''; $('vbox').hidden = true;
     $('app').classList.remove('watching', 'ytmode'); $('watchTxt').textContent = 'Watch';
-    if (t != null) t = Math.max(0, t - vlead(cur.s, cur.n));
+    app.classList.toggle('playing', handBack && wasPlaying); $('play').setAttribute('aria-label', handBack && wasPlaying ? 'Pause' : 'Play');
     if (handBack && t != null) {
       const d = audio.duration && isFinite(audio.duration) ? audio.duration : (curEp() ? curEp().dur : t);
       t = Math.max(0, Math.min(t, d - 1));
       if (audio.readyState >= 1) { audio.currentTime = t; paintTime(); }
       else {
         pendingSeek = t; store.pos[cur.s + '-' + cur.n] = t; save();
-        const e = curEp(); seek.value = t; seek.style.setProperty('--p', d ? (t / d * 100) + '%' : '0%');
+        const e = curEp(); seek.max = d || 100; seek.value = t; seek.style.setProperty('--p', d ? (t / d * 100) + '%' : '0%');
         $('tNow').textContent = fmt(t / (store.speed || 1)); $('tLeft').textContent = '−' + fmt(Math.max(0, d - t) / (store.speed || 1));
       }
       if (audio.readyState >= 1) saveProgress();
       if (wasPlaying) audio.play().catch(() => {});
     }
-    updateWatch();
+    paintTime(); updateWatch();
   }
   $('watchBtn').addEventListener('click', () => watching ? stopWatch(true) : startWatch(true));
 

@@ -263,6 +263,9 @@
   .wch .wone{font-weight:700;letter-spacing:.2em;font-size:22px;color:var(--navy)}
   .wch p{font-size:clamp(19px,5.2vw,24px);line-height:1.3;color:#3b342e;margin-top:16px;max-width:440px}
   .wch .wtap2{margin-top:18px;font-size:16px;font-style:italic;color:var(--muted)}
+  .wch p .hw{font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--red)}
+  .wc1 .wtap1{position:absolute;left:0;right:0;bottom:max(6vh,28px);text-align:center;font-size:16px;font-style:italic;color:var(--muted)}
+  html.nv{background:var(--navy)}
   .b2 .pp{font-weight:500;font-size:20px;line-height:1.4;color:#3b342e}
   .b2 .pv{font-weight:500;font-style:italic;font-size:19px;line-height:1.4;color:var(--muted)}
   .b3 .in{padding-top:44px;padding-bottom:40px;gap:44px}
@@ -287,7 +290,7 @@
   .below .toast{color:var(--pale)}
   .below .demo .body p{color:var(--pale)}
   .below .demo .body .wbtn.alt{border-color:rgba(227,181,91,.5);color:var(--cream)}
-  .below .legal{background:var(--navy-deep);color:#C9C2B0;margin:0;padding:26px 26px 30px}
+  .below .legal{background:var(--navy);color:#C9C2B0;margin:0;padding:26px 26px 30px}
   .below :focus-visible{outline:2px solid var(--gold-lt);outline-offset:3px}
 
   /* demo2: About row lives in the cream first screen; cream always fills the full (large) viewport */
@@ -888,48 +891,48 @@
     c2.querySelector('.wtap').style.top = (r.bottom + 22) + 'px';
   }
   window.addEventListener('resize', placeDrop);
-  function advance() {
-    if (!wov) return;
-    clearTimeout(wtimer);
-    if (wstage === 1) {
-      wstage = 2;
-      wov.querySelector('.wc1').classList.remove('on'); wov.querySelector('.wch').classList.add('on');
-      wtimer = setTimeout(advance, 10000);
-    } else if (wstage === 2) {
-      wstage = 3;
-      placeDrop(); wdrop.classList.add('on');
-      wov.querySelector('.wch').classList.remove('on'); wov.querySelector('.wc2').classList.add('on');
-      wtimer = setTimeout(finishWelcome, 14000);
-    } else finishWelcome();
+  /* cards hold until tapped: right side goes forward, left side goes back */
+  function goTo(n) {
+    wstage = n;
+    wov.querySelector('.wc1').classList.toggle('on', n === 1);
+    wov.querySelector('.wch').classList.toggle('on', n === 2);
+    wov.querySelector('.wc2').classList.toggle('on', n === 3);
+    if (wdrop) { if (n === 3) { placeDrop(); wdrop.classList.add('on'); } else wdrop.classList.remove('on'); }
   }
+  function advance() { if (!wov) return; if (wstage < 3) goTo(wstage + 1); else finishWelcome(); }
+  function back() { if (wov && wstage > 1) goTo(wstage - 1); }
+  document.addEventListener('keydown', e => {
+    if (!wov) return;
+    if (e.key === 'ArrowRight') advance(); else if (e.key === 'ArrowLeft') back();
+  });
   function welcome() {
     if (wov) wov.remove();
     clearTimeout(wtimer); wstage = 1;
     wov = h('div', 'wov'); wov.setAttribute('role', 'dialog'); wov.setAttribute('aria-label', 'Welcome to Walking with Jesus');
-    const c1 = h('div', 'wc wc1 on'), im = h('img'); im.src = '/demo3/hear-jesus-here.svg'; im.alt = 'Hear Jesus here.'; c1.appendChild(im);
+    const c1 = h('div', 'wc wc1 on'), im = h('img'); im.src = '/demo3/hear-jesus-here.svg'; im.alt = 'Hear Jesus here.'; c1.appendChild(im); c1.appendChild(h('div', 'wtap1', 'Tap to continue'));
     const ch = h('div', 'wc wch');
     ch.innerHTML =
       '<h2>Hear Jesus from every angle.</h2>' +
       '<div class="wg"><div><b>Matthew</b><span>Eyewitness account</span></div><div><b>Mark</b><span>Action oriented</span></div><div><b>Luke</b><span>Careful historian</span></div><div><b>John</b><span>The beloved disciple</span></div></div>' +
       '<svg class="wt" viewBox="0 0 350 130" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M44 6C44 62 175 56 175 96" stroke="#C4A059"/><path d="M131 6C131 52 175 60 175 96" stroke="#9A1114"/><path d="M219 6C219 52 175 60 175 96" stroke="#C4A059"/><path d="M306 6C306 62 175 56 175 96" stroke="#9A1114"/><path d="M175 96V126" stroke="#1B2748" stroke-width="7"/></g></svg>' +
       '<div class="wone">ONE STORY</div>' +
-      '<p>That&rsquo;s a harmony: two or more Gospels blended into one story, told in the order it happened.</p>' +
-      '<div class="wtap2">Tap anywhere to continue</div>';
+      '<p>That&rsquo;s a <b class="hw">harmony</b>: two or more Gospels blended into one story, told in the order it happened.</p>' +
+      '<div class="wtap2">Tap right to continue &middot; tap left to go back</div>';
     const c2 = h('div', 'wc wc2');
     c2.innerHTML =
       '<div class="wtop"><h2>Go at your pace.</h2><p>Pick the harmony you want to hear, choose your speed, and it remembers where you stopped.</p></div>' +
       '<svg class="warrow" viewBox="0 0 36 60" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3v50M6 40l12 14 12-14"/></svg>' +
-      '<div class="wtap">Tap anywhere to begin</div>' +
+      '<div class="wtap">Tap right to begin &middot; tap left to go back</div>' +
       '<div class="wbot"><p>Everything else is just below. Scroll for questions, sharing, and large-print videos.</p>' +
       '<svg viewBox="0 0 34 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l13 14L30 4"/></svg></div>';
     wdrop = h('div', 'pick season wdrop', '<span class="shown"><span></span><i class="chev"></i></span>');
-    wov.append(c1, ch, c2, wdrop); wov.addEventListener('click', advance);
+    wov.append(c1, ch, c2, wdrop);
+    wov.addEventListener('click', e => { if (e.clientX < window.innerWidth * 0.35) back(); else advance(); });
     window.scrollTo(0, 0);
     document.documentElement.style.overflow = 'hidden';
     document.body.appendChild(wov);
     wmo = new MutationObserver(placeDrop); wmo.observe($('seasonLabel'), { childList: true, characterData: true, subtree: true });
     placeDrop();
-    wtimer = setTimeout(advance, 3600);
   }
   if (!lsGet(WKEY) || /[?&]welcome=1/.test(location.search)) welcome();
 
@@ -1043,6 +1046,18 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     top0(); outroDismissed = false; audio.currentTime = Math.max(0, d - 20); audio.play().catch(() => {});
   });
   $('demoReset').addEventListener('click', () => { lsDel(WKEY); location.reload(); });
+})();
+/* bottom edge: the browser's bottom strip follows the navy section once it fills the screen */
+(() => {
+  const below = document.getElementById('below'), meta = document.querySelector('meta[name="theme-color"]'), root = document.documentElement;
+  if (!below) return;
+  let on = null;
+  const upd = () => {
+    const nv = below.getBoundingClientRect().top <= 1;
+    if (nv === on) return; on = nv; root.classList.toggle('nv', nv);
+    if (meta) meta.setAttribute('content', nv ? '#1B2A49' : '#FBF7EC');
+  };
+  addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); upd();
 })();
 </script>
 </body>

@@ -266,6 +266,8 @@
   .wch p .hw{font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--red)}
   .wc1 .wtap1{position:absolute;left:0;right:0;bottom:max(6vh,28px);text-align:center;font-size:16px;font-style:italic;color:var(--muted)}
   html.nv{background:var(--navy)}
+  .wch .wtap2{display:flex;justify-content:space-between;width:100%;max-width:400px}
+  .wc2 .wtap{display:flex;justify-content:space-between;max-width:440px;margin:0 auto;padding:0 30px}
   .b2 .pp{font-weight:500;font-size:20px;line-height:1.4;color:#3b342e}
   .b2 .pv{font-weight:500;font-style:italic;font-size:19px;line-height:1.4;color:var(--muted)}
   .b3 .in{padding-top:44px;padding-bottom:40px;gap:44px}
@@ -335,11 +337,11 @@
   </section>
   <nav class="more" aria-label="More">
     <details class="cat" id="catAbout">
-      <summary>About this show &amp; episode</summary>
+      <summary>About this episode &amp; harmony</summary>
       <div class="body desc">
         <div class="tabs" role="tablist">
           <button type="button" role="tab" id="tabEp" aria-selected="true" aria-controls="epDesc">Episode</button>
-          <button type="button" role="tab" id="tabShow" aria-selected="false" aria-controls="showDesc">Show</button>
+          <button type="button" role="tab" id="tabShow" aria-selected="false" aria-controls="showDesc">Harmony</button>
         </div>
         <div id="epDesc" role="tabpanel" aria-labelledby="tabEp"></div>
         <div id="showDesc" role="tabpanel" aria-labelledby="tabShow" hidden></div>
@@ -822,13 +824,17 @@
     };
     const e = curEp();
     fill($('epDesc'), e && e.desc, 'The episode description is not available right now.');
-    const SHOW_SKIP = [/^Hear Jesus here\.?$/i, /John 10:27/, /^Make hearing Jesus a daily practice\.?$/i];
-    fill($('showDesc'), showDesc.filter(x => !SHOW_SKIP.some(r => r.test(String(x.t).trim()))), '');
+    /* second tab = constant "Harmony" pill; panel shows the selected series' name and description only */
     const si = cur.s != null && seasonInfo(cur.s), sd = si && seriesDesc(si.label);
+    const tab = $('tabShow'), pane = $('showDesc');
+    pane.textContent = '';
     if (sd) {
-      const h = document.createElement('h3'); h.textContent = si.label;
-      const p = document.createElement('p'); p.textContent = sd;
-      $('showDesc').append(h, p);
+      tab.hidden = false;
+      const hd = document.createElement('h3'); hd.textContent = si.label;
+      const p = document.createElement('p'); p.textContent = sd; pane.append(hd, p);
+    } else {
+      tab.hidden = true;
+      if (tab.getAttribute('aria-selected') === 'true') aboutTab('tabEp');
     }
   }
   async function start() {
@@ -909,7 +915,7 @@
     if (wov) wov.remove();
     clearTimeout(wtimer); wstage = 1;
     wov = h('div', 'wov'); wov.setAttribute('role', 'dialog'); wov.setAttribute('aria-label', 'Welcome to Walking with Jesus');
-    const c1 = h('div', 'wc wc1 on'), im = h('img'); im.src = '/demo3/hear-jesus-here.svg'; im.alt = 'Hear Jesus here.'; c1.appendChild(im); c1.appendChild(h('div', 'wtap1', 'Tap to continue'));
+    const c1 = h('div', 'wc wc1 on'), im = h('img'); im.src = '/demo3/hear-jesus-here.svg'; im.alt = 'Hear Jesus here.'; c1.appendChild(im); c1.appendChild(h('div', 'wtap1', 'Tap to continue &raquo;'));
     const ch = h('div', 'wc wch');
     ch.innerHTML =
       '<h2>Hear Jesus from every angle.</h2>' +
@@ -917,12 +923,12 @@
       '<svg class="wt" viewBox="0 0 350 130" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M44 6C44 62 175 56 175 96" stroke="#C4A059"/><path d="M131 6C131 52 175 60 175 96" stroke="#9A1114"/><path d="M219 6C219 52 175 60 175 96" stroke="#C4A059"/><path d="M306 6C306 62 175 56 175 96" stroke="#9A1114"/><path d="M175 96V126" stroke="#1B2748" stroke-width="7"/></g></svg>' +
       '<div class="wone">ONE STORY</div>' +
       '<p>That&rsquo;s a <b class="hw">harmony</b>: two or more Gospels blended into one story, told in the order it happened.</p>' +
-      '<div class="wtap2">Tap right to continue &middot; tap left to go back</div>';
+      '<div class="wtap2"><span>&laquo; Tap to go back</span><span>Tap to continue &raquo;</span></div>';
     const c2 = h('div', 'wc wc2');
     c2.innerHTML =
       '<div class="wtop"><h2>Go at your pace.</h2><p>Pick the harmony you want to hear, choose your speed, and it remembers where you stopped.</p></div>' +
       '<svg class="warrow" viewBox="0 0 36 60" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3v50M6 40l12 14 12-14"/></svg>' +
-      '<div class="wtap">Tap right to begin &middot; tap left to go back</div>' +
+      '<div class="wtap"><span>&laquo; Tap to go back</span><span>Tap to begin &raquo;</span></div>' +
       '<div class="wbot"><p>Everything else is just below. Scroll for questions, sharing, and large-print videos.</p>' +
       '<svg viewBox="0 0 34 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l13 14L30 4"/></svg></div>';
     wdrop = h('div', 'pick season wdrop', '<span class="shown"><span></span><i class="chev"></i></span>');

@@ -145,7 +145,8 @@
   .wpill .wic{width:0;height:0;border-left:9px solid var(--red);border-top:6px solid transparent;border-bottom:6px solid transparent}
   .app.watching .wpill .wic{width:11px;height:11px;border:0;border-radius:2px;background:var(--red)}
   .app.watching .logo{display:none}
-  .app.watching .bar,.app.watching .transport,.app.watching .speeds{opacity:.35;pointer-events:none}
+  /* controls stay live while the R2 video plays (it follows the audio); only the YouTube fallback locks them */
+  .app.watching.ytmode .bar,.app.watching.ytmode .transport,.app.watching.ytmode .speeds{opacity:.35;pointer-events:none}
   /* phone held sideways: the video grows to the visible height and uses the full width */
   @media (orientation:landscape) and (max-height:520px){
     .app.watching{--stage:calc(100vh - 62px)}
@@ -640,6 +641,7 @@
 
   /* ---------- load / navigate ---------- */
   function loadEpisode(s, n, autoplay) {
+    const wasWatching = watching && !$('app').classList.contains('ytmode');
     if (watching) stopWatch(false);
     if (cur.s != null) saveProgress();
     cur = { s, n };
@@ -656,6 +658,7 @@
     seek.style.setProperty('--p', e.dur ? (pendingSeek / e.dur * 100) + '%' : '0%');
     updateMediaSession(); paintDesc(); if (typeof updateWatch === 'function') updateWatch();
     if (autoplay) audio.play().catch(() => {});
+    if (wasWatching && typeof startWatch === 'function' && (videos[s] || {})[n]) startWatch(false);
   }
   function pickSeason(s) {
     const list = eps[s] || []; if (!list.length) return;
@@ -757,26 +760,37 @@
     if (typeof d.info.playerState === 'number') ytState = d.info.playerState;
   });
   // A plain iframe: Safari does all the sizing. Position comes back through YouTube's postMessage feed.
-  function mountVideo(id, t, auto) {
-    const box = $('vbox'); box.hidden = false; ytTime = t; ytState = -1;
+  // The R2 video is a silent picture that follows the player's audio, so play/pause, skip, seek, speed and
+  // next/previous all keep working through the normal controls. (If R2 fails, the YouTube copy takes over.)
+  function syncVideo(force) {
+    const v = vel; if (!v) return;
+    const t = audio.readyState >= 1 ? audio.currentTime : (pendingSeek || 0);
+    if (v.readyState >= 1 && (force || Math.abs(v.currentTime - t) > 0.4)) { try { v.currentTime = t; } catch (e) {} }
+    if (v.playbackRate !== audio.playbackRate) v.playbackRate = audio.playbackRate;
+    if (!audio.paused && !audio.ended) { if (v.paused) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } }
+    else if (!v.paused) v.pause();
+  }
+  ['play', 'playing', 'pause', 'seeked', 'ratechange', 'timeupdate'].forEach(ev =>
+    audio.addEventListener(ev, () => syncVideo(ev === 'seeked')));
+  function mountVideo(id, t) {
+    const box = $('vbox'); box.hidden = false;
     const v = document.createElement('video');
-    v.controls = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', ''); v.preload = 'auto';
+    v.muted = true; v.defaultMuted = true; v.controls = false; v.playsInline = true; v.preload = 'auto';
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
     const wrap = document.createElement('div'); wrap.className = 'vin'; wrap.appendChild(v);
     box.innerHTML = ''; box.appendChild(wrap);
-    vel = v; yt = null;
-    let started = false;
-    v.addEventListener('loadedmetadata', () => { try { if (t > 0) v.currentTime = Math.min(t, Math.max(0, v.duration - 1)); } catch (e) {} });
-    v.addEventListener('playing', () => { started = true; });
+    vel = v; yt = null; $('app').classList.remove('ytmode');
+    v.addEventListener('loadedmetadata', () => syncVideo(true));
+    v.addEventListener('canplay', () => syncVideo(false));
     v.addEventListener('error', () => {
-      // R2 file missing or blocked: fall back to the YouTube copy at the same spot.
       if (vel !== v || !watching) return;
-      const at = started || v.currentTime ? v.currentTime : t;
-      vel = null; mountYT(id, Math.floor(at), true);
+      vel = null; mountYT(id, Math.floor(audio.currentTime || t || 0), true);
     });
     v.src = vurl(cur.s, cur.n);
-    if (auto) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); }
+    syncVideo(true);
   }
   function mountYT(id, t, auto) {
+    audio.pause(); $('app').classList.add('ytmode');
     const box = $('vbox'); box.hidden = false; ytTime = t; ytState = -1;
     box.innerHTML = '<div class="vin"><iframe src="https://www.youtube.com/embed/' + id + '?start=' + t + '&autoplay=' + (auto ? 1 : 0) +
       '&playsinline=1&rel=0&modestbranding=1&cc_load_policy=0&enablejsapi=1&origin=' + encodeURIComponent(location.origin) +
@@ -784,20 +798,19 @@
     yt = box.querySelector('iframe');
     yt.addEventListener('load', () => { try { yt.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (e) {} });
   }
-  async function startWatch() {
+  async function startWatch(playNow = true) {
     const id = vidId(); if (!id) return;
-    const t = Math.floor(audio.currentTime || pendingSeek || 0);
-    audio.pause();
     watching = true; $('app').classList.add('watching'); $('watchTxt').textContent = 'Back to audio';
-    mountVideo(id, t, true);
+    mountVideo(id, Math.floor(audio.currentTime || pendingSeek || 0));
+    if (playNow && audio.paused) audio.play().catch(() => {});
   }
   function stopWatch(handBack) {
     if (!watching) return;
     let t = ytTime, wasPlaying = ytState === 1;
-    if (vel) { t = vel.currentTime; wasPlaying = !vel.paused && !vel.ended; try { vel.pause(); } catch (e) {} }
+    if (vel) { try { vel.pause(); } catch (e) {} t = null; wasPlaying = false; }   // the audio never stopped, so nothing to hand back
     vel = null; yt = null; watching = false;
     $('vbox').innerHTML = ''; $('vbox').hidden = true;
-    $('app').classList.remove('watching'); $('watchTxt').textContent = 'Watch';
+    $('app').classList.remove('watching', 'ytmode'); $('watchTxt').textContent = 'Watch';
     if (handBack && t != null) {
       const d = audio.duration && isFinite(audio.duration) ? audio.duration : (curEp() ? curEp().dur : t);
       t = Math.max(0, Math.min(t, d - 1));
@@ -812,7 +825,7 @@
     }
     updateWatch();
   }
-  $('watchBtn').addEventListener('click', () => watching ? stopWatch(true) : startWatch());
+  $('watchBtn').addEventListener('click', () => watching ? stopWatch(true) : startWatch(true));
 
   /* ---------- About sub-tabs ---------- */
   const TABS = [['tabEp', 'epDesc'], ['tabShow', 'showDesc']];

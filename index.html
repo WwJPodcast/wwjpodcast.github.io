@@ -548,8 +548,14 @@
 
   /* ---------- UI ---------- */
   const seasonSel = $('season'), epSel = $('episode'), seek = $('seek');
-  // The dropdown list shows the length; the listening screen shows the name alone.
-  SEASONS.forEach(s => seasonSel.add(new Option(s.label + ' (' + s.weeks + ')', s.id)));
+  // The dropdown list shows a short description per season; the listening screen shows the name alone.
+  const MENU_TEXT = {
+    1: 'Mark + John: Fast action, close-up moments.',
+    2: 'Matthew + John: Two eyewitnesses, one story.',
+    3: 'Luke + John: Careful history, deeper insight.',
+    4: 'Four Gospel: Every word of Jesus, in order.'
+  };
+  SEASONS.forEach(s => seasonSel.add(new Option(MENU_TEXT[s.id] || (s.label + ' (' + s.weeks + ')'), s.id)));
   const seasonInfo = id => SEASONS.find(s => s.id === id);
   // Per-series paragraph shown under the show description (About > Show). Matched by the series name in the
   // dropdown label, so a series added to SEASONS later (or a rerun under a new season number) picks up its

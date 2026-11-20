@@ -735,6 +735,12 @@
   // The ONE line to change if the video address ever moves. Falls back to the YouTube copy if a file won't load.
   const R2 = 'https://pub-306859672a3d4fa4a0d0662093095c81.r2.dev/';
   const vurl = (s, n) => R2 + 's' + s + 'ep' + String(n).padStart(2, '0') + '_FULL.mp4';
+  // Lead-in: seconds of intro music / nature sound at the start of the video before the voice begins (the audio
+  // file has none). The picture runs this far ahead of the audio. Per-episode entries ("season-episode": seconds)
+  // override the default. For testing, open the player with ?vlead=7 (seconds) to override both.
+  const VLEAD_DEFAULT = 0, VLEAD = {};
+  const vleadQ = (() => { try { const q = new URLSearchParams(location.search).get('vlead'); return q === null || q === '' ? null : Math.max(0, parseFloat(q) || 0); } catch (e) { return null; } })();
+  const vlead = (s, n) => vleadQ !== null ? vleadQ : (VLEAD[s + '-' + n] != null ? VLEAD[s + '-' + n] : VLEAD_DEFAULT);
   let videos = {}, yt = null, vel = null, watching = false, ytReady = null;
   fetch('videos.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : {}).then(j => { videos = j || {}; updateWatch(); }).catch(() => {});
   const vidId = () => (videos[cur.s] || {})[cur.n];
@@ -764,7 +770,7 @@
   // next/previous all keep working through the normal controls. (If R2 fails, the YouTube copy takes over.)
   function syncVideo(force) {
     const v = vel; if (!v) return;
-    const t = audio.readyState >= 1 ? audio.currentTime : (pendingSeek || 0);
+    const t = (audio.readyState >= 1 ? audio.currentTime : (pendingSeek || 0)) + vlead(cur.s, cur.n);
     if (v.readyState >= 1 && (force || Math.abs(v.currentTime - t) > 0.4)) { try { v.currentTime = t; } catch (e) {} }
     if (v.playbackRate !== audio.playbackRate) v.playbackRate = audio.playbackRate;
     if (!audio.paused && !audio.ended) { if (v.paused) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } }
@@ -784,7 +790,7 @@
     v.addEventListener('canplay', () => syncVideo(false));
     v.addEventListener('error', () => {
       if (vel !== v || !watching) return;
-      vel = null; mountYT(id, Math.floor(audio.currentTime || t || 0), true);
+      vel = null; mountYT(id, Math.floor((audio.currentTime || 0) + vlead(cur.s, cur.n) || t || 0), true);
     });
     v.src = vurl(cur.s, cur.n);
     syncVideo(true);
@@ -801,7 +807,7 @@
   async function startWatch(playNow = true) {
     const id = vidId(); if (!id) return;
     watching = true; $('app').classList.add('watching'); $('watchTxt').textContent = 'Back to audio';
-    mountVideo(id, Math.floor(audio.currentTime || pendingSeek || 0));
+    mountVideo(id, Math.floor((audio.currentTime || pendingSeek || 0) + vlead(cur.s, cur.n)));
     if (playNow && audio.paused) audio.play().catch(() => {});
   }
   function stopWatch(handBack) {
@@ -811,6 +817,7 @@
     vel = null; yt = null; watching = false;
     $('vbox').innerHTML = ''; $('vbox').hidden = true;
     $('app').classList.remove('watching', 'ytmode'); $('watchTxt').textContent = 'Watch';
+    if (t != null) t = Math.max(0, t - vlead(cur.s, cur.n));
     if (handBack && t != null) {
       const d = audio.duration && isFinite(audio.duration) ? audio.duration : (curEp() ? curEp().dur : t);
       t = Math.max(0, Math.min(t, d - 1));

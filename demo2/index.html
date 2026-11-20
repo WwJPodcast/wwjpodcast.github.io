@@ -278,6 +278,11 @@
   .below .demo .body .wbtn.alt{border-color:rgba(227,181,91,.5);color:var(--cream)}
   .below .legal{background:var(--navy-deep);color:#C9C2B0;margin:0;padding:26px 26px 30px}
   .below :focus-visible{outline:2px solid var(--gold-lt);outline-offset:3px}
+
+  /* demo2: About row lives in the cream first screen; cream always fills the full (large) viewport */
+  .app{min-height:100vh;min-height:100lvh;padding-bottom:max(32px,env(safe-area-inset-bottom))}
+  .app .player{flex:0 0 auto}
+  .app>.more{margin-top:22px}
 </style>
 </head>
 <body>
@@ -314,6 +319,29 @@
     <div class="speeds" id="speeds" role="group" aria-label="Playback speed"></div>
     <div class="msg" id="msg"></div>
   </section>
+  <nav class="more" aria-label="More">
+    <details class="cat" id="catAbout">
+      <summary>About this show &amp; episode</summary>
+      <div class="body desc">
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tabEp" aria-selected="true" aria-controls="epDesc">Episode</button>
+          <button type="button" role="tab" id="tabShow" aria-selected="false" aria-controls="showDesc">Show</button>
+          <button type="button" role="tab" id="tabPractice" aria-selected="false" aria-controls="practiceDesc">Practice</button>
+        </div>
+        <div id="epDesc" role="tabpanel" aria-labelledby="tabEp"></div>
+        <div id="showDesc" role="tabpanel" aria-labelledby="tabShow" hidden></div>
+        <div id="practiceDesc" role="tabpanel" aria-labelledby="tabPractice" hidden>
+          <p class="b">The Practice</p>
+          <p>Fifteen minutes in the Gospels, five days a week. In one month, it’s a habit. In three, you notice the difference. In six, you’re asking your family to try it. Give it a year and His words come to mind right when you need them.</p>
+          <p>We take vitamins, exercise, sleep, and brush our teeth every day, because the results come from keeping at it. The soul is no different. The Gospels are the story all of Scripture points to or stands on, so they’re the best place to let Jesus change us.</p>
+          <p>This doesn’t replace the rest of your Bible, or your church. It makes room for Jesus. “If a man love me, he will keep my words: and my Father will love him, and we will come unto him, and make our abode with him.” (John 14:23)</p>
+          <p>Read the Gospels or listen, but try it. Fifteen minutes a day. Jesus will do the rest.</p>
+        </div>
+        <p class="fine" style="text-align:center"><a href="https://wwjpodcast.github.io/">Walking with Jesus Website</a></p>
+        <p class="fine" style="text-align:center"><button type="button" class="linkbtn" id="replayWelcome">Replay the welcome</button></p>
+      </div>
+    </details>
+  </nav>
 </main>
 
 <div class="below" id="below">
@@ -349,27 +377,7 @@
   </div></section>
 
   <section class="b3"><div class="in">
-    <details class="cat" id="catAbout">
-      <summary>About this show &amp; episode</summary>
-      <div class="body desc">
-        <div class="tabs" role="tablist">
-          <button type="button" role="tab" id="tabEp" aria-selected="true" aria-controls="epDesc">Episode</button>
-          <button type="button" role="tab" id="tabShow" aria-selected="false" aria-controls="showDesc">Show</button>
-          <button type="button" role="tab" id="tabPractice" aria-selected="false" aria-controls="practiceDesc">Practice</button>
-        </div>
-        <div id="epDesc" role="tabpanel" aria-labelledby="tabEp"></div>
-        <div id="showDesc" role="tabpanel" aria-labelledby="tabShow" hidden></div>
-        <div id="practiceDesc" role="tabpanel" aria-labelledby="tabPractice" hidden>
-          <p class="b">The Practice</p>
-          <p>Fifteen minutes in the Gospels, five days a week. In one month, it’s a habit. In three, you notice the difference. In six, you’re asking your family to try it. Give it a year and His words come to mind right when you need them.</p>
-          <p>We take vitamins, exercise, sleep, and brush our teeth every day, because the results come from keeping at it. The soul is no different. The Gospels are the story all of Scripture points to or stands on, so they’re the best place to let Jesus change us.</p>
-          <p>This doesn’t replace the rest of your Bible, or your church. It makes room for Jesus. “If a man love me, he will keep my words: and my Father will love him, and we will come unto him, and make our abode with him.” (John 14:23)</p>
-          <p>Read the Gospels or listen, but try it. Fifteen minutes a day. Jesus will do the rest.</p>
-        </div>
-        <p class="fine" style="text-align:center"><a href="https://wwjpodcast.github.io/">Walking with Jesus Website</a></p>
-        <p class="fine" style="text-align:center"><button type="button" class="linkbtn" id="replayWelcome">Replay the welcome</button></p>
-      </div>
-    </details>
+
     <div class="faq">
       <p class="eyebrow">FAQ</p>
       <h2>Questions people ask</h2>

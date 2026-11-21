@@ -215,8 +215,7 @@
          padding:34px 24px 26px;border:1.5px solid var(--gold);border-radius:22px;background:#fffaf0;opacity:0;pointer-events:none;transition:opacity 1.2s ease;box-shadow:0 4px 14px rgba(196,160,89,.22)}
   .mcard.on{opacity:1;pointer-events:auto}
   .mcard.fast{transition-duration:.4s}
-  .mcard .mtag{font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dk,#8A6420)}
-  .mcard h2{font-weight:700;font-size:clamp(28px,8.2vw,38px);line-height:1.08;color:var(--red);margin-top:14px;text-wrap:balance;max-width:430px}
+  .mcard h2{font-weight:700;font-size:clamp(28px,8.2vw,38px);line-height:1.08;color:var(--red);text-wrap:balance;max-width:430px}
   .mcard p{font-size:clamp(19px,5.2vw,24px);line-height:1.3;color:#3b342e;margin-top:14px;text-wrap:balance;max-width:430px}
   .mcard .mbtn{display:inline-flex;align-items:center;justify-content:center;margin-top:22px;min-height:50px;padding:0 34px;border-radius:25px;border:0;background:var(--red);color:#fff;font-family:inherit;font-weight:600;font-size:19px;text-decoration:none;cursor:pointer}
   .mcard .mnote{min-height:1.2em;margin-top:10px;font-size:15px;font-style:italic;color:var(--muted)}
@@ -1179,7 +1178,6 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     23: { k: 'feedback', t: 'Is This Helping You?', b: 'We’d love to hear your story.', btn: 'mail' },
     24: { k: 'feedback', t: 'How Can We Make This Better?', b: 'Tell us what’s working and what isn’t.', btn: 'mail' }
   };
-  const TAG = { cue: 'Cue', reward: 'Reward', milestone: 'Milestone', share: 'Share', feedback: 'Feedback', streak: 'Streak', grace: 'Streak saved' };
   const REW = [11, 14, 8, 10, 9, 12, 13, 15], CUE = [1, 4, 2, 5, 3];
   const ASK = [19, 20, 21, 23, 22, 19, 20, 24];
   const MS = [7200, 18000, 36000];
@@ -1232,11 +1230,10 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   function showM(c) {
     hideM(true);
     const el = document.createElement('div'); el.className = 'mcard'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', c.t);
-    const tag = document.createElement('div'); tag.className = 'mtag'; tag.textContent = TAG[c.k];
     const h2 = document.createElement('h2'); h2.textContent = c.t;
     const x = document.createElement('button'); x.type = 'button'; x.className = 'mx'; x.setAttribute('aria-label', 'Close'); x.textContent = '×';
     x.addEventListener('click', e => { e.stopPropagation(); hideM(true); });
-    el.append(tag, h2);
+    el.append(h2);
     if (c.b) { const p = document.createElement('p'); p.textContent = c.b; el.appendChild(p); }
     if (c.btn) {
       const note = document.createElement('div'); note.className = 'mnote';

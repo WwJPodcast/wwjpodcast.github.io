@@ -434,7 +434,7 @@
 <p>It then opens like an app, with its own icon.</p></div></details>
 <details class="q"><summary>Will it remember where I stopped?</summary><div class="a"><p>Yes. On this device it keeps your place in every episode, your listening speed, and the last episode you played in each harmony.</p>
 <p>If you clear your browser data or switch to another device, you will start fresh.</p></div></details>
-<details class="q"><summary>What is the streak?</summary><div class="a"><p>A streak counts the days in a row you finish an episode. Weekends never break it, and you get two grace days a month if you miss a weekday. It&rsquo;s just a way to cheer you on, and there is no penalty for missing a day.</p>
+<details class="q"><summary>What is the streak?</summary><div class="a"><p>A streak counts the weeks in a row you finish five episodes. It doesn&rsquo;t matter which days, so catching up on the weekend counts. It&rsquo;s just a way to cheer you on, and there is no penalty for missing a week.</p>
         <p>Your streak is saved on this device, so clearing your browser or switching phones starts it over.</p></div></details>
 <details class="q"><summary>I already know the story of Jesus’ life. Why listen again?</summary><div class="a"><p>You don&rsquo;t stop spending time with someone because you already know their story. This isn&rsquo;t about new information; it&rsquo;s about time in His company, day after day.</p>
         <p>Hearing familiar passages in order, and read aloud, also tends to bring out details we&rsquo;ve skimmed past.</p></div></details>
@@ -1129,7 +1129,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   $('replayWelcome').addEventListener('click', () => { welcome(); top0(); });
 })();
 /* ===== MID-EPISODE CARDS: reward / cue / ask / time milestone / streak (spec: project doc claude/wwj-player-mid-episode-cards.md) =====
-   Additive: listens to the existing <audio> element only. Test any card on your phone with ?card=ID (e.g. ?card=19, ?card=16, ?card=streak10, ?card=grace). */
+   Additive: listens to the existing <audio> element only. Test any card on your phone with ?card=ID (e.g. ?card=19, ?card=16, ?card=streak3, ?card=grace). */
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
@@ -1170,25 +1170,29 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   const REW = [11, 14, 8, 10, 9, 12, 13, 15], CUE = [1, 4, 2, 5, 3];
   const ASK = [19, 20, 21, 23, 22, 19, 20, 24];
   const MS = [7200, 18000, 36000];
-  const GRACE_CARD = { k: 'grace', t: 'Streak Saved', b: 'A grace day covered the day you missed. {g} grace {d} left this month.' };
-  const WEEKS = { 1: 'A full week with Jesus.', 2: 'Two weeks in His word.', 3: 'Three weeks. Keep walking.', 4: 'Four weeks with Jesus.', 10: 'Ten weeks. A whole season with Jesus.' };
-  function streakCard(n) { const w = n / 5; return { k: 'streak', t: n + '-Episode Streak', b: WEEKS[w] || (w + ' weeks with Jesus.') }; }
+  const GRACE_CARD = { k: 'grace', t: 'Streak Saved', b: 'A grace week covered the week you missed. Your streak is safe.' };
+  const WEEKS = { 2: 'Ten episodes, week after week.', 3: 'Keep walking.', 4: 'A month with Jesus.', 10: 'Ten weeks. A whole season with Jesus.', 26: 'Half a year with Jesus.', 52: 'A whole year with Jesus.' };
+  function streakCard(n) { return { k: 'streak', t: n + '-Week Streak', b: WEEKS[n] || (n + ' weeks in a row.') }; }
 
-  const st = Object.assign({ finished: 0, secs: 0, shown: {}, ri: 0, ci: 0, ai: 0, last: '', streak: 0, gm: '', gu: 0, shared: false }, lsGet(KEY) || {});
+  const st = Object.assign({ finished: 0, secs: 0, shown: {}, ri: 0, ci: 0, ai: 0, streak: 0, wk: '', eps: [], lastWeek: '', gm: '', gu: 0, shared: false }, lsGet(KEY) || {});
   const save = () => lsSet(KEY, st);
   const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const parse = s => { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2], 12); };
-  /* streak = consecutive release days (Mon-Fri) with a finished episode; weekends never break it; 2 grace days a month, used automatically */
-  function evalStreak(now) {
-    const today = ymd(now);
-    if (!st.last) return { inc: true, streak: 1, graces: 0 };
-    if (st.last === today) return { inc: false, streak: st.streak, graces: 0 };
-    let missed = 0; const d = parse(st.last), end = parse(today); d.setDate(d.getDate() + 1);
-    while (d < end) { const w = d.getDay(); if (w !== 0 && w !== 6) missed++; d.setDate(d.getDate() + 1); }
-    if (missed === 0) return { inc: true, streak: st.streak + 1, graces: 0 };
-    const avail = 2 - (st.gm === today.slice(0, 7) ? st.gu : 0);
-    if (missed <= avail) return { inc: true, streak: st.streak + 1, graces: missed };
-    return { inc: true, streak: 1, graces: 0 };
+  /* streak = consecutive weeks (Mon-Sun) in which the listener finishes 5 different episodes, on any days (weekend catch-up counts).
+     One grace week a month is used automatically if a week is missed. */
+  const keyNow = () => { const a = $('season'), e = $('episode'); return (a && e && a.value && e.value) ? a.value + '-' + e.value : (audio.currentSrc || 'x'); };
+  const mondayOf = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return ymd(x); };
+  const weeksBetween = (a, b) => Math.round((parse(b) - parse(a)) / 604800000);
+  /* what the streak becomes when this week completes now */
+  function evalWeek(now) {
+    const wk = mondayOf(now);
+    if (st.lastWeek === wk) return { done: true, streak: st.streak, graces: 0 };
+    if (!st.lastWeek) return { streak: 1, graces: 0 };
+    const m = weeksBetween(st.lastWeek, wk) - 1;
+    if (m <= 0) return { streak: st.streak + 1, graces: 0 };
+    const avail = 1 - (st.gm === wk.slice(0, 7) ? st.gu : 0);
+    if (m <= avail) return { streak: st.streak + 1, graces: m };
+    return { streak: 1, graces: 0 };
   }
 
   /* ---------- the card ---------- */
@@ -1240,9 +1244,11 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   let pending = [], planned = false, finishedThis = false, lastT = 0;
   function plan() {
     planned = true; pending = [];
-    const ev = evalStreak(new Date());
-    const willStreak = ev.inc && !!st.last && ev.streak % 5 === 0 && ev.streak > st.streak;
-    if (ev.graces > 0 && st.streak > 0) pending.push({ at: d => 120, card: () => { const left = Math.max(0, 2 - ((st.gm === ymd(new Date()).slice(0, 7) ? st.gu : 0) + ev.graces)); return { k: 'grace', t: GRACE_CARD.t, b: GRACE_CARD.b.replace('{g}', left).replace('{d}', left === 1 ? 'day' : 'days') }; } });
+    const now = new Date(), have = st.wk === mondayOf(now) ? st.eps : [];
+    const completes = have.length === 4 && have.indexOf(keyNow()) < 0;
+    const ev = completes ? evalWeek(now) : null;
+    const willStreak = !!ev && !ev.done && ev.streak >= 2;
+    if (ev && !ev.done && ev.graces > 0) pending.push({ at: d => 120, card: () => GRACE_CARD });
     const n = st.finished + 1, pos = n % 4;
     if (n > 1) {
       let id = null, on = null;
@@ -1259,14 +1265,19 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   }
   function commitFinish() {
     finishedThis = true;
-    const ev = evalStreak(new Date()), prev = st.streak;
     st.finished++;
-    if (ev.inc) {
-      st.streak = ev.streak; st.last = ymd(new Date());
-      if (ev.graces > 0) { const mo = st.last.slice(0, 7); if (st.gm !== mo) { st.gm = mo; st.gu = 0; } st.gu += ev.graces; }
+    const now = new Date(), wk = mondayOf(now), key = keyNow();
+    if (st.wk !== wk) { st.wk = wk; st.eps = []; }
+    if (st.eps.indexOf(key) < 0) st.eps.push(key);
+    let card = null;
+    if (st.eps.length >= 5 && st.lastWeek !== wk) {
+      const ev = evalWeek(now);
+      st.streak = ev.streak; st.lastWeek = wk;
+      if (ev.graces > 0) { const mo = wk.slice(0, 7); if (st.gm !== mo) { st.gm = mo; st.gu = 0; } st.gu += ev.graces; }
+      if (st.streak >= 2) card = streakCard(st.streak);
     }
     save();
-    if (ev.inc && prev > 0 && st.streak % 5 === 0 && st.streak > prev) pending.push({ at: d => 0, card: () => streakCard(st.streak), now: true });
+    if (card) pending.push({ at: d => 0, card: () => card, now: true });
   }
 
   /* ---------- test mode: ?card=19 | ?card=streak10 | ?card=grace shows that card ~4 sec into playback, saving nothing ---------- */
@@ -1274,8 +1285,8 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   let testDone = false;
   function testCard() {
     if (/^\d+$/.test(q) && CARDS[q]) return CARDS[q];
-    if (/^streak\d+$/.test(q)) return streakCard(parseInt(q.slice(6), 10) || 5);
-    if (q === 'grace') return { k: 'grace', t: GRACE_CARD.t, b: GRACE_CARD.b.replace('{g}', 1).replace('{d}', 'day') };
+    if (/^streak\d+$/.test(q)) return streakCard(parseInt(q.slice(6), 10) || 2);
+    if (q === 'grace') return GRACE_CARD;
     return null;
   }
 

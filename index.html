@@ -224,6 +224,16 @@
   .mcard .mtimer{position:absolute;left:24px;right:24px;bottom:10px;height:3px;border-radius:2px;background:var(--gold-soft);overflow:hidden}
   .mcard .mtimer i{display:block;height:100%;width:100%;background:var(--gold)}
   @media (prefers-reduced-motion:reduce){.mcard{transition-duration:.01s}}
+  /* footer progress: one quiet line at a time between the speed buttons and About */
+  .prog{position:relative;width:100%;height:36px;margin-top:2px;cursor:pointer;-webkit-user-select:none;user-select:none}
+  .prog[hidden]{display:none}
+  .prog .pn{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .6s ease}
+  .prog .pn.show{opacity:1}
+  .prog .pt{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-style:italic;font-weight:400;font-size:15px;line-height:1.1;color:var(--muted);margin-bottom:7px;min-height:1.1em}
+  .prog .sg{display:flex;gap:3px}
+  .prog .sg i{flex:1;height:3px;border-radius:2px;background:var(--gold-soft);display:block}
+  .prog .sg i.f{background:var(--red)}
+  @media (prefers-reduced-motion:reduce){.prog .pn{transition:none}}
   @media (prefers-reduced-motion:reduce){.wov,.wov .wc,.ecard,.ecard .eline{transition-duration:.01s}.wc2 .warrow,.wc2 .wbot svg{animation:none}}
   .demo .body p{font-size:18px;color:#3b342e;margin-bottom:10px}
   .demo .body .wbtn{display:block;width:100%;margin-top:8px;font-size:18px;min-height:46px;padding:0 24px;border-radius:23px;border:0;background:var(--red);color:#fff;font-family:inherit;font-weight:600;cursor:pointer}
@@ -365,6 +375,11 @@
 
     <div class="speeds" id="speeds" role="group" aria-label="Playback speed"></div>
     <div class="msg" id="msg"></div>
+    <div class="prog" id="prog" role="button" tabindex="0" hidden>
+      <div class="pn" id="pnE"><div class="pt"><span>Episodes this week</span><span></span></div><div class="sg"></div></div>
+      <div class="pn" id="pnW"><div class="pt"><span></span><span></span></div><div class="sg"></div></div>
+      <div class="pn" id="pnT"><div class="pt"><span>Episodes finished</span><span></span></div></div>
+    </div>
   </section>
   <nav class="more" aria-label="More">
     <details class="cat" id="catAbout">
@@ -434,8 +449,6 @@
 <p>It then opens like an app, with its own icon.</p></div></details>
 <details class="q"><summary>Will it remember where I stopped?</summary><div class="a"><p>Yes. On this device it keeps your place in every episode, your listening speed, and the last episode you played in each harmony.</p>
 <p>If you clear your browser data or switch to another device, you will start fresh.</p></div></details>
-<details class="q"><summary>What is the streak?</summary><div class="a"><p>A streak counts the weeks in a row you finish five episodes. It doesn&rsquo;t matter which days, so catching up on the weekend counts. It&rsquo;s just a way to cheer you on, and there is no penalty for missing a week.</p>
-        <p>Your streak is saved on this device, so clearing your browser or switching phones starts it over.</p></div></details>
 <details class="q"><summary>I already know the story of Jesus’ life. Why listen again?</summary><div class="a"><p>You don&rsquo;t stop spending time with someone because you already know their story. This isn&rsquo;t about new information; it&rsquo;s about time in His company, day after day.</p>
         <p>Hearing familiar passages in order, and read aloud, also tends to bring out details we&rsquo;ve skimmed past.</p></div></details>
 <details class="q"><summary>Why the King James Version?</summary><div class="a"><p>The KJV is in the public domain, so the text can be read freely without licensing limits. Its rhythm was also shaped for being read aloud, which suits listening.</p>
@@ -1278,6 +1291,63 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     }
     save();
     if (card) pending.push({ at: d => 0, card: () => card, now: true });
+    if (typeof paintProg === 'function') paintProg();
+  }
+
+  /* ---------- footer progress: episodes this week / weeks (then months) in a row / total episodes finished.
+     One line at a time, fading every few seconds; tap to switch. Test on a phone with ?foot=EPISODES,WEEKS,TOTAL (e.g. ?foot=3,6,27). ---------- */
+  const prog = $('prog'), PN = [$('pnE'), $('pnW'), $('pnT')];
+  const FOOT = location.search.match(/[?&]foot=(\d+),(\d+),(\d+)/);
+  let ppos = 0, pnow = [0], phold = 0;
+  function footState() {
+    if (FOOT) return { e: Math.min(5, +FOOT[1]), w: +FOOT[2], f: +FOOT[3] };
+    const wk = mondayOf(new Date());
+    const e = st.wk === wk ? Math.min(5, st.eps.length) : 0;
+    let w = 0;
+    if (st.lastWeek && st.streak > 0) {
+      const m = weeksBetween(st.lastWeek, wk) - 1, avail = 1 - (st.gm === wk.slice(0, 7) ? st.gu : 0);
+      if (m <= 0 || m <= avail) w = st.streak;
+    }
+    return { e, w, f: st.finished };
+  }
+  function segs(box, n, total) {
+    box.textContent = '';
+    for (let i = 0; i < Math.max(5, total); i++) { const b = document.createElement('i'); if (i < n) b.className = 'f'; box.appendChild(b); }
+  }
+  function paintProg() {
+    if (!prog) return;
+    const s = footState();
+    if (s.f < 1) { prog.hidden = true; return; }
+    prog.hidden = false;
+    segs(PN[0].querySelector('.sg'), s.e, 5);
+    let line = null;
+    if (s.w > 0) {
+      const mo = s.w > 26, n = mo ? Math.min(12, Math.floor(s.w * 12 / 52)) : s.w;
+      segs(PN[1].querySelector('.sg'), n, n);
+      const t = PN[1].querySelectorAll('.pt span');
+      t[0].textContent = mo ? 'Months in a row' : 'Weeks in a row';
+      t[1].textContent = mo ? n + (n === 1 ? ' month' : ' months') : (s.w > 5 ? s.w + ' weeks' : '');
+      line = (mo ? n + (n === 1 ? ' month' : ' months') : s.w + (s.w === 1 ? ' week' : ' weeks')) + ' in a row';
+    }
+    PN[2].querySelectorAll('.pt span')[1].textContent = s.f;
+    pnow = [0].concat(s.w > 0 ? [1] : [], [2]);
+    prog.setAttribute('aria-label', s.e + ' of 5 episodes this week, ' + (line ? line + ', ' : '') + s.f + ' episodes finished. Tap to switch.');
+    showProg();
+  }
+  function showProg() { const cur = pnow[ppos % pnow.length]; PN.forEach((p, i) => p.classList.toggle('show', i === cur)); }
+  function flipProg(user) {
+    if (prog.hidden || pnow.length < 2) return;
+    if (!user && (document.hidden || Date.now() < phold)) return;
+    if (user) phold = Date.now() + 12000;
+    ppos = (ppos + 1) % pnow.length; showProg();
+  }
+  if (prog) {
+    prog.addEventListener('click', () => flipProg(true));
+    prog.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flipProg(true); } });
+    setInterval(() => flipProg(false), 7000);
+    document.addEventListener('visibilitychange', paintProg);
+    addEventListener('pageshow', paintProg);
+    paintProg();
   }
 
   /* ---------- test mode: ?card=19 | ?card=streak10 | ?card=grace shows that card ~4 sec into playback, saving nothing ---------- */
@@ -1290,7 +1360,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     return null;
   }
 
-  audio.addEventListener('loadstart', () => { hideM(true); planned = false; finishedThis = false; lastT = 0; pending = []; });
+  audio.addEventListener('loadstart', () => { hideM(true); planned = false; finishedThis = false; lastT = 0; pending = []; if (typeof paintProg === 'function') paintProg(); });
   audio.addEventListener('seeking', () => { lastT = audio.currentTime; });
   audio.addEventListener('timeupdate', () => {
     const t = audio.currentTime, d = audio.duration;

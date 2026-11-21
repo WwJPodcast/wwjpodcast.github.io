@@ -210,6 +210,20 @@
   .ecard .tbg{position:absolute;inset:-24px;background-size:cover;background-position:center;filter:blur(20px) brightness(.75)}
   .ecard .timg{position:relative;display:block;height:100%;width:auto;max-width:100%;object-fit:contain;margin:0 auto}
   .ecard.tcard .ex{color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6);z-index:2}
+  /* mid-episode cards (reward / cue / ask / milestone / streak): same look as the verse cards, 30 sec, X to close */
+  .mcard{position:absolute;left:26px;right:26px;top:max(18px,env(safe-area-inset-top));z-index:19;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+         padding:34px 24px 26px;border:1.5px solid var(--gold);border-radius:22px;background:#fffaf0;opacity:0;pointer-events:none;transition:opacity 1.2s ease;box-shadow:0 4px 14px rgba(196,160,89,.22)}
+  .mcard.on{opacity:1;pointer-events:auto}
+  .mcard.fast{transition-duration:.4s}
+  .mcard .mtag{font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dk,#8A6420)}
+  .mcard h2{font-weight:700;font-size:clamp(28px,8.2vw,38px);line-height:1.08;color:var(--red);margin-top:14px;text-wrap:balance;max-width:430px}
+  .mcard p{font-size:clamp(19px,5.2vw,24px);line-height:1.3;color:#3b342e;margin-top:14px;text-wrap:balance;max-width:430px}
+  .mcard .mbtn{display:inline-flex;align-items:center;justify-content:center;margin-top:22px;min-height:50px;padding:0 34px;border-radius:25px;border:0;background:var(--red);color:#fff;font-family:inherit;font-weight:600;font-size:19px;text-decoration:none;cursor:pointer}
+  .mcard .mnote{min-height:1.2em;margin-top:10px;font-size:15px;font-style:italic;color:var(--muted)}
+  .mcard .mx{position:absolute;top:2px;right:2px;width:44px;height:44px;border:0;background:transparent;cursor:pointer;color:var(--muted);font-size:28px;line-height:1;font-family:inherit}
+  .mcard .mtimer{position:absolute;left:24px;right:24px;bottom:10px;height:3px;border-radius:2px;background:var(--gold-soft);overflow:hidden}
+  .mcard .mtimer i{display:block;height:100%;width:100%;background:var(--gold)}
+  @media (prefers-reduced-motion:reduce){.mcard{transition-duration:.01s}}
   @media (prefers-reduced-motion:reduce){.wov,.wov .wc,.ecard,.ecard .eline{transition-duration:.01s}.wc2 .warrow,.wc2 .wbot svg{animation:none}}
   .demo .body p{font-size:18px;color:#3b342e;margin-bottom:10px}
   .demo .body .wbtn{display:block;width:100%;margin-top:8px;font-size:18px;min-height:46px;padding:0 24px;border-radius:23px;border:0;background:var(--red);color:#fff;font-family:inherit;font-weight:600;cursor:pointer}
@@ -420,6 +434,8 @@
 <p>It then opens like an app, with its own icon.</p></div></details>
 <details class="q"><summary>Will it remember where I stopped?</summary><div class="a"><p>Yes. On this device it keeps your place in every episode, your listening speed, and the last episode you played in each harmony.</p>
 <p>If you clear your browser data or switch to another device, you will start fresh.</p></div></details>
+<details class="q"><summary>What is the streak?</summary><div class="a"><p>A streak counts the days in a row you finish an episode. Weekends never break it, and you get two grace days a month if you miss a weekday. It&rsquo;s just a way to cheer you on, and there is no penalty for missing a day.</p>
+        <p>Your streak is saved on this device, so clearing your browser or switching phones starts it over.</p></div></details>
 <details class="q"><summary>I already know the story of Jesus’ life. Why listen again?</summary><div class="a"><p>You don&rsquo;t stop spending time with someone because you already know their story. This isn&rsquo;t about new information; it&rsquo;s about time in His company, day after day.</p>
         <p>Hearing familiar passages in order, and read aloud, also tends to bring out details we&rsquo;ve skimmed past.</p></div></details>
 <details class="q"><summary>Why the King James Version?</summary><div class="a"><p>The KJV is in the public domain, so the text can be read freely without licensing limits. Its rhythm was also shaped for being read aloud, which suits listening.</p>
@@ -1111,6 +1127,181 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   /* ---------- replay the welcome ---------- */
   const top0 = () => window.scrollTo({ top: 0, behavior: 'smooth' });
   $('replayWelcome').addEventListener('click', () => { welcome(); top0(); });
+})();
+/* ===== MID-EPISODE CARDS: reward / cue / ask / time milestone / streak (spec: project doc claude/wwj-player-mid-episode-cards.md) =====
+   Additive: listens to the existing <audio> element only. Test any card on your phone with ?card=ID (e.g. ?card=19, ?card=16, ?card=streak10, ?card=grace). */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const app = $('app'), audio = $('audio');
+  if (!app || !audio) return;
+  const KEY = 'wwj.cards.v1';
+  const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+  const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SHARE_MSG = 'I’ve been listening to Walking with Jesus: 15 minutes of the Gospels a day, straight from the King James, no commentary. Free, no sign-up. Hear Jesus here: https://hearjesus.here/';
+  const MAIL = 'mailto:wwjesuspodcast@gmail.com?subject=' + encodeURIComponent('Walking with Jesus feedback');
+  /* k = kind; end = shows near the end of the episode (last ~90 sec); btn = 'share' | 'mail' */
+  const CARDS = {
+    1: { k: 'cue', t: 'Same Time Tomorrow?', b: 'Tie it to something you already do.', end: 1 },
+    2: { k: 'cue', t: 'Make It Automatic', b: 'Pair this with something you already do every day.', end: 1 },
+    3: { k: 'cue', t: 'Tomorrow’s Episode Is Ready', b: 'Press play whenever you are.', end: 1 },
+    4: { k: 'cue', t: 'Missed a Day?', b: 'No guilt. Just press play on the next one.' },
+    5: { k: 'cue', t: 'Just Fifteen Minutes', b: 'Start with Jesus, and let Him have the rest of the day.' },
+    8: { k: 'reward', t: 'Well Done', b: 'That was fifteen minutes with Jesus. Let it follow you into your day.' },
+    9: { k: 'reward', t: 'Carry It With You', b: 'Pick one phrase from today and think on it this afternoon.' },
+    10: { k: 'reward', t: 'His Words Are Working in You', b: 'Keep showing up.' },
+    11: { k: 'reward', t: 'You Showed Up Today', b: 'That’s fifteen minutes with Jesus.' },
+    12: { k: 'reward', t: 'Seeds Planted', b: 'Every day you listen, His words go a little deeper.' },
+    13: { k: 'reward', t: 'Hear Jesus Here', b: 'And you just did.' },
+    14: { k: 'reward', t: 'You’re Walking with Jesus', b: 'One more day, one more step.' },
+    15: { k: 'reward', t: 'Time Well Spent', b: 'Take His peace with you.' },
+    16: { k: 'milestone', t: 'Two Hours With Jesus', b: 'That’s two hours in His words, right here in this show.' },
+    17: { k: 'milestone', t: 'Five Hours With Jesus', b: 'Five hours in His words, right here in this show. Keep walking.' },
+    18: { k: 'milestone', t: 'Ten Hours With Jesus', b: 'Ten hours in His words, right here in this show. They’re taking root.' },
+    19: { k: 'share', t: 'Know Someone Who Needs This?', b: 'Share the Word.', btn: 'share' },
+    20: { k: 'share', t: 'Pass It On', b: 'Someone you love might need fifteen minutes with Jesus.', btn: 'share' },
+    21: { k: 'share', t: 'Share the Word', b: 'Free. No sign-up. One tap sends a message you can edit.', btn: 'share' },
+    22: { k: 'share', t: 'Follow His Walk. Share His Word.', b: '', btn: 'share' },
+    23: { k: 'feedback', t: 'Is This Helping You?', b: 'We’d love to hear your story.', btn: 'mail' },
+    24: { k: 'feedback', t: 'How Can We Make This Better?', b: 'Tell us what’s working and what isn’t.', btn: 'mail' }
+  };
+  const TAG = { cue: 'Cue', reward: 'Reward', milestone: 'Milestone', share: 'Share', feedback: 'Feedback', streak: 'Streak', grace: 'Streak saved' };
+  const REW = [11, 14, 8, 10, 9, 12, 13, 15], CUE = [1, 4, 2, 5, 3];
+  const ASK = [19, 20, 21, 23, 22, 19, 20, 24];
+  const MS = [7200, 18000, 36000];
+  const GRACE_CARD = { k: 'grace', t: 'Streak Saved', b: 'A grace day covered the day you missed. {g} grace {d} left this month.' };
+  const WEEKS = { 1: 'A full week with Jesus.', 2: 'Two weeks in His word.', 3: 'Three weeks. Keep walking.', 4: 'Four weeks with Jesus.', 10: 'Ten weeks. A whole season with Jesus.' };
+  function streakCard(n) { const w = n / 5; return { k: 'streak', t: n + '-Episode Streak', b: WEEKS[w] || (w + ' weeks with Jesus.') }; }
+
+  const st = Object.assign({ finished: 0, secs: 0, shown: {}, ri: 0, ci: 0, ai: 0, last: '', streak: 0, gm: '', gu: 0, shared: false }, lsGet(KEY) || {});
+  const save = () => lsSet(KEY, st);
+  const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const parse = s => { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2], 12); };
+  /* streak = consecutive release days (Mon-Fri) with a finished episode; weekends never break it; 2 grace days a month, used automatically */
+  function evalStreak(now) {
+    const today = ymd(now);
+    if (!st.last) return { inc: true, streak: 1, graces: 0 };
+    if (st.last === today) return { inc: false, streak: st.streak, graces: 0 };
+    let missed = 0; const d = parse(st.last), end = parse(today); d.setDate(d.getDate() + 1);
+    while (d < end) { const w = d.getDay(); if (w !== 0 && w !== 6) missed++; d.setDate(d.getDate() + 1); }
+    if (missed === 0) return { inc: true, streak: st.streak + 1, graces: 0 };
+    const avail = 2 - (st.gm === today.slice(0, 7) ? st.gu : 0);
+    if (missed <= avail) return { inc: true, streak: st.streak + 1, graces: missed };
+    return { inc: true, streak: 1, graces: 0 };
+  }
+
+  /* ---------- the card ---------- */
+  let mcard = null, mtimer = null, mraf = null;
+  function fit() {
+    if (!mcard) return;
+    const bar = document.querySelector('.bar'), top = parseFloat(getComputedStyle(mcard).top) || 18;
+    mcard.style.height = Math.max(240, bar.offsetTop - top - 10) + 'px';
+  }
+  function hideM(fast) {
+    clearTimeout(mtimer); cancelAnimationFrame(mraf);
+    if (!mcard) return;
+    const c = mcard; mcard = null;
+    if (fast) c.classList.add('fast');
+    c.classList.remove('on'); setTimeout(() => c.remove(), fast ? 400 : 1300);
+  }
+  function mark() { st.shared = true; save(); }
+  async function doShare(note, btn) {
+    try {
+      if (navigator.share) { await navigator.share({ text: SHARE_MSG }); mark(); setTimeout(() => hideM(false), 600); return; }
+      await navigator.clipboard.writeText(SHARE_MSG); mark(); note.textContent = 'Message copied. Paste it anywhere to share.';
+    } catch (e) { if (e && e.name !== 'AbortError') note.textContent = 'Share this link: https://hearjesus.here/'; }
+  }
+  function showM(c) {
+    hideM(true);
+    const el = document.createElement('div'); el.className = 'mcard'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', c.t);
+    const tag = document.createElement('div'); tag.className = 'mtag'; tag.textContent = TAG[c.k];
+    const h2 = document.createElement('h2'); h2.textContent = c.t;
+    const x = document.createElement('button'); x.type = 'button'; x.className = 'mx'; x.setAttribute('aria-label', 'Close'); x.textContent = '×';
+    x.addEventListener('click', e => { e.stopPropagation(); hideM(true); });
+    el.append(tag, h2);
+    if (c.b) { const p = document.createElement('p'); p.textContent = c.b; el.appendChild(p); }
+    if (c.btn) {
+      const note = document.createElement('div'); note.className = 'mnote';
+      if (c.btn === 'share') { const b = document.createElement('button'); b.type = 'button'; b.className = 'mbtn'; b.textContent = 'Share'; b.addEventListener('click', e => { e.stopPropagation(); doShare(note, b); }); el.append(b, note); }
+      else { const a = document.createElement('a'); a.className = 'mbtn'; a.href = MAIL; a.textContent = 'Email Us'; a.addEventListener('click', e => e.stopPropagation()); el.append(a, note); }
+    }
+    const tm = document.createElement('div'); tm.className = 'mtimer'; const bar = document.createElement('i'); tm.appendChild(bar);
+    el.append(x, tm); app.appendChild(el); mcard = el; fit();
+    requestAnimationFrame(() => requestAnimationFrame(() => el === mcard && el.classList.add('on')));
+    const t0 = performance.now();
+    const tick = n => { const p = Math.min(1, (n - t0) / 30000); bar.style.width = (100 - p * 100) + '%'; if (p < 1 && el === mcard) mraf = requestAnimationFrame(tick); };
+    mraf = requestAnimationFrame(tick);
+    mtimer = setTimeout(() => hideM(false), 30000);
+  }
+  const blocked = () => !!(document.querySelector('.wov') || document.querySelector('.ecard') || app.classList.contains('watching') || mcard);
+
+  /* ---------- per-episode plan ---------- */
+  let pending = [], planned = false, finishedThis = false, lastT = 0;
+  function plan() {
+    planned = true; pending = [];
+    const ev = evalStreak(new Date());
+    const willStreak = ev.inc && !!st.last && ev.streak % 5 === 0 && ev.streak > st.streak;
+    if (ev.graces > 0 && st.streak > 0) pending.push({ at: d => 120, card: () => { const left = Math.max(0, 2 - ((st.gm === ymd(new Date()).slice(0, 7) ? st.gu : 0) + ev.graces)); return { k: 'grace', t: GRACE_CARD.t, b: GRACE_CARD.b.replace('{g}', left).replace('{d}', left === 1 ? 'day' : 'days') }; } });
+    const n = st.finished + 1, pos = n % 4;
+    if (n > 1) {
+      let id = null, on = null;
+      if (pos === 0) {
+        for (let k = 0; k < ASK.length; k++) { const i = (st.ai + k) % ASK.length, cid = ASK[i]; if (st.shared && CARDS[cid].k === 'share') continue; id = cid; on = () => { st.ai = i + 1; }; break; }
+      } else if (pos === 2) {
+        if (!willStreak) { id = CUE[st.ci % CUE.length]; on = () => { st.ci++; }; }
+      } else {
+        const m = MS.findIndex((s, i) => st.secs >= s && !st.shown[i]);
+        if (m >= 0) { id = 16 + m; on = () => { st.shown[m] = 1; }; } else { id = REW[st.ri % REW.length]; on = () => { st.ri++; }; }
+      }
+      if (id) { const c = CARDS[id]; pending.push({ at: d => c.end ? Math.max(d * 0.5, d - 90) : Math.min(270, d * 0.3), card: () => c, on }); }
+    }
+  }
+  function commitFinish() {
+    finishedThis = true;
+    const ev = evalStreak(new Date()), prev = st.streak;
+    st.finished++;
+    if (ev.inc) {
+      st.streak = ev.streak; st.last = ymd(new Date());
+      if (ev.graces > 0) { const mo = st.last.slice(0, 7); if (st.gm !== mo) { st.gm = mo; st.gu = 0; } st.gu += ev.graces; }
+    }
+    save();
+    if (ev.inc && prev > 0 && st.streak % 5 === 0 && st.streak > prev) pending.push({ at: d => 0, card: () => streakCard(st.streak), now: true });
+  }
+
+  /* ---------- test mode: ?card=19 | ?card=streak10 | ?card=grace shows that card ~4 sec into playback, saving nothing ---------- */
+  const q = (location.search.match(/[?&]card=([a-z0-9]+)/i) || [])[1];
+  let testDone = false;
+  function testCard() {
+    if (/^\d+$/.test(q) && CARDS[q]) return CARDS[q];
+    if (/^streak\d+$/.test(q)) return streakCard(parseInt(q.slice(6), 10) || 5);
+    if (q === 'grace') return { k: 'grace', t: GRACE_CARD.t, b: GRACE_CARD.b.replace('{g}', 1).replace('{d}', 'day') };
+    return null;
+  }
+
+  audio.addEventListener('loadstart', () => { hideM(true); planned = false; finishedThis = false; lastT = 0; pending = []; });
+  audio.addEventListener('seeking', () => { lastT = audio.currentTime; });
+  audio.addEventListener('timeupdate', () => {
+    const t = audio.currentTime, d = audio.duration;
+    if (audio.paused || !isFinite(d) || d < 60) { lastT = t; return; }
+    const dt = t - lastT; lastT = t;
+    if (dt > 0 && dt < 2.5 && !q) { st.secs += dt; if (Math.round(st.secs) % 10 === 0) save(); }
+    if (q) { if (!testDone && t > 4 && t < 40 && !blocked()) { const c = testCard(); testDone = true; if (c) showM(c); } return; }
+    if (!planned) plan();
+    if (!finishedThis && t >= d * 0.8) commitFinish();
+    for (let i = pending.length - 1; i >= 0; i--) {
+      const p = pending[i], at = p.now ? d * 0.8 : p.at(d);
+      if (t < at) continue;
+      if (t - at > 60) { pending.splice(i, 1); continue; }
+      if (blocked()) continue;
+      pending.splice(i, 1); if (p.on) p.on(); save(); showM(p.card());
+    }
+  });
+  audio.addEventListener('pause', save);
+  audio.addEventListener('ended', () => { hideM(true); save(); });
+  addEventListener('pagehide', save);
+  addEventListener('resize', fit);
+  new MutationObserver(() => { if (app.classList.contains('watching')) hideM(true); }).observe(app, { attributes: true, attributeFilter: ['class'] });
 })();
 /* bottom edge: the browser's bottom strip follows the navy section once it fills the screen */
 (() => {

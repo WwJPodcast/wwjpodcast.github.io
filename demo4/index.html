@@ -308,10 +308,10 @@
   @keyframes c1ph{from{opacity:0;transform:translateY(calc(var(--u)*50))}to{opacity:1;transform:none}}
   @keyframes c1in{from{opacity:0}to{opacity:1}}
   @keyframes c1pulse{0%,100%{opacity:.7}50%{opacity:1}}
-  .wc1.run .s1 .hj{animation:c1up .8s ease-out .3s forwards,c1out .7s ease-in 2.5s forwards}
-  .wc1.run .s1 .ph{animation:c1ph 1.2s ease-out 3.2s forwards}
-  .wc1.run .s1 .pf{animation:c1in .1s linear 3.2s forwards}
-  .wc1.run .s1 .tp{animation:c1in .8s ease-out 4.7s forwards,c1pulse 2.2s ease-in-out 5.6s infinite}
+  .wc1.run .s1 .hj{animation:c1up .6s ease-out .1s forwards,c1out .6s ease-in 1.9s forwards}
+  .wc1.run .s1 .ph{animation:c1ph .9s ease-out 2.5s forwards}
+  .wc1.run .s1 .pf{animation:c1in .1s linear 2.5s forwards}
+  .wc1.run .s1 .tp{animation:c1in .6s ease-out 3.3s forwards,c1pulse 2.2s ease-in-out 3.9s infinite}
   .wc1.static .s1 .hj{display:none}
   .wc1.static .s1 .ph,.wc1.static .s1 .pf,.wc1.static .s1 .tp{opacity:1;animation:none}
   .wc1.static .s1 .tp{animation:c1pulse 2.2s ease-in-out infinite}
@@ -394,7 +394,7 @@
 .hs .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .hs .row:focus-visible,.hs .what:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .wc1 .s1 .fs{left:0;right:0;top:calc(var(--u)*1625);text-align:center;font-size:calc(var(--u)*44);font-weight:500;letter-spacing:.01em;color:#6b625a;z-index:5;white-space:nowrap}
-.wc1.run .s1 .fs{animation:c1in .8s ease-out 5.1s forwards}
+.wc1.run .s1 .fs{animation:c1in .6s ease-out 3.6s forwards}
 .wc1.static .s1 .fs{opacity:1;animation:none}
 .pick.season.coach{position:relative}
 .pick.season.coach::before{content:"";position:absolute;inset:-5px -10px;border-radius:999px;border:3px solid var(--red);animation:cring 1.7s ease-out infinite;pointer-events:none}
@@ -1154,20 +1154,30 @@
   /* ---------- welcome: card 1 = full-screen logo card, card 2 = merged card; both dissolve ---------- */
   let wov = null, wstage = 0, wtimer = null, wdrop = null, wmo = null;
   const FADE = REDUCED ? 20 : 900;
-  function endCoach() { const pb = $('play'); if (pb) { pb.classList.remove('coach'); const b = pb.querySelector('.cbub'); if (b) b.remove(); } lsSet('wwj.coach.v1', true); }
-  function showCoach() {
-    if (lsGet('wwj.coach.v1')) { showCoachH(); return; }
+  function endCoach() {
+    lsSet('wwj.coach.v1', true);
+    const pb = $('play'); if (pb) { pb.classList.remove('coach'); const b = pb.querySelector('.cbub'); if (b) b.remove(); }
+    endCoachH();
+  }
+  function showPlayCoach() {
+    if (lsGet('wwj.coach.v1')) return;
     const pb = $('play'); if (!pb || pb.querySelector('.cbub')) return;
     pb.classList.add('coach'); const b = h('span', 'cbub', 'Press play to begin'); b.setAttribute('aria-hidden', 'true'); pb.appendChild(b);
     pb.addEventListener('click', endCoach, { once: true });
-    showCoachH();
   }
-  function endCoachH() { const sp = document.querySelector('.pick.season'); if (sp) { sp.classList.remove('coach'); const b = sp.querySelector('.cbub'); if (b) b.remove(); } lsSet('wwj.coach.h.v1', true); }
-  function showCoachH() {
-    if (lsGet('wwj.coach.h.v1')) return;
+  function endCoachH() {
+    const sp = document.querySelector('.pick.season'); if (sp) { sp.classList.remove('coach'); const b = sp.querySelector('.cbub'); if (b) b.remove(); }
+    const was = lsGet('wwj.coach.h.v1'); lsSet('wwj.coach.h.v1', true);
+    if (!was) showPlayCoach();
+  }
+  /* sequence: "Pick a harmony" first; "Press play to begin" appears once the harmony menu has been tapped */
+  function showCoach() {
+    if (lsGet('wwj.coach.v1')) return;
+    if (lsGet('wwj.coach.h.v1')) { showPlayCoach(); return; }
     const sp = document.querySelector('.pick.season'); if (!sp || sp.querySelector('.cbub')) return;
     sp.classList.add('coach'); const b = h('span', 'cbub', 'Pick a harmony'); b.setAttribute('aria-hidden', 'true'); sp.appendChild(b);
     const se = $('season'); ['mousedown', 'touchstart', 'keydown'].forEach(ev => se.addEventListener(ev, endCoachH, { once: true }));
+    $('play').addEventListener('click', endCoach, { once: true });
   }
   function finishWelcome() {
     if (!wov) return;

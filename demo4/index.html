@@ -380,20 +380,29 @@
 .hs .dot{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #b9ad92;margin-top:3px;position:relative}.hs .row[aria-checked=true] .dot{border-color:var(--red)}.hs .row[aria-checked=true] .dot:after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--red)}
 .hs .t{font-size:19px;font-weight:700;color:var(--ink)}.hs .d{display:block;font-size:16px;line-height:1.3;color:#4b443d;margin-top:2px}.hs .m{display:block;font-size:14px;color:var(--muted);margin-top:4px}
 .hs .new{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;color:#fff;background:var(--red);border-radius:10px;padding:2px 8px;margin-left:8px;vertical-align:2px}
-.hs .what{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid #e4d6b8;margin-top:6px;padding:14px 2px 4px;font:inherit;font-size:17px;font-weight:600;color:var(--red);cursor:pointer}
+.hs .what{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:#fff9ec;border:1.5px dashed #c9b88f;border-radius:16px;margin:0 0 10px;padding:12px 14px;font:inherit;font-size:18px;font-weight:600;color:var(--red);cursor:pointer}
 .hs .what i{display:inline-block;width:9px;height:9px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg) translateY(-3px);margin-left:10px;transition:transform .2s}.hs .what[aria-expanded=true] i{transform:rotate(225deg) translateY(-1px)}
-.hs .ex{display:none;padding:8px 0 6px;text-align:center}.hs .ex.on{display:block}
-.hs .ex .wg{display:grid;grid-template-columns:repeat(4,1fr);width:100%;margin-top:12px}
+.hs .ex{display:none;padding:2px 0 12px;text-align:center}.hs .ex.on{display:block}
+.hs .ex .wg{display:grid;grid-template-columns:repeat(4,1fr);width:100%;margin:2px 0 6px}
 .hs .ex .wg b{display:block;font-weight:700;font-size:clamp(16px,4.6vw,19px);color:var(--navy)}
 .hs .ex .wg span{display:block;font-size:clamp(13px,3.7vw,15px);line-height:1.15;color:#4b443d;margin-top:2px}
-.hs .ex svg.wt{display:block;width:100%;max-width:340px;height:auto;margin:0 auto}
-.hs .ex .wone{font-weight:700;letter-spacing:.2em;font-size:20px;color:var(--navy)}
-.hs .ex p{font-size:17px;line-height:1.32;color:#3b342e;margin:12px auto 0;max-width:360px}.hs .ex p .hw{font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--red)}
+.hs .ex svg.wt{display:block;width:100%;max-width:230px;height:auto;margin:0 auto}
+.hs .ex .wone{font-weight:700;letter-spacing:.2em;font-size:18px;color:var(--navy)}
+.hs .ex p{font-size:16px;line-height:1.3;color:#3b342e;margin:8px auto 0;max-width:340px}.hs .ex p .hw{font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--red)}
 .hs .row.ep{align-items:center;padding:10px 14px;margin-bottom:8px}.hs .row.ep .t{font-size:18px;font-weight:600}
 .hs .num{flex:none;width:36px;height:36px;border-radius:50%;background:#efe6cf;color:#4b443d;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center}.hs .row[aria-checked=true] .num{background:var(--red);color:#fff}.hs .num.done{background:var(--gold-soft);color:#6b5a2a}
 .hs .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .hs .row:focus-visible,.hs .what:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-@media (prefers-reduced-motion:reduce){.hs,.hs-scrim{transition:none!important}}
+.wc1 .s1 .fs{left:0;right:0;top:calc(var(--u)*1625);text-align:center;font-size:calc(var(--u)*44);font-weight:500;letter-spacing:.01em;color:#6b625a;z-index:5;white-space:nowrap}
+.wc1.run .s1 .fs{animation:c1in .8s ease-out 5.1s forwards}
+.wc1.static .s1 .fs{opacity:1;animation:none}
+.play.coach{position:relative}
+.play.coach::before{content:"";position:absolute;inset:-5px;border-radius:50%;border:3px solid var(--red);animation:cring 1.7s ease-out infinite;pointer-events:none}
+.play .cbub{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);white-space:nowrap;background:#2b2620;color:var(--cream);font-family:var(--serif);font-size:17px;font-weight:600;padding:9px 16px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.22);animation:cbob 1.8s ease-in-out infinite;pointer-events:none}
+.play .cbub::after{content:"";position:absolute;left:50%;top:100%;margin-left:-8px;border:8px solid transparent;border-top-color:#2b2620}
+@keyframes cring{0%{transform:scale(.96);opacity:.9}100%{transform:scale(1.35);opacity:0}}
+@keyframes cbob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+@media (prefers-reduced-motion:reduce){.hs,.hs-scrim{transition:none!important}.wc1 .s1 .fs{opacity:1!important;animation:none!important}.play.coach::before,.play .cbub{animation:none!important}.play.coach::before{opacity:.6}.play .cbub{transform:translateX(-50%)}}
 </style>
 </head>
 <body>
@@ -665,11 +674,13 @@
     const meta = s => s.weeks + ' \u00b7 ' + s.total + ' episodes' + (s.id === 4 ? ' \u00b7 Video' : '');
     function build() {
       const cur = +seasonSel.value;
-      let h = '<div class="gr"></div><h3>Choose a harmony</h3><p class="in">A <b>harmony</b> blends the Gospels into one story, told in the order it happened. Not sure? Start with Mark + John.</p><div role="radiogroup" aria-label="Harmony">';
+      let first = false; try { first = !localStorage.getItem('wwj.harmony.seen'); localStorage.setItem('wwj.harmony.seen','1'); } catch (e) {}
+      const WHAT = '<button type="button" class="what" id="hsWhat" aria-expanded="' + first + '" aria-controls="hsEx">What is a harmony?<i aria-hidden="true"></i></button><div class="ex' + (first ? ' on' : '') + '" id="hsEx"><div class="wg"><div><b>Matthew</b><span>Eyewitness account</span></div><div><b>Mark</b><span>Action oriented</span></div><div><b>Luke</b><span>Careful historian</span></div><div><b>John</b><span>The beloved disciple</span></div></div>' + TREE + '<div class="wone">ONE STORY</div><p>That\u2019s a <b class="hw">harmony</b>: two or more Gospels blended into one story, told in the order it happened.</p></div>';
+      let h = '<div class="gr"></div><h3>Choose a harmony</h3><p class="in">Not sure? Start with <b>Mark + John</b>.</p>' + WHAT + '<div role="radiogroup" aria-label="Harmony">';
       SEASONS.forEach(s => {
         h += '<button type="button" class="row" role="radio" aria-checked="' + (s.id === cur) + '" tabindex="' + (s.id === cur ? 0 : -1) + '" data-id="' + s.id + '"><span class="dot" aria-hidden="true"></span><span><span class="t">' + s.label.replace(/ Harmony$/, '') + (s.id === 1 ? '<span class="new">START HERE</span>' : '') + '</span><span class="d">' + desc(s) + '</span><span class="m">' + meta(s) + '</span></span></button>';
       });
-      h += '</div><button type="button" class="what" id="hsWhat" aria-expanded="false" aria-controls="hsEx">What is a harmony?<i aria-hidden="true"></i></button><div class="ex" id="hsEx"><div class="wg"><div><b>Matthew</b><span>Eyewitness account</span></div><div><b>Mark</b><span>Action oriented</span></div><div><b>Luke</b><span>Careful historian</span></div><div><b>John</b><span>The beloved disciple</span></div></div>' + TREE + '<div class="wone">ONE STORY</div><p>That\u2019s a <b class="hw">harmony</b>: two or more Gospels blended into one story, told in the order it happened.</p></div>';
+      h += '</div>';
       hs.innerHTML = h;
       const rows = [...hs.querySelectorAll('.row')];
       rows.forEach((b, i) => {
@@ -1139,11 +1150,18 @@
   /* ---------- welcome: card 1 = full-screen logo card, card 2 = merged card; both dissolve ---------- */
   let wov = null, wstage = 0, wtimer = null, wdrop = null, wmo = null;
   const FADE = REDUCED ? 20 : 900;
+  function endCoach() { const pb = $('play'); if (pb) { pb.classList.remove('coach'); const b = pb.querySelector('.cbub'); if (b) b.remove(); } lsSet('wwj.coach.v1', true); }
+  function showCoach() {
+    if (lsGet('wwj.coach.v1')) return;
+    const pb = $('play'); if (!pb || pb.querySelector('.cbub')) return;
+    pb.classList.add('coach'); const b = h('span', 'cbub', 'Press play to begin'); b.setAttribute('aria-hidden', 'true'); pb.appendChild(b);
+    pb.addEventListener('click', endCoach, { once: true });
+  }
   function finishWelcome() {
     if (!wov) return;
     clearTimeout(wtimer); lsSet(WKEY, true);
     const o = wov; wov = null; wdrop = null; if (wmo) { wmo.disconnect(); wmo = null; } o.classList.add('out');
-    setTimeout(() => { o.remove(); document.documentElement.style.overflow = ''; }, FADE + 50);
+    setTimeout(() => { o.remove(); document.documentElement.style.overflow = ''; showCoach(); }, FADE + 50);
   }
   /* put the replica exactly over the real season selector, then fit the arrow and the tap line around it */
   function placeDrop() {
@@ -1167,10 +1185,11 @@
     const wstage0 = wstage; wstage = n;
     const k1 = wov.querySelector(".wc1"); if (n === 1 && wstage0 > 1) { k1.classList.remove('run'); k1.classList.add('static'); }
     k1.classList.toggle('on', n === 1);
-    wov.querySelector('.wc2').classList.toggle('on', n === 2);
-    if (wdrop) { if (n === 2) { placeDrop(); wdrop.classList.add('on'); requestAnimationFrame(placeDrop); } else wdrop.classList.remove('on'); }
+    wov.querySelector('.wch').classList.toggle('on', n === 2);
+    wov.querySelector('.wc2').classList.toggle('on', n === 3);
+    if (wdrop) { if (n === 3) { placeDrop(); wdrop.classList.add('on'); requestAnimationFrame(placeDrop); } else wdrop.classList.remove('on'); }
   }
-  function advance() { if (!wov) return; if (wstage < 2) goTo(wstage + 1); else finishWelcome(); }
+  function advance() { if (wov) finishWelcome(); }
   function back() { if (wov && wstage > 1) goTo(wstage - 1); }
   document.addEventListener('keydown', e => {
     if (!wov) return;
@@ -1178,23 +1197,15 @@
   });
   function welcome() {
     if (wov) wov.remove();
-    clearTimeout(wtimer); wstage = 1;
+    clearTimeout(wtimer); wstage = 1; lsDel('wwj.coach.v1'); lsDel('wwj.harmony.seen');
     wov = h('div', 'wov'); wov.setAttribute('role', 'dialog'); wov.setAttribute('aria-label', 'Welcome to Walking with Jesus');
     const c1 = h('div', 'wc wc1 on run'); c1.setAttribute('role', 'group'); c1.setAttribute('aria-label', 'Hear Jesus here. Walking with Jesus. Tap to continue.');
     c1.innerHTML = '<div class="s1">' +
       '<svg class="hj" viewBox="0 0 1080 1920" aria-hidden="true"><g font-family="CGhead,Cormorant Garamond,Georgia,serif" font-weight="700" text-anchor="middle"><text x="540" y="855" font-size="150" fill="#111">HEAR</text><text x="540" y="1025" font-size="205" fill="#980F11">JESUS</text><text x="540" y="1159" font-size="150" fill="#111">HERE.</text></g></svg>' +
       '<div class="ph" aria-hidden="true"><div class="isl"></div><img src="/welcome-logo.png" alt=""><div class="play"></div><div class="fd"></div></div>' +
       '<div class="pf" aria-hidden="true"></div>' +
-      '<div class="tp">Tap to continue<b>&raquo;</b></div></div>';
-    const c2 = h('div', 'wc wc2');
-    c2.innerHTML =
-      '<div class="wtop"><h2>Go at your pace.</h2><p>Just press play to begin with Mark + John. Or pick another harmony, choose your speed, and it remembers where you stopped.</p></div>' +
-      '<svg class="warrow" viewBox="0 0 36 60" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3v50M6 40l12 14 12-14"/></svg>' +
-      '<div class="wtap"><span>&laquo; Tap to go back</span><span>Tap to begin &raquo;</span></div>' +
-      '<div class="wbot"><p><b>Free. No sign-up.</b></p><p style="margin-top:12px">Scroll below the player to learn more about this project, find sharing links, and watch large-print videos adapted from the show for seniors.</p>' +
-      '<svg viewBox="0 0 34 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l13 14L30 4"/></svg></div>';
-    wdrop = h('div', 'pick season wdrop', '<span class="shown"><span></span><i class="chev"></i></span>');
-    wov.append(c1, c2, wdrop);
+      '<div class="tp">Tap to continue<b>&raquo;</b></div><div class="fs">Free. No sign-up.</div></div>';
+    wov.append(c1);
     wov.addEventListener('click', e => { if (e.clientX < window.innerWidth * 0.35) back(); else advance(); });
     window.scrollTo(0, 0);
     document.documentElement.style.overflow = 'hidden';

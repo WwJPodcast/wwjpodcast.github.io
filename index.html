@@ -132,6 +132,23 @@
   .sharebtn{background:var(--red);border-color:var(--red);color:#fff;margin-top:6px}
   .legal{margin-top:auto;padding:22px 0 4px;text-align:center;font-size:14px;line-height:1.45;color:var(--muted)}
   .legal p+p{margin-top:4px}
+  .bless{margin-top:auto;padding:28px 0 0;text-align:center;font-style:italic;font-size:22px;color:var(--gold)}
+  .bless+.legal{margin-top:0;padding-top:8px}
+  /* reviews */
+  .stars{display:flex;gap:2px;margin:2px 0 6px}
+  .stars button{width:48px;height:48px;border:0;background:none;font-size:38px;line-height:1;color:var(--gold);cursor:pointer;padding:0}
+  .stars button.on{color:var(--gold)}
+  .revform{display:flex;flex-direction:column;gap:10px;margin-top:8px;max-width:420px}
+  .revform textarea,.revform input[type=text]{font-family:inherit;font-size:18px;color:var(--ink);background:#fff;border:1.5px solid var(--gold-soft);border-radius:12px;padding:10px 14px;width:100%}
+  .revform textarea{resize:vertical}
+  .revform .sharebtn{align-self:flex-start;cursor:pointer}
+  .revform .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  .revapple{display:flex;align-items:center;justify-content:center;width:fit-content;max-width:100%;min-height:44px;margin-top:12px;padding:0 18px;border-radius:22px;border:1.5px solid var(--gold);background:#fff;color:var(--ink);font-style:normal;font-size:18px;text-decoration:none}
+  .revlist{margin-top:6px}
+  .rv{padding:12px 0;border-bottom:1px solid var(--gold-soft)}
+  .rv .rs{color:var(--gold);font-size:20px;letter-spacing:2px}
+  .rv p{font-size:18px;line-height:1.4;margin-top:4px}
+  .rv .rn{font-style:italic;color:var(--muted);font-size:16px}
   .toast{min-height:1.3em;margin-top:8px;font-style:italic;color:var(--muted);font-size:17px}
   /* watch: video in place of the logo (seasons that have videos) */
   /* same height as the logo area, so nothing below moves when the video appears */
@@ -546,6 +563,27 @@
         <p class="grp">Share</p>
         <button class="sharebtn" id="shareBtn" type="button">Share this player</button>
         <p class="toast" id="toast" role="status" aria-live="polite"></p>
+        <div class="revlist" id="revList" hidden>
+          <p class="grp">What listeners say</p>
+          <div id="revItems"></div>
+        </div>
+        <div class="rev" id="rev">
+          <p class="grp">Rate this show</p>
+          <div class="stars" id="stars" role="radiogroup" aria-label="Your rating">
+            <button type="button" role="radio" aria-checked="false" aria-label="1 star" data-v="1">&#9734;</button>
+            <button type="button" role="radio" aria-checked="false" aria-label="2 stars" data-v="2">&#9734;</button>
+            <button type="button" role="radio" aria-checked="false" aria-label="3 stars" data-v="3">&#9734;</button>
+            <button type="button" role="radio" aria-checked="false" aria-label="4 stars" data-v="4">&#9734;</button>
+            <button type="button" role="radio" aria-checked="false" aria-label="5 stars" data-v="5">&#9734;</button>
+          </div>
+          <form class="revform" id="revForm" hidden>
+            <textarea id="revComment" maxlength="1000" rows="4" placeholder="Add a comment (optional)" aria-label="Comment, optional"></textarea>
+            <input id="revName" type="text" maxlength="40" placeholder="First name (optional)" aria-label="First name, optional" autocomplete="given-name">
+            <input class="hp" id="revWebsite" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button class="sharebtn" id="revSend" type="submit">Send</button>
+          </form>
+          <p class="toast" id="revMsg" role="status" aria-live="polite"></p>
+        </div>
         <p class="grp">Contact</p>
         <div class="links">
           <a href="mailto:wwjesuspodcast@gmail.com">Questions or feedback? Email us</a>
@@ -553,6 +591,7 @@
     </div>
   </div></section>
 
+  <p class="bless">May God Bless Your Journey</p>
   <footer class="legal"><p>&copy; 2026 Walking with Jesus</p></footer>
 </div>
 
@@ -1581,5 +1620,67 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); upd();
 })();
 </script>
+
+<script>
+/* Reviews: stars + optional comment -> Cloudflare Worker (emails Chad, stores in KV). Approved reviews are listed from hearjesus/reviews.json */
+(function () {
+  const ENDPOINT = 'https://wwj-reviews.cp-784.workers.dev/review';
+  const APPLE = 'https://podcasts.apple.com/us/podcast/walking-with-jesus/id6792097599';
+  const $ = id => document.getElementById(id);
+  const stars = $('stars'), form = $('revForm'), msg = $('revMsg');
+  if (!stars || !form) return;
+  let rating = 0;
+  const btns = [...stars.querySelectorAll('button')];
+  const paint = () => btns.forEach(b => {
+    const v = +b.dataset.v, on = v <= rating;
+    b.textContent = on ? '\u2605' : '\u2606';
+    b.setAttribute('aria-checked', String(v === rating));
+  });
+  btns.forEach(b => b.addEventListener('click', () => {
+    rating = +b.dataset.v; paint(); form.hidden = false; msg.textContent = '';
+  }));
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!rating) { msg.textContent = 'Please tap a star first.'; return; }
+    const send = $('revSend'); send.disabled = true; msg.textContent = 'Sending\u2026';
+    try {
+      const r = await fetch(ENDPOINT, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rating, comment: $('revComment').value, name: $('revName').value, website: $('revWebsite').value })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.error || 'fail');
+      form.hidden = true; stars.hidden = true;
+      msg.textContent = 'Thank you. Your review was sent.';
+      const a = document.createElement('a');
+      a.className = 'revapple';
+      a.href = APPLE; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = 'Also review us on Apple Podcasts';
+      msg.appendChild(a);
+    } catch (err) {
+      send.disabled = false;
+      msg.textContent = (err && err.message && err.message !== 'fail') ? err.message : 'Sorry, that did not send. Please try again.';
+    }
+  });
+  paint();
+  /* approved reviews */
+  fetch('reviews.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).then(list => {
+    const shown = (Array.isArray(list) ? list : []).filter(x => x && x.comment && x.rating >= 1 && x.rating <= 5);
+    if (!shown.length) return;
+    const box = $('revItems');
+    shown.forEach(x => {
+      const d = document.createElement('div'); d.className = 'rv';
+      const s = document.createElement('div'); s.className = 's rs'; s.setAttribute('aria-label', x.rating + ' out of 5 stars');
+      s.textContent = '\u2605'.repeat(x.rating) + '\u2606'.repeat(5 - x.rating);
+      const p = document.createElement('p'); p.textContent = x.comment;
+      d.append(s, p);
+      if (x.name) { const n = document.createElement('p'); n.className = 'rn'; n.textContent = '\u2014 ' + x.name; d.appendChild(n); }
+      box.appendChild(d);
+    });
+    $('revList').hidden = false;
+  }).catch(() => {});
+})();
+</script>
+
 </body>
 </html>

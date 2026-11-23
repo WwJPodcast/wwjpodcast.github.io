@@ -1499,8 +1499,9 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       if (id) { const c = CARDS[id]; pending.push({ at: d => c.end ? Math.max(d * 0.5, d - 90) : Math.min(270, d * 0.3), card: () => c, on }); }
     }
   }
-  function commitFinish() {
-    finishedThis = true;
+  let counted = '';   // the episode key last counted as finished (audio or video), so switching between them never counts twice
+  function commitFinish(silent) {
+    finishedThis = true; counted = keyNow();
     st.finished++;
     const now = new Date(), wk = mondayOf(now), key = keyNow();
     if (st.wk !== wk) { st.wk = wk; st.eps = []; }
@@ -1513,7 +1514,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       if (st.streak >= 2) card = streakCard(st.streak);
     }
     save();
-    if (card) pending.push({ at: d => 0, card: () => card, now: true });
+    if (card && !silent) pending.push({ at: d => 0, card: () => card, now: true });
     if (typeof paintProg === 'function') paintProg();
   }
 
@@ -1601,6 +1602,18 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       pending.splice(i, 1); if (p.on) p.on(); save(); showM(p.card());
     }
   });
+  /* Watching counts too. The video is its own element (reused for every episode), so listen for its events on the document.
+     Cards stay hidden while watching, so a finished video just counts toward the week and the total. The YouTube fallback can't be counted. */
+  let vLast = 0;
+  document.addEventListener('seeking', e => { if (e.target && e.target.tagName === 'VIDEO') vLast = e.target.currentTime; }, true);
+  document.addEventListener('timeupdate', e => {
+    const v = e.target; if (!v || v.tagName !== 'VIDEO' || q) return;
+    const t = v.currentTime, d = v.duration;
+    if (v.paused || !isFinite(d) || d < 60) { vLast = t; return; }
+    const dt = t - vLast; vLast = t;
+    if (dt > 0 && dt < 2.5) { st.secs += dt; if (Math.round(st.secs) % 10 === 0) save(); }
+    if (t >= d * 0.8 && counted !== keyNow()) commitFinish(true);
+  }, true);
   audio.addEventListener('pause', save);
   audio.addEventListener('ended', () => { hideM(true); save(); });
   addEventListener('pagehide', save);

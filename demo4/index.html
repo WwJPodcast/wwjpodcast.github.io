@@ -370,6 +370,7 @@
   body{background:transparent}
 </style>
 <style id="hsCss">
+.pick select{pointer-events:none}
 .hs-scrim{position:fixed;inset:0;background:rgba(30,24,16,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:70;touch-action:none}.hs-scrim.on{opacity:1;pointer-events:auto}
 .hs{position:fixed;left:0;right:0;bottom:0;z-index:71;margin:0 auto;max-width:560px;background:var(--cream);border-radius:26px 26px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.25);transform:translateY(105%);visibility:hidden;transition:transform .3s ease,visibility 0s .3s;max-height:92vh;max-height:92dvh;overflow:auto;overscroll-behavior:contain;padding:10px 20px max(22px,env(safe-area-inset-bottom));font-family:var(--serif)}
 .hs.on{transform:none;visibility:visible;transition:transform .3s ease}
@@ -717,6 +718,7 @@
     });
     document.body.append(scrim, hs);
     ['mousedown', 'touchstart'].forEach(ev => seasonSel.addEventListener(ev, e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }, { passive: false }));
+    { const lab = seasonSel.closest('label'); if (lab) lab.addEventListener('click', e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }); }
     seasonSel.addEventListener('keydown', e => { if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); open(); } });
   })();
 
@@ -765,6 +767,7 @@
     });
     document.body.append(scrim, sh);
     ['mousedown', 'touchstart'].forEach(ev => epS.addEventListener(ev, e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }, { passive: false }));
+    { const lab = epS.closest('label'); if (lab) lab.addEventListener('click', e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }); }
     epS.addEventListener('keydown', e => { if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); open(); } });
   })();
   // Per-series paragraph shown under the show description (About > Show). Matched by the series name in the
@@ -1176,7 +1179,7 @@
     if (lsGet('wwj.coach.h.v1')) { showPlayCoach(); return; }
     const sp = document.querySelector('.pick.season'); if (!sp || sp.querySelector('.cbub')) return;
     sp.classList.add('coach'); const b = h('span', 'cbub', 'Pick a harmony'); b.setAttribute('aria-hidden', 'true'); sp.appendChild(b);
-    const se = $('season'); ['mousedown', 'touchstart', 'keydown'].forEach(ev => se.addEventListener(ev, endCoachH, { once: true }));
+    sp.addEventListener('click', endCoachH, { once: true }); $('season').addEventListener('keydown', endCoachH, { once: true });
     $('play').addEventListener('click', endCoach, { once: true });
   }
   function finishWelcome() {

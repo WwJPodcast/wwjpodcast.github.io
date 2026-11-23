@@ -1682,5 +1682,38 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
 })();
 </script>
 
+<script>
+/* Quiet update check. The page itself carries no version, so ask the server (HEAD, never cached) when index.html last changed and compare with
+   when this copy was loaded. If newer, reload at a calm moment: audio paused, no welcome/menu open, no typing, and only when the app is
+   returning to the foreground or sitting in the background. Rate-limited to one reload per 3 minutes, so it cannot loop. Any failure = do nothing. */
+(function () {
+  if (!window.fetch) return;
+  var audio = document.getElementById('audio'), loaded = Date.parse(document.lastModified) || 0, pending = false, busy = false, last = 0;
+  function idle() {
+    if (audio && !audio.paused) return false;
+    if (document.querySelector('.wov, .hs.on')) return false;
+    var a = document.activeElement; if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return false;
+    if (/[?&]welcome=/.test(location.search)) return false;
+    return true;
+  }
+  function go() {
+    try { var t = +sessionStorage.getItem('wwj.upd.t') || 0; if (Date.now() - t < 180000) return; sessionStorage.setItem('wwj.upd.t', Date.now()); } catch (e) {}
+    location.reload();
+  }
+  function check(force) {
+    var now = Date.now(); if (busy || (!force && now - last < 120000)) return;
+    last = now; busy = true;
+    fetch(location.pathname, { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+      var lm = Date.parse(r.headers.get('last-modified') || '');
+      if (lm && loaded && lm > loaded + 1000) pending = true;
+    }).catch(function () {}).then(function () { busy = false; if (force && pending && idle() && !document.hidden) go(); });
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) check(true); });
+  addEventListener('pageshow', function () { check(true); });
+  setTimeout(function () { check(true); }, 8000);
+  setInterval(function () { check(false); if (pending && document.hidden && idle()) go(); }, 60000);
+})();
+</script>
+
 </body>
 </html>

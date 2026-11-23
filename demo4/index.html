@@ -371,7 +371,7 @@
 </style>
 <style id="hsCss">
 .pick select{pointer-events:none}
-.hs-scrim{position:fixed;inset:0;background:rgba(30,24,16,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:70;touch-action:none}.hs-scrim.on{opacity:1;pointer-events:auto}
+.hs-scrim{position:fixed;inset:0;background:rgba(30,24,16,.45);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility 0s .25s;z-index:70;touch-action:none}.hs-scrim.on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .25s}
 .hs{position:fixed;left:0;right:0;bottom:0;z-index:71;margin:0 auto;max-width:560px;background:var(--cream);border-radius:26px 26px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.25);transform:translateY(105%);visibility:hidden;transition:transform .3s ease,visibility 0s .3s;max-height:92vh;max-height:92dvh;overflow:auto;overscroll-behavior:contain;padding:10px 20px max(22px,env(safe-area-inset-bottom));font-family:var(--serif)}
 .hs.on{transform:none;visibility:visible;transition:transform .3s ease}
 .hs .gr{width:44px;height:5px;border-radius:3px;background:#d9d0bb;margin:4px auto 14px}

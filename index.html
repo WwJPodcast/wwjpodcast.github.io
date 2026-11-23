@@ -308,10 +308,10 @@
   @keyframes c1ph{from{opacity:0;transform:translateY(calc(var(--u)*50))}to{opacity:1;transform:none}}
   @keyframes c1in{from{opacity:0}to{opacity:1}}
   @keyframes c1pulse{0%,100%{opacity:.7}50%{opacity:1}}
-  .wc1.run .s1 .hj{animation:c1up .8s ease-out .3s forwards,c1out .7s ease-in 2.5s forwards}
-  .wc1.run .s1 .ph{animation:c1ph 1.2s ease-out 3.2s forwards}
-  .wc1.run .s1 .pf{animation:c1in .1s linear 3.2s forwards}
-  .wc1.run .s1 .tp{animation:c1in .8s ease-out 4.7s forwards,c1pulse 2.2s ease-in-out 5.6s infinite}
+  .wc1.run .s1 .hj{animation:c1up .6s ease-out .1s forwards,c1out .6s ease-in 1.9s forwards}
+  .wc1.run .s1 .ph{animation:c1ph .9s ease-out 2.5s forwards}
+  .wc1.run .s1 .pf{animation:c1in .1s linear 2.5s forwards}
+  .wc1.run .s1 .tp{animation:c1in .6s ease-out 3.3s forwards,c1pulse 2.2s ease-in-out 3.9s infinite}
   .wc1.static .s1 .hj{display:none}
   .wc1.static .s1 .ph,.wc1.static .s1 .pf,.wc1.static .s1 .tp{opacity:1;animation:none}
   .wc1.static .s1 .tp{animation:c1pulse 2.2s ease-in-out infinite}
@@ -368,6 +368,46 @@
   /* the page itself ends in navy: nothing cream or white can show under the footer or on overscroll */
   html{background:var(--cream)}
   body{background:transparent}
+</style>
+<style id="hsCss">
+.pick select{pointer-events:none}
+.hs-scrim{position:fixed;inset:0;background:rgba(30,24,16,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:70;touch-action:none}.hs-scrim.on{opacity:1;pointer-events:auto}
+.hs{position:fixed;left:0;right:0;bottom:0;z-index:71;margin:0 auto;max-width:560px;background:var(--cream);border-radius:26px 26px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.25);transform:translateY(105%);visibility:hidden;transition:transform .3s ease,visibility 0s .3s;max-height:92vh;max-height:92dvh;overflow:auto;overscroll-behavior:contain;padding:10px 20px max(22px,env(safe-area-inset-bottom));font-family:var(--serif)}
+.hs.on{transform:none;visibility:visible;transition:transform .3s ease}
+.hs .gr{width:44px;height:5px;border-radius:3px;background:#d9d0bb;margin:4px auto 14px}
+.hs h3{font-size:24px;font-weight:700;color:var(--ink);margin:0 0 6px}.hs .in{font-size:17px;line-height:1.35;color:#3b342e;margin:0 0 14px}.hs .in b{color:var(--red)}
+.hs .row{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:#fff9ec;border:1.5px solid #e4d6b8;border-radius:16px;padding:13px 14px;margin-bottom:10px;font:inherit;color:inherit;cursor:pointer}
+.hs .row[aria-checked=true]{border-color:var(--red);background:#fff}
+.hs .dot{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #b9ad92;margin-top:3px;position:relative}.hs .row[aria-checked=true] .dot{border-color:var(--red)}.hs .row[aria-checked=true] .dot:after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--red)}
+.hs .t{font-size:19px;font-weight:700;color:var(--ink)}.hs .d{display:block;font-size:16px;line-height:1.3;color:#4b443d;margin-top:2px}.hs .m{display:block;font-size:14px;color:var(--muted);margin-top:4px}
+.hs .row.start{position:relative;margin-top:18px}.hs .new{position:absolute;top:-12px;right:14px;font-size:12.5px;font-weight:700;letter-spacing:.06em;color:#fff;background:var(--red);border-radius:12px;padding:3px 10px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.hs .what{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:#fff9ec;border:1.5px dashed #c9b88f;border-radius:16px;margin:4px 0 0;padding:12px 14px;font:inherit;font-size:18px;font-weight:600;color:var(--red);cursor:pointer}
+.hs .what i{display:inline-block;width:9px;height:9px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg) translateY(-3px);margin-left:10px;transition:transform .2s}.hs .what[aria-expanded=true] i{transform:rotate(225deg) translateY(-1px)}
+.hs .ex{display:none;padding:14px 0 8px;text-align:center}.hs .ex.on{display:block}
+.hs .ex .wg{display:grid;grid-template-columns:repeat(4,1fr);width:100%;margin:2px 0 6px}
+.hs .ex .wg b{display:block;font-weight:700;font-size:clamp(16px,4.6vw,19px);color:var(--navy)}
+.hs .ex .wg span{display:block;font-size:clamp(13px,3.7vw,15px);line-height:1.15;color:#4b443d;margin-top:2px}
+.hs .ex svg.wt{display:block;width:100%;max-width:230px;height:auto;margin:0 auto}
+.hs .ex .wone{font-weight:700;letter-spacing:.2em;font-size:18px;color:var(--navy)}
+.hs .ex p{font-size:16px;line-height:1.3;color:#3b342e;margin:8px auto 0;max-width:340px}.hs .ex p .hw{font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--red)}
+.hs .row.ep{align-items:center;padding:10px 14px;margin-bottom:8px}.hs .row.ep .t{font-size:18px;font-weight:600}
+.hs .num{flex:none;width:36px;height:36px;border-radius:50%;background:#efe6cf;color:#4b443d;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center}.hs .row[aria-checked=true] .num{background:var(--red);color:#fff}.hs .num.done{background:var(--gold-soft);color:#6b5a2a}
+.hs .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.hs .row:focus-visible,.hs .what:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wc1 .s1 .fs{left:0;right:0;top:calc(var(--u)*1625);text-align:center;font-size:calc(var(--u)*44);font-weight:500;letter-spacing:.01em;color:#6b625a;z-index:5;white-space:nowrap}
+.wc1.run .s1 .fs{animation:c1in .6s ease-out 3.6s forwards}
+.wc1.static .s1 .fs{opacity:1;animation:none}
+.pick.season.coach{position:relative}
+.pick.season.coach::before{content:"";position:absolute;inset:-5px -10px;border-radius:999px;border:3px solid var(--red);animation:cring 1.7s ease-out infinite;pointer-events:none}
+.pick.season .cbub{position:absolute;left:50%;bottom:calc(100% + 14px);transform:translateX(-50%);white-space:nowrap;background:#2b2620;color:var(--cream);font-family:var(--serif);font-size:17px;font-weight:600;font-style:normal;letter-spacing:0;text-transform:none;padding:9px 16px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.22);animation:cbob 1.8s ease-in-out infinite;pointer-events:none;z-index:3}
+.pick.season .cbub::after{content:"";position:absolute;left:50%;top:100%;margin-left:-8px;border:8px solid transparent;border-top-color:#2b2620}
+.play.coach{position:relative}
+.play.coach::before{content:"";position:absolute;inset:-5px;border-radius:50%;border:3px solid var(--red);animation:cring 1.7s ease-out infinite;pointer-events:none}
+.play .cbub{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);white-space:nowrap;background:#2b2620;color:var(--cream);font-family:var(--serif);font-size:17px;font-weight:600;padding:9px 16px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.22);animation:cbob 1.8s ease-in-out infinite;pointer-events:none}
+.play .cbub::after{content:"";position:absolute;left:50%;top:100%;margin-left:-8px;border:8px solid transparent;border-top-color:#2b2620}
+@keyframes cring{0%{transform:scale(.96);opacity:.9}100%{transform:scale(1.35);opacity:0}}
+@keyframes cbob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+@media (prefers-reduced-motion:reduce){.hs,.hs-scrim{transition:none!important}.wc1 .s1 .fs{opacity:1!important;animation:none!important}.play.coach::before,.play .cbub,.pick.season.coach::before,.pick.season .cbub{animation:none!important}.pick.season .cbub{transform:translateX(-50%)}.play.coach::before{opacity:.6}.play .cbub{transform:translateX(-50%)}}
 </style>
 </head>
 <body>
@@ -628,6 +668,108 @@
   };
   SEASONS.forEach(s => seasonSel.add(new Option(MENU_TEXT[s.id] || (s.label + ' (' + s.weeks + ')'), s.id)));
   const seasonInfo = id => SEASONS.find(s => s.id === id);
+
+  /* ---------- harmony sheet: replaces the native season menu (the closed pill is unchanged) ---------- */
+  (function () {
+    const TREE = "<svg class=\"wt\" viewBox=\"0 0 350 130\" aria-hidden=\"true\"><g fill=\"none\" stroke-width=\"5\" stroke-linecap=\"round\"><path d=\"M44 6C44 62 175 56 175 96\" stroke=\"#C4A059\"/><path d=\"M131 6C131 52 175 60 175 96\" stroke=\"#9A1114\"/><path d=\"M219 6C219 52 175 60 175 96\" stroke=\"#C4A059\"/><path d=\"M306 6C306 62 175 56 175 96\" stroke=\"#9A1114\"/><path d=\"M175 96V126\" stroke=\"#1B2748\" stroke-width=\"7\"/></g></svg>";
+    const scrim = document.createElement('div'); scrim.className = 'hs-scrim';
+    const hs = document.createElement('div'); hs.className = 'hs'; hs.setAttribute('role', 'dialog'); hs.setAttribute('aria-modal', 'true'); hs.setAttribute('aria-label', 'Choose a harmony');
+    let opener = null;
+    const desc = s => (MENU_TEXT[s.id] || '').replace(/^[^:]*:\s*/, '');
+    const meta = s => s.weeks + ' \u00b7 ' + s.total + ' episodes' + (s.id === 4 ? ' with videos' : '');
+    function build() {
+      const cur = +seasonSel.value;
+      const first = false;
+      const WHAT = '<button type="button" class="what" id="hsWhat" aria-expanded="' + first + '" aria-controls="hsEx">What is a harmony?<i aria-hidden="true"></i></button><div class="ex' + (first ? ' on' : '') + '" id="hsEx"><div class="wg"><div><b>Matthew</b><span>Eyewitness account</span></div><div><b>Mark</b><span>Action oriented</span></div><div><b>Luke</b><span>Careful historian</span></div><div><b>John</b><span>The beloved disciple</span></div></div>' + TREE + '<div class="wone">ONE STORY</div><p>That\u2019s a <b class="hw">harmony</b>: two or more Gospels blended into one story, told in the order it happened.</p></div>';
+      let h = '<div class="gr"></div><h3>Choose a harmony</h3><div role="radiogroup" aria-label="Harmony">';
+      SEASONS.forEach(s => {
+        h += '<button type="button" class="row' + (s.id === 1 ? ' start' : '') + '" role="radio" aria-checked="' + (s.id === cur) + '" tabindex="' + (s.id === cur ? 0 : -1) + '" data-id="' + s.id + '"><span class="dot" aria-hidden="true"></span><span><span class="t">' + s.label.replace(/ Harmony$/, '') + '</span><span class="d">' + desc(s) + '</span><span class="m">' + meta(s) + '</span></span>' + (s.id === 1 ? '<span class="new">START HERE</span>' : '') + '</button>';
+      });
+      h += '</div>' + WHAT;
+      hs.innerHTML = h;
+      const rows = [...hs.querySelectorAll('.row')];
+      rows.forEach((b, i) => {
+        b.addEventListener('click', () => { const id = b.dataset.id; close(); seasonSel.value = id; seasonSel.dispatchEvent(new Event('change', { bubbles: true })); });
+        b.addEventListener('keydown', e => {
+          const k = e.key, n = (k === 'ArrowDown' || k === 'ArrowRight') ? 1 : (k === 'ArrowUp' || k === 'ArrowLeft') ? -1 : 0;
+          if (n) { e.preventDefault(); const t = rows[(i + n + rows.length) % rows.length]; rows.forEach(r => r.tabIndex = -1); t.tabIndex = 0; t.focus(); }
+        });
+      });
+      hs.querySelector('#hsWhat').addEventListener('click', e => {
+        const on = hs.querySelector('#hsEx').classList.toggle('on'); e.currentTarget.setAttribute('aria-expanded', String(on));
+        if (on) setTimeout(() => hs.querySelector('#hsEx').scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }), 30);
+      });
+    }
+    function open() {
+      if (hs.classList.contains('on')) return;
+      opener = document.activeElement; build();
+      scrim.classList.add('on'); hs.classList.add('on'); document.documentElement.style.overflow = 'hidden'; hs.scrollTop = 0;
+      const f = hs.querySelector('.row[aria-checked="true"]'); if (f) f.focus({ preventScroll: true });
+    }
+    function close() {
+      scrim.classList.remove('on'); hs.classList.remove('on'); document.documentElement.style.overflow = '';
+      if (opener && opener.focus) opener.focus({ preventScroll: true });
+    }
+    scrim.addEventListener('click', close);
+    document.addEventListener('keydown', e => {
+      if (!hs.classList.contains('on')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') { const f = [...hs.querySelectorAll('button')].filter(b => b.offsetParent !== null && b.tabIndex >= 0 || b.classList.contains('what')); if (!f.length) return; const a = f[0], z = f[f.length - 1]; if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); } }
+    });
+    document.body.append(scrim, hs);
+    ['mousedown', 'touchstart'].forEach(ev => seasonSel.addEventListener(ev, e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }, { passive: false }));
+    { const lab = seasonSel.closest('label'); if (lab) lab.addEventListener('click', e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }); }
+    seasonSel.addEventListener('keydown', e => { if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); open(); } });
+  })();
+
+  /* ---------- episode sheet: same look as the harmony sheet (the closed "Episode N of M" pill is unchanged) ---------- */
+  (function () {
+    const epS = $('episode'); if (!epS) return;
+    const scrim = document.createElement('div'); scrim.className = 'hs-scrim';
+    const sh = document.createElement('div'); sh.className = 'hs'; sh.setAttribute('role', 'dialog'); sh.setAttribute('aria-modal', 'true'); sh.setAttribute('aria-label', 'Choose an episode');
+    let opener = null;
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    function build() {
+      const list = eps[cur.s] || [], si = seasonInfo(cur.s) || { label: '', total: list.length };
+      const done = list.filter(e => store.done[cur.s + '-' + e.n]).length;
+      let h = '<div class="gr"></div><h3>Choose an episode</h3><p class="in">' + esc(si.label) + (done ? ' · ' + done + ' of ' + Math.max(si.total, list.length) + ' finished' : '') + '</p><div role="radiogroup" aria-label="Episode">';
+      list.forEach(e => {
+        const d = !!store.done[cur.s + '-' + e.n], on = e.n === cur.n;
+        h += '<button type="button" class="row ep" role="radio" aria-checked="' + on + '" tabindex="' + (on ? 0 : -1) + '" data-n="' + e.n + '"><span class="num' + (d ? ' done' : '') + '" aria-hidden="true">' + (d ? '✓' : e.n) + '</span><span class="t">' + esc(e.title) + (d ? '<span class="sr"> (finished)</span>' : '') + '</span></button>';
+      });
+      sh.innerHTML = h + '</div>';
+      const rows = [...sh.querySelectorAll('.row')];
+      rows.forEach((b, i) => {
+        b.addEventListener('click', () => { const n = b.dataset.n; close(); epS.value = n; epS.dispatchEvent(new Event('change', { bubbles: true })); });
+        b.addEventListener('keydown', e => {
+          const k = e.key, n = (k === 'ArrowDown' || k === 'ArrowRight') ? 1 : (k === 'ArrowUp' || k === 'ArrowLeft') ? -1 : 0;
+          if (n) { e.preventDefault(); const t = rows[(i + n + rows.length) % rows.length]; rows.forEach(r => r.tabIndex = -1); t.tabIndex = 0; t.focus(); }
+        });
+      });
+    }
+    function open() {
+      if (sh.classList.contains('on')) return;
+      if (!(eps[cur.s] || []).length) return;
+      opener = document.activeElement; build();
+      scrim.classList.add('on'); sh.classList.add('on'); document.documentElement.style.overflow = 'hidden'; sh.scrollTop = 0;
+      const f = sh.querySelector('.row[aria-checked="true"]');
+      if (f) { f.focus({ preventScroll: true }); requestAnimationFrame(() => { sh.scrollTop = Math.max(0, f.offsetTop - sh.clientHeight / 2 + f.offsetHeight / 2); }); }
+    }
+    function close() {
+      scrim.classList.remove('on'); sh.classList.remove('on'); document.documentElement.style.overflow = '';
+      if (opener && opener.focus) opener.focus({ preventScroll: true });
+    }
+    scrim.addEventListener('click', close);
+    document.addEventListener('keydown', e => {
+      if (!sh.classList.contains('on')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') { e.preventDefault(); const f = sh.querySelector('.row[tabindex="0"]'); if (f) f.focus(); }
+    });
+    document.body.append(scrim, sh);
+    ['mousedown', 'touchstart'].forEach(ev => epS.addEventListener(ev, e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }, { passive: false }));
+    { const lab = epS.closest('label'); if (lab) lab.addEventListener('click', e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }); }
+    epS.addEventListener('keydown', e => { if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); open(); } });
+  })();
   // Per-series paragraph shown under the show description (About > Show). Matched by the series name in the
   // dropdown label, so a series added to SEASONS later (or a rerun under a new season number) picks up its
   // paragraph automatically. A series with no match here simply shows the show description alone.
@@ -1015,11 +1157,36 @@
   /* ---------- welcome: card 1 = full-screen logo card, card 2 = merged card; both dissolve ---------- */
   let wov = null, wstage = 0, wtimer = null, wdrop = null, wmo = null;
   const FADE = REDUCED ? 20 : 900;
+  function endCoach() {
+    lsSet('wwj.coach.v1', true);
+    const pb = $('play'); if (pb) { pb.classList.remove('coach'); const b = pb.querySelector('.cbub'); if (b) b.remove(); }
+    endCoachH();
+  }
+  function showPlayCoach() {
+    if (lsGet('wwj.coach.v1')) return;
+    const pb = $('play'); if (!pb || pb.querySelector('.cbub')) return;
+    pb.classList.add('coach'); const b = h('span', 'cbub', 'Press play to begin'); b.setAttribute('aria-hidden', 'true'); pb.appendChild(b);
+    pb.addEventListener('click', endCoach, { once: true });
+  }
+  function endCoachH() {
+    const sp = document.querySelector('.pick.season'); if (sp) { sp.classList.remove('coach'); const b = sp.querySelector('.cbub'); if (b) b.remove(); }
+    const was = lsGet('wwj.coach.h.v1'); lsSet('wwj.coach.h.v1', true);
+    if (!was) showPlayCoach();
+  }
+  /* sequence: "Pick a harmony" first; "Press play to begin" appears once the harmony menu has been tapped */
+  function showCoach() {
+    if (lsGet('wwj.coach.v1')) return;
+    if (lsGet('wwj.coach.h.v1')) { showPlayCoach(); return; }
+    const sp = document.querySelector('.pick.season'); if (!sp || sp.querySelector('.cbub')) return;
+    sp.classList.add('coach'); const b = h('span', 'cbub', 'Pick a harmony'); b.setAttribute('aria-hidden', 'true'); sp.appendChild(b);
+    sp.addEventListener('click', endCoachH, { once: true }); $('season').addEventListener('keydown', endCoachH, { once: true });
+    $('play').addEventListener('click', endCoach, { once: true });
+  }
   function finishWelcome() {
     if (!wov) return;
     clearTimeout(wtimer); lsSet(WKEY, true);
     const o = wov; wov = null; wdrop = null; if (wmo) { wmo.disconnect(); wmo = null; } o.classList.add('out');
-    setTimeout(() => { o.remove(); document.documentElement.style.overflow = ''; }, FADE + 50);
+    setTimeout(() => { o.remove(); document.documentElement.style.overflow = ''; showCoach(); }, FADE + 50);
   }
   /* put the replica exactly over the real season selector, then fit the arrow and the tap line around it */
   function placeDrop() {
@@ -1047,7 +1214,7 @@
     wov.querySelector('.wc2').classList.toggle('on', n === 3);
     if (wdrop) { if (n === 3) { placeDrop(); wdrop.classList.add('on'); requestAnimationFrame(placeDrop); } else wdrop.classList.remove('on'); }
   }
-  function advance() { if (!wov) return; if (wstage < 3) goTo(wstage + 1); else finishWelcome(); }
+  function advance() { if (wov) finishWelcome(); }
   function back() { if (wov && wstage > 1) goTo(wstage - 1); }
   document.addEventListener('keydown', e => {
     if (!wov) return;
@@ -1055,31 +1222,15 @@
   });
   function welcome() {
     if (wov) wov.remove();
-    clearTimeout(wtimer); wstage = 1;
+    clearTimeout(wtimer); wstage = 1; lsDel('wwj.coach.v1'); lsDel('wwj.coach.h.v1'); lsDel('wwj.harmony.seen');
     wov = h('div', 'wov'); wov.setAttribute('role', 'dialog'); wov.setAttribute('aria-label', 'Welcome to Walking with Jesus');
     const c1 = h('div', 'wc wc1 on run'); c1.setAttribute('role', 'group'); c1.setAttribute('aria-label', 'Hear Jesus here. Walking with Jesus. Tap to continue.');
     c1.innerHTML = '<div class="s1">' +
       '<svg class="hj" viewBox="0 0 1080 1920" aria-hidden="true"><g font-family="CGhead,Cormorant Garamond,Georgia,serif" font-weight="700" text-anchor="middle"><text x="540" y="855" font-size="150" fill="#111">HEAR</text><text x="540" y="1025" font-size="205" fill="#980F11">JESUS</text><text x="540" y="1159" font-size="150" fill="#111">HERE.</text></g></svg>' +
       '<div class="ph" aria-hidden="true"><div class="isl"></div><img src="/welcome-logo.png" alt=""><div class="play"></div><div class="fd"></div></div>' +
       '<div class="pf" aria-hidden="true"></div>' +
-      '<div class="tp">Tap to continue<b>&raquo;</b></div></div>';
-    const ch = h('div', 'wc wch');
-    ch.innerHTML =
-      '<h2>Hear Jesus from every angle.</h2>' +
-      '<div class="wg"><div><b>Matthew</b><span>Eyewitness account</span></div><div><b>Mark</b><span>Action oriented</span></div><div><b>Luke</b><span>Careful historian</span></div><div><b>John</b><span>The beloved disciple</span></div></div>' +
-      '<svg class="wt" viewBox="0 0 350 130" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M44 6C44 62 175 56 175 96" stroke="#C4A059"/><path d="M131 6C131 52 175 60 175 96" stroke="#9A1114"/><path d="M219 6C219 52 175 60 175 96" stroke="#C4A059"/><path d="M306 6C306 62 175 56 175 96" stroke="#9A1114"/><path d="M175 96V126" stroke="#1B2748" stroke-width="7"/></g></svg>' +
-      '<div class="wone">ONE STORY</div>' +
-      '<p>That&rsquo;s a <b class="hw">harmony</b>: two or more Gospels blended into one story, told in the order it happened.</p>' +
-      '<div class="wtap2"><span>&laquo; Tap to go back</span><span>Tap to continue &raquo;</span></div>';
-    const c2 = h('div', 'wc wc2');
-    c2.innerHTML =
-      '<div class="wtop"><h2>Go at your pace.</h2><p>Pick the harmony you want to hear, choose your speed, and it remembers where you stopped.</p></div>' +
-      '<svg class="warrow" viewBox="0 0 36 60" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3v50M6 40l12 14 12-14"/></svg>' +
-      '<div class="wtap"><span>&laquo; Tap to go back</span><span>Tap to begin &raquo;</span></div>' +
-      '<div class="wbot"><p><b>Free. No sign-up.</b></p><p style="margin-top:12px">Scroll below the player to learn more about this project, find sharing links, and watch large-print videos adapted from the show for seniors.</p>' +
-      '<svg viewBox="0 0 34 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l13 14L30 4"/></svg></div>';
-    wdrop = h('div', 'pick season wdrop', '<span class="shown"><span></span><i class="chev"></i></span>');
-    wov.append(c1, ch, c2, wdrop);
+      '<div class="tp">Tap to continue<b>&raquo;</b></div><div class="fs">Free. No sign-up.</div></div>';
+    wov.append(c1);
     wov.addEventListener('click', e => { if (e.clientX < window.innerWidth * 0.35) back(); else advance(); });
     window.scrollTo(0, 0);
     document.documentElement.style.overflow = 'hidden';

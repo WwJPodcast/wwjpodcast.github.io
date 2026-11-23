@@ -371,7 +371,8 @@
 </style>
 <style id="hsCss">
 .pick select{pointer-events:none}
-.hs-scrim{position:fixed;inset:0;background:rgba(30,24,16,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:70;touch-action:none}.hs-scrim.on{opacity:1;pointer-events:auto}
+.hs-scrim{position:fixed;inset:0;background:transparent;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility 0s .25s;z-index:70;touch-action:none}.hs-scrim.on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .25s}
+.app,.below{transition:filter .25s}.hs-open .app{background:var(--cream);filter:brightness(.6)}.hs-open .below{filter:brightness(.6)}
 .hs{position:fixed;left:0;right:0;bottom:0;z-index:71;margin:0 auto;max-width:560px;background:var(--cream);border-radius:26px 26px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.25);transform:translateY(105%);visibility:hidden;transition:transform .3s ease,visibility 0s .3s;max-height:92vh;max-height:92dvh;overflow:auto;overscroll-behavior:contain;padding:10px 20px max(22px,env(safe-area-inset-bottom));font-family:var(--serif)}
 .hs.on{transform:none;visibility:visible;transition:transform .3s ease}
 .hs .gr{width:44px;height:5px;border-radius:3px;background:#d9d0bb;margin:4px auto 14px}
@@ -407,7 +408,7 @@
 .play .cbub::after{content:"";position:absolute;left:50%;top:100%;margin-left:-8px;border:8px solid transparent;border-top-color:#2b2620}
 @keyframes cring{0%{transform:scale(.96);opacity:.9}100%{transform:scale(1.35);opacity:0}}
 @keyframes cbob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
-@media (prefers-reduced-motion:reduce){.hs,.hs-scrim{transition:none!important}.wc1 .s1 .fs{opacity:1!important;animation:none!important}.play.coach::before,.play .cbub,.pick.season.coach::before,.pick.season .cbub{animation:none!important}.pick.season .cbub{transform:translateX(-50%)}.play.coach::before{opacity:.6}.play .cbub{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.hs,.hs-scrim,.app,.below{transition:none!important}.wc1 .s1 .fs{opacity:1!important;animation:none!important}.play.coach::before,.play .cbub,.pick.season.coach::before,.pick.season .cbub{animation:none!important}.pick.season .cbub{transform:translateX(-50%)}.play.coach::before{opacity:.6}.play .cbub{transform:translateX(-50%)}}
 </style>
 </head>
 <body>
@@ -703,11 +704,11 @@
     function open() {
       if (hs.classList.contains('on')) return;
       opener = document.activeElement; build();
-      scrim.classList.add('on'); hs.classList.add('on'); document.documentElement.style.overflow = 'hidden'; hs.scrollTop = 0;
+      scrim.classList.add('on'); hs.classList.add('on'); document.body.classList.add('hs-open'); document.documentElement.style.overflow = 'hidden'; hs.scrollTop = 0;
       const f = hs.querySelector('.row[aria-checked="true"]'); if (f) f.focus({ preventScroll: true });
     }
     function close() {
-      scrim.classList.remove('on'); hs.classList.remove('on'); document.documentElement.style.overflow = '';
+      scrim.classList.remove('on'); hs.classList.remove('on'); document.body.classList.remove('hs-open'); document.documentElement.style.overflow = '';
       if (opener && opener.focus) opener.focus({ preventScroll: true });
     }
     scrim.addEventListener('click', close);
@@ -751,12 +752,12 @@
       if (sh.classList.contains('on')) return;
       if (!(eps[cur.s] || []).length) return;
       opener = document.activeElement; build();
-      scrim.classList.add('on'); sh.classList.add('on'); document.documentElement.style.overflow = 'hidden'; sh.scrollTop = 0;
+      scrim.classList.add('on'); sh.classList.add('on'); document.body.classList.add('hs-open'); document.documentElement.style.overflow = 'hidden'; sh.scrollTop = 0;
       const f = sh.querySelector('.row[aria-checked="true"]');
       if (f) { f.focus({ preventScroll: true }); requestAnimationFrame(() => { sh.scrollTop = Math.max(0, f.offsetTop - sh.clientHeight / 2 + f.offsetHeight / 2); }); }
     }
     function close() {
-      scrim.classList.remove('on'); sh.classList.remove('on'); document.documentElement.style.overflow = '';
+      scrim.classList.remove('on'); sh.classList.remove('on'); document.body.classList.remove('hs-open'); document.documentElement.style.overflow = '';
       if (opener && opener.focus) opener.focus({ preventScroll: true });
     }
     scrim.addEventListener('click', close);

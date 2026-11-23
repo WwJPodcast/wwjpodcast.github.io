@@ -180,8 +180,6 @@
   .wov.out{opacity:0;pointer-events:none}
   .wov .wc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;opacity:0;transition:opacity .9s ease;pointer-events:none}
   .wov .wc.on{opacity:1;pointer-events:auto}
-  .wc1{justify-content:center;padding-bottom:7vh;padding-bottom:7dvh}
-  .wc1 img{display:block;width:min(94vw,80vh,640px);width:min(94vw,80dvh,640px);height:auto;aspect-ratio:1/1}
   .wc2{justify-content:flex-start;text-align:center;padding:max(6vh,28px) 30px max(6vh,26px)}
   .wc2 .wtop{max-width:440px}
   .wc2 h2{font-weight:700;font-size:clamp(30px,8.4vw,42px);line-height:1.05;color:var(--red)}
@@ -289,7 +287,38 @@
   .wch p{font-size:clamp(19px,5.2vw,24px);line-height:1.3;color:#3b342e;margin-top:16px;max-width:440px}
   .wch .wtap2{margin-top:18px;font-size:16px;font-style:italic;color:var(--muted)}
   .wch p .hw{font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--red)}
-  .wc1 .wtap1{position:absolute;left:0;right:0;bottom:max(6vh,28px);text-align:center;font-size:16px;font-style:italic;color:var(--muted)}
+
+  /* ---------- card 1: small HEAR JESUS HERE. headline, fades out, then a phone picture with the logo + play button + Tap to continue ---------- */
+  @font-face{font-family:'CGhead';src:url(data:font/woff;base64,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) format('woff');font-weight:700;font-display:block}
+  .wc1{justify-content:center}
+  .wc1 .s1{--u:calc(min(100vw,56.25vh)/1080);--u:calc(min(100vw,56.25dvh)/1080);position:relative;width:calc(var(--u)*1080);height:calc(var(--u)*1920);overflow:hidden;flex:none}
+  .wc1 .s1 > *{position:absolute;opacity:0}
+  .wc1 .s1 .hj{left:0;top:0;width:100%;height:100%}
+  .wc1 .ph{left:calc(var(--u)*30);top:calc(var(--u)*380);width:calc(var(--u)*1020);height:calc(var(--u)*1560);box-sizing:border-box;border:calc(var(--u)*26) solid #0e0e0e;border-radius:calc(var(--u)*150);background:var(--cream);box-shadow:0 calc(var(--u)*30) calc(var(--u)*80) rgba(60,50,30,.22);overflow:hidden}
+  .wc1 .ph .isl{position:absolute;left:50%;top:calc(var(--u)*28);width:calc(var(--u)*210);height:calc(var(--u)*60);margin-left:calc(var(--u)*-105);border-radius:calc(var(--u)*32);background:#0e0e0e}
+  .wc1 .ph img{position:absolute;left:calc(var(--u)*30);top:calc(var(--u)*190);width:calc(var(--u)*900);height:auto}
+  .wc1 .ph .play{position:absolute;left:50%;top:calc(var(--u)*915);width:calc(var(--u)*130);height:calc(var(--u)*130);margin-left:calc(var(--u)*-65);border-radius:50%;background:#8B1E1A}
+  .wc1 .ph .play:after{content:"";position:absolute;left:calc(var(--u)*50);top:calc(var(--u)*36);border-left:calc(var(--u)*48) solid var(--cream);border-top:calc(var(--u)*29) solid transparent;border-bottom:calc(var(--u)*29) solid transparent}
+  .wc1 .ph .fd{position:absolute;left:calc(var(--u)*-30);right:calc(var(--u)*-30);top:calc(var(--u)*1060);height:calc(var(--u)*440);background:linear-gradient(rgba(251,247,236,0),var(--cream) 65%)}
+  .wc1 .pf{left:0;right:0;top:calc(var(--u)*1640);height:calc(var(--u)*280);background:linear-gradient(rgba(251,247,236,0),var(--cream) 80%);z-index:4}
+  .wc1 .tp{left:0;right:0;top:calc(var(--u)*1510);text-align:center;font-size:calc(var(--u)*68);font-weight:600;font-style:italic;line-height:1.2;color:#2b2620;z-index:5;white-space:nowrap}
+  .wc1 .tp b{font-style:normal;color:#8B1E1A;margin-left:.18em}
+  @keyframes c1up{from{opacity:0;transform:translateY(calc(var(--u)*24))}to{opacity:1;transform:none}}
+  @keyframes c1out{from{opacity:1}to{opacity:0}}
+  @keyframes c1ph{from{opacity:0;transform:translateY(calc(var(--u)*50))}to{opacity:1;transform:none}}
+  @keyframes c1in{from{opacity:0}to{opacity:1}}
+  @keyframes c1pulse{0%,100%{opacity:.7}50%{opacity:1}}
+  .wc1.run .s1 .hj{animation:c1up .8s ease-out .3s forwards,c1out .7s ease-in 2.5s forwards}
+  .wc1.run .s1 .ph{animation:c1ph 1.2s ease-out 3.2s forwards}
+  .wc1.run .s1 .pf{animation:c1in .1s linear 3.2s forwards}
+  .wc1.run .s1 .tp{animation:c1in .8s ease-out 4.7s forwards,c1pulse 2.2s ease-in-out 5.6s infinite}
+  .wc1.static .s1 .hj{display:none}
+  .wc1.static .s1 .ph,.wc1.static .s1 .pf,.wc1.static .s1 .tp{opacity:1;animation:none}
+  .wc1.static .s1 .tp{animation:c1pulse 2.2s ease-in-out infinite}
+  @media (prefers-reduced-motion:reduce){
+    .wc1 .s1 .hj{display:none}
+    .wc1 .s1 .ph,.wc1 .s1 .pf,.wc1 .s1 .tp{opacity:1!important;animation:none!important;transform:none!important}
+  }
   html.nv{background:var(--navy)}
   .wch .wtap2{display:flex;justify-content:space-between;width:100%;max-width:400px;margin-top:46px}
   .wc2 .wtap{display:flex;justify-content:space-between;max-width:440px;margin:0 auto;padding:0 30px}
@@ -1011,8 +1040,9 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (wov) placeDrop(); });
   /* cards hold until tapped: right side goes forward, left side goes back */
   function goTo(n) {
-    wstage = n;
-    wov.querySelector('.wc1').classList.toggle('on', n === 1);
+    const wstage0 = wstage; wstage = n;
+    const k1 = wov.querySelector(".wc1"); if (n === 1 && wstage0 > 1) { k1.classList.remove('run'); k1.classList.add('static'); }
+    k1.classList.toggle('on', n === 1);
     wov.querySelector('.wch').classList.toggle('on', n === 2);
     wov.querySelector('.wc2').classList.toggle('on', n === 3);
     if (wdrop) { if (n === 3) { placeDrop(); wdrop.classList.add('on'); requestAnimationFrame(placeDrop); } else wdrop.classList.remove('on'); }
@@ -1027,7 +1057,12 @@
     if (wov) wov.remove();
     clearTimeout(wtimer); wstage = 1;
     wov = h('div', 'wov'); wov.setAttribute('role', 'dialog'); wov.setAttribute('aria-label', 'Welcome to Walking with Jesus');
-    const c1 = h('div', 'wc wc1 on'), im = h('img'); im.src = '/hear-jesus-here.svg'; im.alt = 'Hear Jesus here.'; c1.appendChild(im); c1.appendChild(h('div', 'wtap1', 'Tap to continue &raquo;'));
+    const c1 = h('div', 'wc wc1 on run'); c1.setAttribute('role', 'group'); c1.setAttribute('aria-label', 'Hear Jesus here. Walking with Jesus. Tap to continue.');
+    c1.innerHTML = '<div class="s1">' +
+      '<svg class="hj" viewBox="0 0 1080 1920" aria-hidden="true"><g font-family="CGhead,Cormorant Garamond,Georgia,serif" font-weight="700" text-anchor="middle"><text x="540" y="855" font-size="150" fill="#111">HEAR</text><text x="540" y="1025" font-size="205" fill="#980F11">JESUS</text><text x="540" y="1159" font-size="150" fill="#111">HERE.</text></g></svg>' +
+      '<div class="ph" aria-hidden="true"><div class="isl"></div><img src="/welcome-logo.png" alt=""><div class="play"></div><div class="fd"></div></div>' +
+      '<div class="pf" aria-hidden="true"></div>' +
+      '<div class="tp">Tap to continue<b>&raquo;</b></div></div>';
     const ch = h('div', 'wc wch');
     ch.innerHTML =
       '<h2>Hear Jesus from every angle.</h2>' +

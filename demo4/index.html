@@ -675,7 +675,7 @@
     const hs = document.createElement('div'); hs.className = 'hs'; hs.setAttribute('role', 'dialog'); hs.setAttribute('aria-modal', 'true'); hs.setAttribute('aria-label', 'Choose a harmony');
     let opener = null;
     const desc = s => (MENU_TEXT[s.id] || '').replace(/^[^:]*:\s*/, '');
-    const meta = s => s.weeks + ' \u00b7 ' + s.total + ' episodes' + (s.id === 4 ? ' \u00b7 Video' : '');
+    const meta = s => s.weeks + ' \u00b7 ' + s.total + ' episodes' + (s.id === 4 ? ' with videos' : '');
     function build() {
       const cur = +seasonSel.value;
       const first = false;

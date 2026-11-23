@@ -142,6 +142,7 @@
   .revform textarea{resize:vertical}
   .revform .sharebtn{align-self:flex-start;cursor:pointer}
   .revform .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  .revapple{display:flex;align-items:center;justify-content:center;width:fit-content;max-width:100%;min-height:44px;margin-top:12px;padding:0 18px;border-radius:22px;border:1.5px solid var(--gold);background:#fff;color:var(--ink);font-style:normal;font-size:18px;text-decoration:none}
   .revlist{margin-top:6px}
   .rv{padding:12px 0;border-bottom:1px solid var(--gold-soft)}
   .rv .rs{color:var(--gold);font-size:20px;letter-spacing:2px}
@@ -1648,11 +1649,11 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.error || 'fail');
       form.hidden = true; stars.hidden = true;
-      msg.innerHTML = 'Thank you. Your review was sent. ';
+      msg.textContent = 'Thank you. Your review was sent.';
       const a = document.createElement('a');
+      a.className = 'revapple';
       a.href = APPLE; a.target = '_blank'; a.rel = 'noopener';
-      a.textContent = 'Would you also leave one on Apple Podcasts?';
-      a.style.cssText = 'color:var(--red);border-bottom:1px solid var(--red);text-decoration:none';
+      a.textContent = 'Also review us on Apple Podcasts';
       msg.appendChild(a);
     } catch (err) {
       send.disabled = false;

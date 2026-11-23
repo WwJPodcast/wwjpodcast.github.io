@@ -379,7 +379,7 @@
 .hs .row[aria-checked=true]{border-color:var(--red);background:#fff}
 .hs .dot{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #b9ad92;margin-top:3px;position:relative}.hs .row[aria-checked=true] .dot{border-color:var(--red)}.hs .row[aria-checked=true] .dot:after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--red)}
 .hs .t{font-size:19px;font-weight:700;color:var(--ink)}.hs .d{display:block;font-size:16px;line-height:1.3;color:#4b443d;margin-top:2px}.hs .m{display:block;font-size:14px;color:var(--muted);margin-top:4px}
-.hs .new{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;color:#fff;background:var(--red);border-radius:10px;padding:2px 8px;margin-left:8px;vertical-align:2px}
+.hs .ns{display:block;font-size:16px;line-height:1.3;color:#4b443d;margin-top:2px}.hs .new{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;color:#fff;background:var(--red);border-radius:10px;padding:2px 8px;margin-left:8px;vertical-align:1px}
 .hs .what{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:#fff9ec;border:1.5px dashed #c9b88f;border-radius:16px;margin:0 0 10px;padding:12px 14px;font:inherit;font-size:18px;font-weight:600;color:var(--red);cursor:pointer}
 .hs .what i{display:inline-block;width:9px;height:9px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg) translateY(-3px);margin-left:10px;transition:transform .2s}.hs .what[aria-expanded=true] i{transform:rotate(225deg) translateY(-1px)}
 .hs .ex{display:none;padding:2px 0 12px;text-align:center}.hs .ex.on{display:block}
@@ -396,13 +396,17 @@
 .wc1 .s1 .fs{left:0;right:0;top:calc(var(--u)*1625);text-align:center;font-size:calc(var(--u)*44);font-weight:500;letter-spacing:.01em;color:#6b625a;z-index:5;white-space:nowrap}
 .wc1.run .s1 .fs{animation:c1in .8s ease-out 5.1s forwards}
 .wc1.static .s1 .fs{opacity:1;animation:none}
+.pick.season.coach{position:relative}
+.pick.season.coach::before{content:"";position:absolute;inset:-5px -10px;border-radius:999px;border:3px solid var(--red);animation:cring 1.7s ease-out infinite;pointer-events:none}
+.pick.season .cbub{position:absolute;left:50%;bottom:calc(100% + 14px);transform:translateX(-50%);white-space:nowrap;background:#2b2620;color:var(--cream);font-family:var(--serif);font-size:17px;font-weight:600;font-style:normal;letter-spacing:0;text-transform:none;padding:9px 16px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.22);animation:cbob 1.8s ease-in-out infinite;pointer-events:none;z-index:3}
+.pick.season .cbub::after{content:"";position:absolute;left:50%;top:100%;margin-left:-8px;border:8px solid transparent;border-top-color:#2b2620}
 .play.coach{position:relative}
 .play.coach::before{content:"";position:absolute;inset:-5px;border-radius:50%;border:3px solid var(--red);animation:cring 1.7s ease-out infinite;pointer-events:none}
 .play .cbub{position:absolute;left:50%;bottom:calc(100% + 16px);transform:translateX(-50%);white-space:nowrap;background:#2b2620;color:var(--cream);font-family:var(--serif);font-size:17px;font-weight:600;padding:9px 16px;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.22);animation:cbob 1.8s ease-in-out infinite;pointer-events:none}
 .play .cbub::after{content:"";position:absolute;left:50%;top:100%;margin-left:-8px;border:8px solid transparent;border-top-color:#2b2620}
 @keyframes cring{0%{transform:scale(.96);opacity:.9}100%{transform:scale(1.35);opacity:0}}
 @keyframes cbob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
-@media (prefers-reduced-motion:reduce){.hs,.hs-scrim{transition:none!important}.wc1 .s1 .fs{opacity:1!important;animation:none!important}.play.coach::before,.play .cbub{animation:none!important}.play.coach::before{opacity:.6}.play .cbub{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.hs,.hs-scrim{transition:none!important}.wc1 .s1 .fs{opacity:1!important;animation:none!important}.play.coach::before,.play .cbub,.pick.season.coach::before,.pick.season .cbub{animation:none!important}.pick.season .cbub{transform:translateX(-50%)}.play.coach::before{opacity:.6}.play .cbub{transform:translateX(-50%)}}
 </style>
 </head>
 <body>
@@ -676,9 +680,9 @@
       const cur = +seasonSel.value;
       let first = false; try { first = !localStorage.getItem('wwj.harmony.seen'); localStorage.setItem('wwj.harmony.seen','1'); } catch (e) {}
       const WHAT = '<button type="button" class="what" id="hsWhat" aria-expanded="' + first + '" aria-controls="hsEx">What is a harmony?<i aria-hidden="true"></i></button><div class="ex' + (first ? ' on' : '') + '" id="hsEx"><div class="wg"><div><b>Matthew</b><span>Eyewitness account</span></div><div><b>Mark</b><span>Action oriented</span></div><div><b>Luke</b><span>Careful historian</span></div><div><b>John</b><span>The beloved disciple</span></div></div>' + TREE + '<div class="wone">ONE STORY</div><p>That\u2019s a <b class="hw">harmony</b>: two or more Gospels blended into one story, told in the order it happened.</p></div>';
-      let h = '<div class="gr"></div><h3>Choose a harmony</h3><p class="in">Not sure? Start with <b>Mark + John</b>.</p>' + WHAT + '<div role="radiogroup" aria-label="Harmony">';
+      let h = '<div class="gr"></div><h3>Choose a harmony</h3>' + WHAT + '<div role="radiogroup" aria-label="Harmony">';
       SEASONS.forEach(s => {
-        h += '<button type="button" class="row" role="radio" aria-checked="' + (s.id === cur) + '" tabindex="' + (s.id === cur ? 0 : -1) + '" data-id="' + s.id + '"><span class="dot" aria-hidden="true"></span><span><span class="t">' + s.label.replace(/ Harmony$/, '') + (s.id === 1 ? '<span class="new">START HERE</span>' : '') + '</span><span class="d">' + desc(s) + '</span><span class="m">' + meta(s) + '</span></span></button>';
+        h += '<button type="button" class="row" role="radio" aria-checked="' + (s.id === cur) + '" tabindex="' + (s.id === cur ? 0 : -1) + '" data-id="' + s.id + '"><span class="dot" aria-hidden="true"></span><span><span class="t">' + s.label.replace(/ Harmony$/, '') + '</span>' + (s.id === 1 ? '<span class="ns">Not sure?<span class="new">START HERE</span></span>' : '') + '<span class="d">' + desc(s) + '</span><span class="m">' + meta(s) + '</span></span></button>';
       });
       h += '</div>';
       hs.innerHTML = h;
@@ -1152,10 +1156,18 @@
   const FADE = REDUCED ? 20 : 900;
   function endCoach() { const pb = $('play'); if (pb) { pb.classList.remove('coach'); const b = pb.querySelector('.cbub'); if (b) b.remove(); } lsSet('wwj.coach.v1', true); }
   function showCoach() {
-    if (lsGet('wwj.coach.v1')) return;
+    if (lsGet('wwj.coach.v1')) { showCoachH(); return; }
     const pb = $('play'); if (!pb || pb.querySelector('.cbub')) return;
     pb.classList.add('coach'); const b = h('span', 'cbub', 'Press play to begin'); b.setAttribute('aria-hidden', 'true'); pb.appendChild(b);
     pb.addEventListener('click', endCoach, { once: true });
+    showCoachH();
+  }
+  function endCoachH() { const sp = document.querySelector('.pick.season'); if (sp) { sp.classList.remove('coach'); const b = sp.querySelector('.cbub'); if (b) b.remove(); } lsSet('wwj.coach.h.v1', true); }
+  function showCoachH() {
+    if (lsGet('wwj.coach.h.v1')) return;
+    const sp = document.querySelector('.pick.season'); if (!sp || sp.querySelector('.cbub')) return;
+    sp.classList.add('coach'); const b = h('span', 'cbub', 'Pick a harmony'); b.setAttribute('aria-hidden', 'true'); sp.appendChild(b);
+    const se = $('season'); ['mousedown', 'touchstart', 'keydown'].forEach(ev => se.addEventListener(ev, endCoachH, { once: true }));
   }
   function finishWelcome() {
     if (!wov) return;
@@ -1197,7 +1209,7 @@
   });
   function welcome() {
     if (wov) wov.remove();
-    clearTimeout(wtimer); wstage = 1; lsDel('wwj.coach.v1'); lsDel('wwj.harmony.seen');
+    clearTimeout(wtimer); wstage = 1; lsDel('wwj.coach.v1'); lsDel('wwj.coach.h.v1'); lsDel('wwj.harmony.seen');
     wov = h('div', 'wov'); wov.setAttribute('role', 'dialog'); wov.setAttribute('aria-label', 'Welcome to Walking with Jesus');
     const c1 = h('div', 'wc wc1 on run'); c1.setAttribute('role', 'group'); c1.setAttribute('aria-label', 'Hear Jesus here. Walking with Jesus. Tap to continue.');
     c1.innerHTML = '<div class="s1">' +

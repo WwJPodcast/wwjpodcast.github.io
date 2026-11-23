@@ -389,6 +389,9 @@
 .hs .ex svg.wt{display:block;width:100%;max-width:340px;height:auto;margin:0 auto}
 .hs .ex .wone{font-weight:700;letter-spacing:.2em;font-size:20px;color:var(--navy)}
 .hs .ex p{font-size:17px;line-height:1.32;color:#3b342e;margin:12px auto 0;max-width:360px}.hs .ex p .hw{font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--red)}
+.hs .row.ep{align-items:center;padding:10px 14px;margin-bottom:8px}.hs .row.ep .t{font-size:18px;font-weight:600}
+.hs .num{flex:none;width:36px;height:36px;border-radius:50%;background:#efe6cf;color:#4b443d;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center}.hs .row[aria-checked=true] .num{background:var(--red);color:#fff}.hs .num.done{background:var(--gold-soft);color:#6b5a2a}
+.hs .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .hs .row:focus-visible,.hs .what:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.hs,.hs-scrim{transition:none!important}}
 </style>
@@ -700,6 +703,54 @@
     document.body.append(scrim, hs);
     ['mousedown', 'touchstart'].forEach(ev => seasonSel.addEventListener(ev, e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }, { passive: false }));
     seasonSel.addEventListener('keydown', e => { if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); open(); } });
+  })();
+
+  /* ---------- episode sheet: same look as the harmony sheet (the closed "Episode N of M" pill is unchanged) ---------- */
+  (function () {
+    const epS = $('episode'); if (!epS) return;
+    const scrim = document.createElement('div'); scrim.className = 'hs-scrim';
+    const sh = document.createElement('div'); sh.className = 'hs'; sh.setAttribute('role', 'dialog'); sh.setAttribute('aria-modal', 'true'); sh.setAttribute('aria-label', 'Choose an episode');
+    let opener = null;
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    function build() {
+      const list = eps[cur.s] || [], si = seasonInfo(cur.s) || { label: '', total: list.length };
+      const done = list.filter(e => store.done[cur.s + '-' + e.n]).length;
+      let h = '<div class="gr"></div><h3>Choose an episode</h3><p class="in">' + esc(si.label) + (done ? ' · ' + done + ' of ' + Math.max(si.total, list.length) + ' finished' : '') + '</p><div role="radiogroup" aria-label="Episode">';
+      list.forEach(e => {
+        const d = !!store.done[cur.s + '-' + e.n], on = e.n === cur.n;
+        h += '<button type="button" class="row ep" role="radio" aria-checked="' + on + '" tabindex="' + (on ? 0 : -1) + '" data-n="' + e.n + '"><span class="num' + (d ? ' done' : '') + '" aria-hidden="true">' + (d ? '✓' : e.n) + '</span><span class="t">' + esc(e.title) + (d ? '<span class="sr"> (finished)</span>' : '') + '</span></button>';
+      });
+      sh.innerHTML = h + '</div>';
+      const rows = [...sh.querySelectorAll('.row')];
+      rows.forEach((b, i) => {
+        b.addEventListener('click', () => { const n = b.dataset.n; close(); epS.value = n; epS.dispatchEvent(new Event('change', { bubbles: true })); });
+        b.addEventListener('keydown', e => {
+          const k = e.key, n = (k === 'ArrowDown' || k === 'ArrowRight') ? 1 : (k === 'ArrowUp' || k === 'ArrowLeft') ? -1 : 0;
+          if (n) { e.preventDefault(); const t = rows[(i + n + rows.length) % rows.length]; rows.forEach(r => r.tabIndex = -1); t.tabIndex = 0; t.focus(); }
+        });
+      });
+    }
+    function open() {
+      if (sh.classList.contains('on')) return;
+      if (!(eps[cur.s] || []).length) return;
+      opener = document.activeElement; build();
+      scrim.classList.add('on'); sh.classList.add('on'); document.documentElement.style.overflow = 'hidden'; sh.scrollTop = 0;
+      const f = sh.querySelector('.row[aria-checked="true"]');
+      if (f) { f.focus({ preventScroll: true }); requestAnimationFrame(() => { sh.scrollTop = Math.max(0, f.offsetTop - sh.clientHeight / 2 + f.offsetHeight / 2); }); }
+    }
+    function close() {
+      scrim.classList.remove('on'); sh.classList.remove('on'); document.documentElement.style.overflow = '';
+      if (opener && opener.focus) opener.focus({ preventScroll: true });
+    }
+    scrim.addEventListener('click', close);
+    document.addEventListener('keydown', e => {
+      if (!sh.classList.contains('on')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') { e.preventDefault(); const f = sh.querySelector('.row[tabindex="0"]'); if (f) f.focus(); }
+    });
+    document.body.append(scrim, sh);
+    ['mousedown', 'touchstart'].forEach(ev => epS.addEventListener(ev, e => { if (document.querySelector('.wov')) return; e.preventDefault(); open(); }, { passive: false }));
+    epS.addEventListener('keydown', e => { if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); open(); } });
   })();
   // Per-series paragraph shown under the show description (About > Show). Matched by the series name in the
   // dropdown label, so a series added to SEASONS later (or a rerun under a new season number) picks up its

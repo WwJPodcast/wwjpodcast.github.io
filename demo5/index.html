@@ -1732,6 +1732,19 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   try { const v = parseFloat(localStorage.getItem(VKEY)); if (v >= .2 && v <= 4) vol = v; } catch {}   // always starts Off each visit; only the volume is remembered
   range.value = Math.round(vol * 100); pct.textContent = Math.round(vol * 100) + '%';
 
+  // iOS can forget the session type once playback stops, so re-apply it before every play, on any new load, and on return to the page.
+  function reassert() {
+    if (!on) return;
+    try { navigator.audioSession.type = 'ambient'; } catch {}
+    if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
+  }
+  const rawPlay = audio.play.bind(audio);
+  audio.play = function () { reassert(); return rawPlay(); };
+  ['pause', 'ended', 'loadstart', 'emptied', 'waiting'].forEach(ev => audio.addEventListener(ev, reassert));
+  document.addEventListener('pointerdown', reassert, true);   // the tap itself, before the play button's own handler runs
+  document.addEventListener('touchend', reassert, true);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reassert(); });
+
   async function wantLock() {
     if (!on || audio.paused || lock || !navigator.wakeLock) return;
     try { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } catch { lock = null; }

@@ -100,6 +100,7 @@
   @media(max-width:380px){.speeds{gap:5px}.speeds button{min-width:0;padding:0 8px}}
   /* Play with other audio */
   .mix{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:6px}
+  .mix [hidden]{display:none!important}
   .mixbtn{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 18px 0 12px;border-radius:22px;border:1.5px solid var(--gold-soft);background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:600;cursor:pointer}
   .mixbtn .mixsw{position:relative;width:34px;height:20px;border-radius:10px;background:var(--track);flex:none;transition:background .2s}
   .mixbtn .mixsw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .2s}
@@ -1813,7 +1814,14 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     if (on) wantLock(); else dropLock();
     volBox.hidden = !on;
   }
-  btn.addEventListener('click', () => { on = !on; touched = true; apply(); });
+  btn.addEventListener('click', () => {
+    on = !on; touched = true;
+    // iOS applies a new session type only when playback starts, so if an episode is playing, restart it inside this tap.
+    const was = !audio.paused;
+    if (was) audio.pause();
+    apply();
+    if (was) rawPlay().catch(() => {});
+  });
   // Leaving the page puts the session back to normal, so the next page (or this one) never inherits mix mode.
   addEventListener('pagehide', () => { try { navigator.audioSession.type = 'auto'; } catch {} });
   let wiring = false;

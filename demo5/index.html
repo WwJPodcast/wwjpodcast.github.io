@@ -1737,7 +1737,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     try { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } catch { lock = null; }
   }
   function dropLock() { if (lock) { try { lock.release(); } catch {} lock = null; } }
-  audio.addEventListener('play', () => { wantLock(); if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); });
+  audio.addEventListener('play', () => { wantLock(); if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {}); });
   audio.addEventListener('pause', dropLock);
   audio.addEventListener('ended', dropLock);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') wantLock(); });
@@ -1751,6 +1751,8 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     const src = audio.currentSrc || audio.src;
     if (!AC || !src) return false;
     const t = audio.currentTime, was = !audio.paused;
+    // iOS only lets an AudioContext run if it is started inside the tap itself, so do it before any waiting.
+    try { ctx = ctx || new AC(); if (ctx.state !== 'running') ctx.resume().catch(() => {}); } catch { return false; }
     audio.pause();
     audio.crossOrigin = 'anonymous';
     const ok = await new Promise(res => {
@@ -1761,7 +1763,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       audio.src = src; audio.load();
     });
     if (!ok) {   // the audio host did not allow it: put everything back the way it was
-      gainFailed = true;
+      gainFailed = true; try { if (ctx) ctx.close(); } catch {} ctx = null;
       audio.removeAttribute('crossorigin');
       audio.src = src; audio.load();
       audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = t; } catch {} }, { once: true });
@@ -1770,33 +1772,41 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     }
     try { audio.currentTime = t; } catch {}
     try {
-      ctx = new AC();
       const node = ctx.createMediaElementSource(audio);
       gain = ctx.createGain(); gain.gain.value = vol;
       node.connect(gain); gain.connect(ctx.destination);
       if (ctx.state === 'suspended') await ctx.resume();
-    } catch { gain = null; gainFailed = true; return false; }
+    } catch { gain = null; gainFailed = true; try { ctx.close(); } catch {} ctx = null; return false; }
     if (was) audio.play().catch(() => {});
     return true;
   }
 
-  async function apply() {
+  function apply() {
     try { navigator.audioSession.type = on ? 'ambient' : 'auto'; } catch {}
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     btn.setAttribute('aria-expanded', on ? 'true' : 'false');
     panel.hidden = !on; hint.hidden = on;
     try { localStorage.setItem(KEY, on ? '1' : '0'); } catch {}
-    if (on) { wantLock(); const ok = await enableGain(); volBox.hidden = !ok; if (ok && ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); }
-    else { dropLock(); }
+    if (on) wantLock(); else dropLock();
+    volBox.hidden = !on || gainFailed;
   }
   btn.addEventListener('click', () => { on = !on; apply(); });
+  let wiring = false;
+  async function wireOnce() {
+    if (gain || gainFailed || wiring) return;
+    wiring = true; range.disabled = true;
+    const ok = await enableGain();
+    wiring = false; range.disabled = false; volBox.hidden = !ok;
+  }
+  range.addEventListener('pointerdown', wireOnce);
+  range.addEventListener('touchstart', wireOnce, { passive: true });
+  range.addEventListener('keydown', wireOnce);
   range.addEventListener('input', () => {
     vol = range.value / 100; pct.textContent = range.value + '%';
     if (gain) gain.gain.value = vol;
     try { localStorage.setItem(VKEY, String(vol)); } catch {}
   });
   apply();
-  if (on) audio.addEventListener('loadedmetadata', () => { if (on && !gain && !gainFailed) enableGain().then(ok => { volBox.hidden = !ok; }); }, { once: true });
 })();
 </script>
 

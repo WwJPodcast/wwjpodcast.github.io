@@ -98,9 +98,23 @@
   .speeds button{min-width:54px;min-height:44px;padding:0 10px;border-radius:22px;border:1.5px solid var(--gold-soft);background:transparent;color:var(--ink);
         font-family:inherit;font-weight:600;font-size:18px;cursor:pointer}
   @media(max-width:380px){.speeds{gap:5px}.speeds button{min-width:0;padding:0 8px}}
-  .mixrow{margin-top:10px}
-  .mixrow button{min-width:0;padding:0 18px}
-  .mixnote{margin:8px auto 0;max-width:330px;text-align:center;font-size:14px;line-height:1.4;color:var(--pale,#6b6258)}
+  /* Play with other audio */
+  .mix{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:6px}
+  .mixbtn{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 18px 0 12px;border-radius:22px;border:1.5px solid var(--gold-soft);background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+  .mixbtn .mixsw{position:relative;width:34px;height:20px;border-radius:10px;background:var(--track);flex:none;transition:background .2s}
+  .mixbtn .mixsw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .2s}
+  .mixbtn[aria-pressed=true]{border-color:var(--red)}
+  .mixbtn[aria-pressed=true] .mixsw{background:var(--red)}
+  .mixbtn[aria-pressed=true] .mixsw::after{transform:translateX(14px)}
+  .mixhint{margin:0;max-width:330px;text-align:center;font-size:15px;line-height:1.4;color:#3b342e}
+  .mixpanel{width:100%;max-width:340px;background:#fff;border:1.5px solid var(--gold-soft);border-radius:14px;padding:14px 16px;color:#222;font-size:16px;line-height:1.45;text-align:left}
+  .mixpanel .mixt{margin:0 0 6px;font-weight:700;color:var(--ink)}
+  .mixpanel ul{margin:0;padding-left:20px}
+  .mixpanel li{margin:0 0 6px}
+  .mixvol{margin-top:12px;padding-top:12px;border-top:1px solid var(--gold-soft)}
+  .mixvol label{display:flex;justify-content:space-between;font-weight:700;color:var(--ink);margin-bottom:6px}
+  .mixvol input[type=range]{width:100%;accent-color:var(--red);height:32px}
+  .mixvol .mixsub{margin:4px 0 0;font-size:14px;color:#3b342e}
   .speeds button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
 
   /* bottom categories */
@@ -464,15 +478,28 @@
     </div>
 
     <div class="speeds" id="speeds" role="group" aria-label="Playback speed"></div>
-    <div class="speeds mixrow" id="mixrow" hidden>
-      <button type="button" id="mixbtn" aria-pressed="false">Play with other audio: Off</button>
-    </div>
-    <div class="mixnote" id="mixnote" hidden>Start your music first, then press play here. Keep the screen on, and turn the silent switch off.</div>
     <div class="msg" id="msg"></div>
     <div class="prog" id="prog" role="button" tabindex="0" hidden>
       <div class="pn" id="pnE"><div class="pt"><span>Episodes this week</span><span></span></div><div class="sg"></div></div>
       <div class="pn" id="pnW"><div class="pt"><span></span><span></span></div><div class="sg"></div></div>
       <div class="pn" id="pnT"><div class="pt"><span>Episodes finished</span><span></span></div></div>
+    </div>
+    <div class="mix" id="mix" hidden>
+      <button type="button" class="mixbtn" id="mixbtn" aria-pressed="false" aria-expanded="false" aria-controls="mixpanel"><span class="mixsw" aria-hidden="true"></span><span>Play with other audio</span></button>
+      <p class="mixhint" id="mixhint">Listen to your own music or sounds at the same time as the podcast.</p>
+      <div class="mixpanel" id="mixpanel" hidden>
+        <p class="mixt">Here is what happens now:</p>
+        <ul>
+          <li>Start your music or sounds in another app first, then press play here. Both will play together.</li>
+          <li>Your screen stays on while an episode plays. This uses more battery, so turning your brightness down helps.</li>
+          <li>If you lock your phone with the side button, the episode stops. Your music keeps playing.</li>
+        </ul>
+        <div class="mixvol" id="mixvol" hidden>
+          <label for="mixrange"><span>Episode volume</span><span id="mixpct">100%</span></label>
+          <input type="range" id="mixrange" min="20" max="150" step="5" value="100">
+          <p class="mixsub">Set your music's volume in the Music app or Control Center.</p>
+        </div>
+      </div>
     </div>
   </section>
   <nav class="more" aria-label="More">
@@ -1689,26 +1716,87 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   }).catch(() => {});
 })();
 
-/* Play with other audio (demo5 test). Uses Safari's Audio Session API: type "ambient" lets this page's audio mix with Apple Music and other apps
-   instead of stopping them. Trade-off: ambient audio follows the silent switch and may stop when the screen locks. Off restores normal playback. */
+
+/* Play with other audio (demo5 test).
+   - Audio Session type "ambient" lets this page's audio mix with Apple Music and other apps instead of stopping them.
+   - A screen wake lock keeps the phone awake while an episode plays (ambient audio stops when the screen locks).
+   - An episode volume slider runs the episode through Web Audio (iOS ignores audio.volume). Only used if the audio host allows it. */
 (function () {
-  const row = document.getElementById('mixrow'), btn = document.getElementById('mixbtn'), note = document.getElementById('mixnote');
-  if (!row || !btn) return;
-  const as = navigator.audioSession;
-  if (!as) return;                       // browser has no Audio Session API: leave the control hidden
-  row.hidden = false;
-  const KEY = 'wwj_mix_other_audio';
-  let on = false;
-  try { on = localStorage.getItem(KEY) === '1'; } catch {}
-  function apply() {
-    try { as.type = on ? 'ambient' : 'auto'; } catch {}
+  const $ = id => document.getElementById(id);
+  const audio = $('audio'), box = $('mix'), btn = $('mixbtn'), panel = $('mixpanel'), hint = $('mixhint');
+  const volBox = $('mixvol'), range = $('mixrange'), pct = $('mixpct');
+  if (!audio || !box || !btn || !navigator.audioSession) return;   // no Audio Session API: leave it hidden
+  box.hidden = false;
+  const KEY = 'wwj_mix_other_audio', VKEY = 'wwj_mix_episode_vol';
+  let on = false, vol = 1, ctx = null, gain = null, gainFailed = false, lock = null;
+  try { on = localStorage.getItem(KEY) === '1'; const v = parseFloat(localStorage.getItem(VKEY)); if (v >= .2 && v <= 1.5) vol = v; } catch {}
+  range.value = Math.round(vol * 100); pct.textContent = Math.round(vol * 100) + '%';
+
+  async function wantLock() {
+    if (!on || audio.paused || lock || !navigator.wakeLock) return;
+    try { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } catch { lock = null; }
+  }
+  function dropLock() { if (lock) { try { lock.release(); } catch {} lock = null; } }
+  audio.addEventListener('play', () => { wantLock(); if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); });
+  audio.addEventListener('pause', dropLock);
+  audio.addEventListener('ended', dropLock);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') wantLock(); });
+
+  let busy = null;
+  function enableGain() { return busy || (busy = enableGain1().finally(() => { busy = null; })); }
+  async function enableGain1() {
+    if (gain) return true;
+    if (gainFailed) return false;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const src = audio.currentSrc || audio.src;
+    if (!AC || !src) return false;
+    const t = audio.currentTime, was = !audio.paused;
+    audio.pause();
+    audio.crossOrigin = 'anonymous';
+    const ok = await new Promise(res => {
+      let done = false;
+      const fin = v => { if (done) return; done = true; audio.removeEventListener('loadedmetadata', good); audio.removeEventListener('error', bad); clearTimeout(tm); res(v); };
+      const good = () => fin(true), bad = () => fin(false), tm = setTimeout(() => fin(false), 8000);
+      audio.addEventListener('loadedmetadata', good); audio.addEventListener('error', bad);
+      audio.src = src; audio.load();
+    });
+    if (!ok) {   // the audio host did not allow it: put everything back the way it was
+      gainFailed = true;
+      audio.removeAttribute('crossorigin');
+      audio.src = src; audio.load();
+      audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = t; } catch {} }, { once: true });
+      const m = $('msg'); if (m) m.textContent = '';
+      return false;
+    }
+    try { audio.currentTime = t; } catch {}
+    try {
+      ctx = new AC();
+      const node = ctx.createMediaElementSource(audio);
+      gain = ctx.createGain(); gain.gain.value = vol;
+      node.connect(gain); gain.connect(ctx.destination);
+      if (ctx.state === 'suspended') await ctx.resume();
+    } catch { gain = null; gainFailed = true; return false; }
+    if (was) audio.play().catch(() => {});
+    return true;
+  }
+
+  async function apply() {
+    try { navigator.audioSession.type = on ? 'ambient' : 'auto'; } catch {}
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.textContent = 'Play with other audio: ' + (on ? 'On' : 'Off');
-    note.hidden = !on;
+    btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+    panel.hidden = !on; hint.hidden = on;
     try { localStorage.setItem(KEY, on ? '1' : '0'); } catch {}
+    if (on) { wantLock(); const ok = await enableGain(); volBox.hidden = !ok; if (ok && ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); }
+    else { dropLock(); }
   }
   btn.addEventListener('click', () => { on = !on; apply(); });
+  range.addEventListener('input', () => {
+    vol = range.value / 100; pct.textContent = range.value + '%';
+    if (gain) gain.gain.value = vol;
+    try { localStorage.setItem(VKEY, String(vol)); } catch {}
+  });
   apply();
+  if (on) audio.addEventListener('loadedmetadata', () => { if (on && !gain && !gainFailed) enableGain().then(ok => { volBox.hidden = !ok; }); }, { once: true });
 })();
 </script>
 

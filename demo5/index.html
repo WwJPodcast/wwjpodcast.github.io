@@ -1800,7 +1800,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   }
 
   function apply() {
-    if (on || touched) { try { navigator.audioSession.type = on ? 'ambient' : 'auto'; } catch {} }   // never touch the session until the switch has been used
+    try { navigator.audioSession.type = on ? 'ambient' : 'auto'; } catch {}   // always set, so a setting left over from an earlier page can never stick
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     btn.setAttribute('aria-expanded', on ? 'true' : 'false');
     panel.hidden = !on; hint.hidden = on;
@@ -1809,6 +1809,8 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     volBox.hidden = !on;
   }
   btn.addEventListener('click', () => { on = !on; touched = true; apply(); });
+  // Leaving the page puts the session back to normal, so the next page (or this one) never inherits mix mode.
+  addEventListener('pagehide', () => { try { navigator.audioSession.type = 'auto'; } catch {} });
   let wiring = false;
   async function wireOnce() {
     if (gain || gainFailed || wiring) return;

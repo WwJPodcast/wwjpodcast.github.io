@@ -506,7 +506,7 @@
             <label for="mixrange"><span>Episode volume</span><span id="mixpct">100%</span></label>
             <input type="range" id="mixrange" min="20" max="400" step="10" value="100">
           </div>
-          <p class="mixsub" id="mixboostnote">Makes the episode louder than your music. If the episode ever goes silent, reload the page and leave this off. Set your music's volume in the Music app or Control Center.</p>
+          <p class="mixsub" id="mixboostnote">Makes the episode louder than your music. If the episode ever goes silent, turn it off, or reload the page and leave it off. Set your music's volume in the Music app or Control Center.</p>
         </div>
       </div>
     </div>
@@ -1857,7 +1857,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     btn.setAttribute('aria-expanded', on ? 'true' : 'false');
     panel.hidden = !on; hint.hidden = on;
-    if (gain) gain.gain.value = on ? vol : 1;
+    if (gain) gain.gain.value = (on && boostOn) ? vol : 1;
     if (on) wantLock(); else dropLock();
     volBox.hidden = !on;
   }
@@ -1878,10 +1878,18 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     await enableGain();
     wiring = false; range.disabled = false;
   }
-  boostBtn.addEventListener('click', async () => {   // Web Audio is only started when this is tapped
+  let boostOn = false;
+  function paintBoost() {
+    boostBtn.hidden = false; boostBtn.disabled = false;
+    boostBtn.textContent = boostOn ? 'Turn off volume boost' : 'Turn on volume boost (experimental)';
+    slider.hidden = !boostOn;
+    if (gain) gain.gain.value = boostOn ? vol : 1;
+  }
+  boostBtn.addEventListener('click', async () => {   // Web Audio is only started the first time this is tapped
+    if (gain) { boostOn = !boostOn; paintBoost(); return; }
     boostBtn.disabled = true; boostBtn.textContent = 'Turning on\u2026';
     await wireOnce();
-    if (gain) { boostBtn.hidden = true; slider.hidden = false; gain.gain.value = vol; }
+    if (gain) { boostOn = true; paintBoost(); }
     else { boostBtn.hidden = true; boostNote.textContent = 'Volume boost is not available here. Set your music\u2019s volume in the Music app or Control Center.'; }
   });
   range.addEventListener('input', () => {

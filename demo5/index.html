@@ -489,8 +489,7 @@
       <div class="pn" id="pnT"><div class="pt"><span>Episodes finished</span><span></span></div></div>
     </div>
     <div class="mix" id="mix" hidden>
-      <button type="button" class="mixbtn" id="mixbtn" aria-pressed="false" aria-expanded="false" aria-controls="mixpanel"><span class="mixsw" aria-hidden="true"></span><span>Play with other audio</span></button>
-      <p class="mixhint" id="mixhint">Add your own background music. Instrumental music works best.</p>
+      <button type="button" class="mixbtn" id="mixbtn" aria-pressed="false" aria-expanded="false" aria-controls="mixpanel"><span class="mixsw" aria-hidden="true"></span><span>Add Your Own Background Music</span></button>
       <div class="mixpanel" id="mixpanel" hidden>
         <p class="mixt">Here is what happens now:</p>
         <ul class="mixlist">
@@ -1809,7 +1808,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     try { navigator.audioSession.type = on ? 'ambient' : 'auto'; } catch {}   // always set, so a setting left over from an earlier page can never stick
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     btn.setAttribute('aria-expanded', on ? 'true' : 'false');
-    panel.hidden = !on; hint.hidden = on;
+    panel.hidden = !on; if (hint) hint.hidden = on;
     if (gain) gain.gain.value = (on && boostOn) ? vol : 1;
     if (on) wantLock(); else dropLock();
     volBox.hidden = !on;

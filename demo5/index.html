@@ -490,14 +490,14 @@
       <div class="mixpanel" id="mixpanel" hidden>
         <p class="mixt">Here is what happens now:</p>
         <ul>
-          <li>Start your music or sounds in another app first, then press play here. Both will play together.</li>
+          <li>Start your music or sounds in another app first. Then turn this switch on, and press play here. Both will play together.</li>
           <li>Your screen stays on while an episode plays. This uses more battery, so turning your brightness down helps.</li>
           <li>If you lock your phone with the side button, the episode stops. Your music keeps playing.</li>
         </ul>
         <div class="mixvol" id="mixvol" hidden>
           <label for="mixrange"><span>Episode volume</span><span id="mixpct">100%</span></label>
-          <input type="range" id="mixrange" min="20" max="150" step="5" value="100">
-          <p class="mixsub">Set your music's volume in the Music app or Control Center.</p>
+          <input type="range" id="mixrange" min="20" max="400" step="10" value="100">
+          <p class="mixsub">Set your music's volume in the Music app or Control Center. Going far above 100% can make the voices sound squeezed.</p>
         </div>
       </div>
     </div>
@@ -1729,7 +1729,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   box.hidden = false;
   const KEY = 'wwj_mix_other_audio', VKEY = 'wwj_mix_episode_vol';
   let on = false, vol = 1, ctx = null, gain = null, gainFailed = false, lock = null;
-  try { on = localStorage.getItem(KEY) === '1'; const v = parseFloat(localStorage.getItem(VKEY)); if (v >= .2 && v <= 1.5) vol = v; } catch {}
+  try { const v = parseFloat(localStorage.getItem(VKEY)); if (v >= .2 && v <= 4) vol = v; } catch {}   // always starts Off each visit; only the volume is remembered
   range.value = Math.round(vol * 100); pct.textContent = Math.round(vol * 100) + '%';
 
   async function wantLock() {
@@ -1774,7 +1774,9 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     try {
       const node = ctx.createMediaElementSource(audio);
       gain = ctx.createGain(); gain.gain.value = vol;
-      node.connect(gain); gain.connect(ctx.destination);
+      const lim = ctx.createDynamicsCompressor();   // soft limiter so a big boost squeezes loud peaks instead of distorting
+      lim.threshold.value = -4; lim.knee.value = 0; lim.ratio.value = 20; lim.attack.value = .003; lim.release.value = .15;
+      node.connect(gain); gain.connect(lim); lim.connect(ctx.destination);
       if (ctx.state === 'suspended') await ctx.resume();
     } catch { gain = null; gainFailed = true; try { ctx.close(); } catch {} ctx = null; return false; }
     if (was) audio.play().catch(() => {});
@@ -1786,8 +1788,8 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     btn.setAttribute('aria-expanded', on ? 'true' : 'false');
     panel.hidden = !on; hint.hidden = on;
-    try { localStorage.setItem(KEY, on ? '1' : '0'); } catch {}
-    if (on) wantLock(); else dropLock();
+    if (gain) gain.gain.value = on ? vol : 1;
+    if (on) { wantLock(); wireOnce(); } else dropLock();
     volBox.hidden = !on || gainFailed;
   }
   btn.addEventListener('click', () => { on = !on; apply(); });
@@ -1798,9 +1800,6 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     const ok = await enableGain();
     wiring = false; range.disabled = false; volBox.hidden = !ok;
   }
-  range.addEventListener('pointerdown', wireOnce);
-  range.addEventListener('touchstart', wireOnce, { passive: true });
-  range.addEventListener('keydown', wireOnce);
   range.addEventListener('input', () => {
     vol = range.value / 100; pct.textContent = range.value + '%';
     if (gain) gain.gain.value = vol;

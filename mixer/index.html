@@ -117,7 +117,7 @@
   .mixinline input[type=range]{width:100%;accent-color:var(--red);height:28px}
   .mixpanel{position:relative}
   .mixclose{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:50%;border:0;background:transparent;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
-  .mixpanel .mixt{padding-right:40px}
+  .mixpanel .mixlist li:first-child{padding-right:34px}
   .mixhint{margin:0;max-width:330px;text-align:center;font-size:15px;line-height:1.4;color:#3b342e}
   .mixpanel{width:100%;max-width:340px;background:#fff;border:1.5px solid var(--gold-soft);border-radius:14px;padding:14px 16px;color:#222;font-size:16px;line-height:1.45;text-align:left}
   .mixpanel .mixt{margin:0 0 6px;font-weight:700;color:var(--ink)}
@@ -501,27 +501,26 @@
     </div>
     <div class="mix" id="mix" hidden>
       <div class="mixbar" id="mixbar">
-        <button type="button" class="mixbtn" id="mixbtn" aria-pressed="false" aria-expanded="false" aria-controls="mixpanel"><span class="mixsw" aria-hidden="true"></span><span id="mixlbl">Add Your Own Background Music</span></button>
+        <button type="button" class="mixbtn" id="mixbtn" aria-pressed="false" aria-expanded="false" aria-controls="mixpanel"><span class="mixsw" aria-hidden="true"></span><span id="mixlbl">Add Background Music</span></button>
         <button type="button" class="mixinfo" id="mixinfo" aria-label="Show instructions" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></svg></button>
         <div class="mixinline" id="mixinline" hidden></div>
       </div>
       <div class="mixpanel" id="mixpanel" hidden>
         <button type="button" class="mixclose" id="mixclose" aria-label="Close instructions"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-        <p class="mixt">Here is what happens now:</p>
         <ul class="mixlist">
-          <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10.3 8.6v6.8l5.4-3.4z" fill="currentColor" stroke="none"/></svg><span>Start your music in another app first. Then turn this switch on, and press play here. Both will play together.</span></li>
+          <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10.3 8.6v6.8l5.4-3.4z" fill="currentColor" stroke="none"/></svg><span>Start your music first. Then turn this on, and press play here. Both will play together.</span></li>
           <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>Instrumental music works best. Lyrics compete with the spoken words.</span></li>
-          <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="7.5" width="16" height="9" rx="2"/><path d="M21.5 10.5v3"/><path d="M6 12h6"/></svg><span>Your screen stays on while an episode plays. This uses more battery, so turning your brightness down helps.</span></li>
+          <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v4"/></svg><span>For long listening, plug in your phone. Your screen stays on while an episode plays, which uses more battery.</span></li>
           <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>If you lock your phone with the side button, the episode stops. Your music keeps playing.</span></li>
           <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5h12l-1.4-2v-4a4.6 4.6 0 0 0-9.2 0v4z"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="M4 4l16 16"/></svg><span>If you hear nothing from your phone's speaker, turn off Silent Mode (the bell icon in Control Center). Headphones work either way.</span></li>
+          <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span>If something sounds off, close this page and open it again for a fresh start.</span></li>
         </ul>
         <div class="mixvol" id="mixvol" hidden>
-          <button type="button" class="mixbtn" id="mixboost" style="min-height:40px;padding:0 16px;font-size:15px">Turn on volume boost (experimental)</button>
           <div id="mixslider" hidden>
             <label for="mixrange"><span>Episode volume</span><span id="mixpct">100%</span></label>
             <input type="range" id="mixrange" min="20" max="400" step="10" value="100">
           </div>
-          <p class="mixsub" id="mixboostnote">Makes the episode louder than your music. If the episode ever goes silent, turn it off, or reload the page and leave it off. Set your music's volume in the Music app or Control Center.</p>
+          <p class="mixsub" id="mixsub">Raise it if your music drowns out the voices. Set your music's own volume in the Music app or Control Center.</p>
         </div>
       </div>
     </div>
@@ -1795,7 +1794,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
 (function () {
   const $ = id => document.getElementById(id);
   const audio = $('audio'), box = $('mix'), btn = $('mixbtn'), panel = $('mixpanel'), hint = $('mixhint');
-  const volBox = $('mixvol'), range = $('mixrange'), pct = $('mixpct'), boostBtn = $('mixboost'), slider = $('mixslider'), boostNote = $('mixboostnote');
+  const volBox = $('mixvol'), range = $('mixrange'), pct = $('mixpct'), slider = $('mixslider'), sub = $('mixsub');
   const bar = $('mixbar'), info = $('mixinfo'), inline = $('mixinline'), closeBtn = $('mixclose');
   if (!audio || !box || !btn || !navigator.audioSession) return;   // no Audio Session API: leave it hidden
   box.hidden = false;
@@ -1803,7 +1802,6 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   let collapsed = false;
   try { localStorage.removeItem('wwj_mix_collapsed'); } catch {}   // no longer remembered: the instructions open every time the switch is turned on
   let touched = false, on = false, vol = 1, ctx = null, gain = null, gainFailed = false, lock = null;
-  try { const v = parseFloat(localStorage.getItem(VKEY)); if (v >= .2 && v <= 4) vol = v; } catch {}   // always starts Off each visit; only the volume is remembered
   range.value = Math.round(vol * 100); pct.textContent = Math.round(vol * 100) + '%';
 
   // iOS can forget the session type once playback stops, so re-apply it before every play, on any new load, and on return to the page.
@@ -1876,8 +1874,9 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     panel.hidden = !on || collapsed;
     info.hidden = !on;
     info.setAttribute('aria-expanded', panel.hidden ? 'false' : 'true');
-    if (compact && boostOn) { inline.appendChild(slider); inline.hidden = false; slider.hidden = false; }
-    else { boostBtn.after(slider); inline.hidden = true; slider.hidden = !boostOn; }
+    volBox.hidden = !(on && gain);
+    if (compact && gain) { inline.appendChild(slider); inline.hidden = false; slider.hidden = false; }
+    else { volBox.prepend(slider); inline.hidden = true; slider.hidden = !gain; }
   }
   function setCollapsed(v) { collapsed = v; layout(); }
   closeBtn.addEventListener('click', () => setCollapsed(true));
@@ -1889,19 +1888,18 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     btn.setAttribute('aria-expanded', on ? 'true' : 'false');
     if (hint) hint.hidden = on;
     bar.classList.toggle('on', on);
-    $('mixlbl').textContent = on ? 'Add Background Music' : 'Add Your Own Background Music';   // shorter when on, so the (i) fits on the same line
     layout();
-    if (gain) gain.gain.value = (on && boostOn) ? vol : 1;
+    if (gain) gain.gain.value = on ? vol : 1;
     if (on) wantLock(); else dropLock();
-    volBox.hidden = !on;
   }
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', async () => {
     on = !on; touched = true;
     if (on) collapsed = false;   // always show the instructions when the switch is turned on
     // iOS applies a new session type only when playback starts, so if an episode is playing, restart it inside this tap.
     const was = !audio.paused;
     if (was) audio.pause();
     apply();
+    if (on) await wireOnce();   // volume control (Web Audio) is set up inside this tap; the slider appears when it is ready
     if (was) rawPlay().catch(() => {});
   });
   // Leaving the page puts the session back to normal, so the next page (or this one) never inherits mix mode.
@@ -1911,27 +1909,11 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     if (gain || gainFailed || wiring) return;
     wiring = true; range.disabled = true;
     await enableGain();
-    wiring = false; range.disabled = false;
+    wiring = false; range.disabled = false; layout();
   }
-  let boostOn = false;
-  function paintBoost() {
-    boostBtn.hidden = false; boostBtn.disabled = false;
-    boostBtn.textContent = boostOn ? 'Turn off volume boost' : 'Turn on volume boost (experimental)';
-    slider.hidden = !boostOn;
-    if (gain) gain.gain.value = boostOn ? vol : 1;
-    layout();
-  }
-  boostBtn.addEventListener('click', async () => {   // Web Audio is only started the first time this is tapped
-    if (gain) { boostOn = !boostOn; paintBoost(); return; }
-    boostBtn.disabled = true; boostBtn.textContent = 'Turning on\u2026';
-    await wireOnce();
-    if (gain) { boostOn = true; paintBoost(); }
-    else { boostBtn.hidden = true; boostNote.textContent = 'Volume boost is not available here. Set your music\u2019s volume in the Music app or Control Center.'; }
-  });
   range.addEventListener('input', () => {
     vol = range.value / 100; pct.textContent = range.value + '%';
     if (gain) gain.gain.value = vol;
-    try { localStorage.setItem(VKEY, String(vol)); } catch {}
   });
   apply();
 })();

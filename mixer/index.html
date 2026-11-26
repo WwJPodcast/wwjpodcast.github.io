@@ -111,7 +111,7 @@
   .mixbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px 6px;max-width:100%;border:1.5px solid var(--gold-soft);border-radius:26px;padding:0 8px 0 4px;transition:border-color .2s}
   .mixbar.on{border-color:var(--red)}
   .mixbar .mixbtn{border:0;background:transparent;min-height:46px;padding:0 8px 0 8px}
-  .mixinfo{flex:none;width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+  .mixinfo{flex:none;width:36px;height:36px;margin-left:10px;border-radius:50%;border:1.5px solid var(--gold-soft);background:transparent;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
   .mixinline{flex-basis:100%;padding:0 6px 10px}
   .mixinline label{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px}
   .mixinline input[type=range]{width:100%;accent-color:var(--red);height:28px}
@@ -501,7 +501,7 @@
     </div>
     <div class="mix" id="mix" hidden>
       <div class="mixbar" id="mixbar">
-        <button type="button" class="mixbtn" id="mixbtn" aria-pressed="false" aria-expanded="false" aria-controls="mixpanel"><span class="mixsw" aria-hidden="true"></span><span>Add Your Own Background Music</span></button>
+        <button type="button" class="mixbtn" id="mixbtn" aria-pressed="false" aria-expanded="false" aria-controls="mixpanel"><span class="mixsw" aria-hidden="true"></span><span id="mixlbl">Add Your Own Background Music</span></button>
         <button type="button" class="mixinfo" id="mixinfo" aria-label="Show instructions" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></svg></button>
         <div class="mixinline" id="mixinline" hidden></div>
       </div>
@@ -1874,13 +1874,14 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   function layout() {
     const compact = on && collapsed;
     panel.hidden = !on || collapsed;
-    info.hidden = !compact;
+    info.hidden = !on;
+    info.setAttribute('aria-expanded', panel.hidden ? 'false' : 'true');
     if (compact && boostOn) { inline.appendChild(slider); inline.hidden = false; slider.hidden = false; }
     else { boostBtn.after(slider); inline.hidden = true; slider.hidden = !boostOn; }
   }
   function setCollapsed(v) { collapsed = v; try { localStorage.setItem('wwj_mix_collapsed', v ? '1' : '0'); } catch {} layout(); }
   closeBtn.addEventListener('click', () => setCollapsed(true));
-  info.addEventListener('click', () => setCollapsed(false));
+  info.addEventListener('click', () => setCollapsed(!collapsed));
 
   function apply() {
     try { navigator.audioSession.type = on ? 'ambient' : 'auto'; } catch {}   // always set, so a setting left over from an earlier page can never stick
@@ -1888,6 +1889,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     btn.setAttribute('aria-expanded', on ? 'true' : 'false');
     if (hint) hint.hidden = on;
     bar.classList.toggle('on', on);
+    $('mixlbl').textContent = on ? 'Add Background Music' : 'Add Your Own Background Music';   // shorter when on, so the (i) fits on the same line
     layout();
     if (gain) gain.gain.value = (on && boostOn) ? vol : 1;
     if (on) wantLock(); else dropLock();

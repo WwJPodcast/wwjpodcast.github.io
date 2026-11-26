@@ -1402,16 +1402,25 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     21: { k: 'share', t: 'Share the Word', b: 'Free. No sign-up. One tap sends a message you can edit.', btn: 'share' },
     22: { k: 'share', t: 'Follow His Walk. Share His Word.', b: '', btn: 'share' },
     23: { k: 'feedback', t: 'Is This Helping You?', b: 'We’d love to hear your story.', btn: 'mail' },
-    24: { k: 'feedback', t: 'How Can We Make This Better?', b: 'Tell us what’s working and what isn’t.', btn: 'mail' }
+    24: { k: 'feedback', t: 'How Can We Make This Better?', b: 'Tell us what’s working and what isn’t.', btn: 'mail' },
+    25: { k: 'benefit', t: 'Learning His Voice', b: '“My sheep hear my voice.” John 10:27' },
+    26: { k: 'benefit', t: 'Faith Comes by Hearing', b: 'Romans 10:17' },
+    27: { k: 'benefit', t: 'Hidden in the Heart', b: 'The more you hear, the more you’ll remember when you need it.' },
+    28: { k: 'benefit', t: 'A Familiar Voice', b: 'After a few weeks, you’ll know His words before they’re read.' },
+    29: { k: 'benefit', t: 'Renewed Day by Day', b: 'Hear His words long enough and they begin to shape how you think.' },
+    30: { k: 'benefit', t: 'The Whole Story', b: 'Hear all four Gospels in order and His whole life comes together.' },
+    31: { k: 'benefit', t: 'Stay With It', b: 'The change is quiet and slow. Keep listening.' },
+    32: { k: 'benefit', t: 'Worth the Walk', b: 'It adds up, one episode at a time.' }
   };
   const REW = [11, 14, 8, 10, 9, 12, 13, 15], CUE = [1, 4, 2, 5, 3];
   const ASK = [19, 20, 21, 23, 22, 19, 20, 24];
   const MS = [7200, 18000, 36000];
+  const BEN = [25, 26, 27, 28, 29, 30, 31, 32];   // benefits of long listening: one extra card at ~10:00 on every third episode, starting with the listener's 10th
   const GRACE_CARD = { k: 'grace', t: 'Streak Saved', b: 'A grace week covered the week you missed. Your streak is safe.' };
   const WEEKS = { 2: 'Ten episodes, week after week.', 3: 'Keep walking.', 4: 'A month with Jesus.', 10: 'Ten weeks. A whole season with Jesus.', 26: 'Half a year with Jesus.', 52: 'A whole year with Jesus.' };
   function streakCard(n) { return { k: 'streak', t: n + '-Week Streak', b: WEEKS[n] || (n + ' weeks in a row.') }; }
 
-  const st = Object.assign({ finished: 0, secs: 0, shown: {}, ri: 0, ci: 0, ai: 0, streak: 0, wk: '', eps: [], lastWeek: '', gm: '', gu: 0, shared: false }, lsGet(KEY) || {});
+  const st = Object.assign({ finished: 0, secs: 0, shown: {}, ri: 0, ci: 0, ai: 0, bi: 0, streak: 0, wk: '', eps: [], lastWeek: '', gm: '', gu: 0, shared: false }, lsGet(KEY) || {});
   const save = () => lsSet(KEY, st);
   const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const parse = s => { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2], 12); };
@@ -1498,6 +1507,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       }
       if (id) { const c = CARDS[id]; pending.push({ at: d => c.end ? Math.max(d * 0.5, d - 90) : Math.min(270, d * 0.3), card: () => c, on }); }
     }
+    if (n >= 10 && (n - 10) % 3 === 0) { const bc = CARDS[BEN[st.bi % BEN.length]]; pending.push({ at: d => Math.min(600, d * 0.6), card: () => bc, on: () => { st.bi++; } }); }
   }
   let counted = '';   // the episode key last counted as finished (audio or video), so switching between them never counts twice
   function commitFinish(silent) {

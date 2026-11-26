@@ -635,7 +635,6 @@
     { id: 4, label: 'Four Gospel Harmony',     weeks: '10 weeks', total: 50 },
   ];
   const SPEEDS = [1, 1.25, 1.5, 2];
-  if (!SPEEDS.includes(store.speed)) store.speed = 1;   // 0.75x was removed: anyone who had it saved starts at 1x
   const STORE_KEY = 'wwj.player.v1', FEED_CACHE = 'wwj.feed.v3', SHOW_CACHE = 'wwj.show.v1';
 
   /* ---------- helpers ---------- */
@@ -647,6 +646,7 @@
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
   let store = Object.assign({ speed: 1, season: null, pos: {}, last: {}, done: {} }, lsGet(STORE_KEY) || {});
+  if (!SPEEDS.includes(store.speed)) store.speed = 1;   // 0.75x was removed: anyone who had it saved starts at 1x
   const save = () => lsSet(STORE_KEY, store);
 
   let eps = {};            // season id -> [{n,title,url,dur}] ascending

@@ -116,6 +116,8 @@
   .mixrule{height:1px;background:var(--gold-soft);margin:6px 0 12px}
   .mixvol label{display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
   .mixvol input[type=range]{width:100%;accent-color:var(--red);height:32px}
+  #mixslider.dim{opacity:.4}
+  .mixhead .mixsw-row{flex:1;font-size:20px;font-weight:700}
   .mixsub{margin:2px 0 10px;font-size:14px;line-height:1.4;color:#3b342e}
   .mixlist{list-style:none;margin:8px 0 0;padding:0}
   .mixlist li{display:flex;gap:12px;align-items:flex-start;margin:0 0 10px;font-size:16px;line-height:1.4}
@@ -1767,23 +1769,22 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
 <div class="mixback" id="mixback" hidden></div>
 <div class="mixsheet" id="mixsheet" role="dialog" aria-modal="true" aria-labelledby="mixtitle" hidden>
   <div class="mixgrab" aria-hidden="true"></div>
-  <div class="mixhead"><h2 id="mixtitle">Background Music</h2><button type="button" class="mixx" id="mixclose" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-  <button type="button" class="mixsw-row" id="mixbtn" aria-pressed="false"><span class="mixsw" aria-hidden="true"></span><span>Add Background Music</span></button>
+  <div class="mixhead"><button type="button" class="mixsw-row" id="mixbtn" aria-pressed="false"><span class="mixsw" aria-hidden="true"></span><span id="mixtitle">Add Background Music</span></button><button type="button" class="mixx" id="mixclose" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="mixrule"></div>
-  <div class="mixvol" id="mixvol" hidden>
-    <div id="mixslider" hidden>
+  <div class="mixvol" id="mixvol">
+    <div id="mixslider">
       <label for="mixrange"><span>Episode Volume Boost</span><span id="mixpct">100%</span></label>
-      <input type="range" id="mixrange" min="20" max="400" step="10" value="100">
+      <input type="range" id="mixrange" min="20" max="400" step="10" value="100" disabled>
     </div>
-    <p class="mixsub">Raise it if your music drowns out the voices. Set your music's own volume in the Music app or Control Center.</p>
+    <p class="mixsub">Raise it if music drowns out the voices. Set the music's own volume in your Music app.</p>
   </div>
   <ul class="mixlist">
-    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10.3 8.6v6.8l5.4-3.4z" fill="currentColor" stroke="none"/></svg><span>Start your music first. Then turn this on, and press play here. Both will play together.</span></li>
-    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>Instrumental music works best. Lyrics compete with the spoken words.</span></li>
-    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v4"/></svg><span>For long listening, plug in your phone. Your screen stays on while an episode plays, which uses more battery.</span></li>
-    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>If you lock your phone with the side button, the episode stops. Your music keeps playing.</span></li>
-    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5h12l-1.4-2v-4a4.6 4.6 0 0 0-9.2 0v4z"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="M4 4l16 16"/></svg><span>If you hear nothing from your phone's speaker, turn off Silent Mode (the bell icon in Control Center). Headphones work either way.</span></li>
-    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span>If something sounds off, close this page and open it again for a fresh start.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10.3 8.6v6.8l5.4-3.4z" fill="currentColor" stroke="none"/></svg><span>Start your music, turn this on, then press play here.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>Instrumental works best. Lyrics compete with the voices.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v4"/></svg><span>Plug in for long listening. The screen stays on during playback.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Locking with the side button stops the episode. Music keeps playing.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5h12l-1.4-2v-4a4.6 4.6 0 0 0-9.2 0v4z"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="M4 4l16 16"/></svg><span>No sound from the speaker? Turn off Silent Mode. Headphones work either way.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span>Something off? Close this page and reopen it.</span></li>
   </ul>
 </div>
 
@@ -1879,11 +1880,11 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   }
   async function wireOnce() {
     if (gain || gainFailed || wiring) return;
-    wiring = true; range.disabled = true;
+    wiring = true; layout();
     await enableGain();
-    wiring = false; range.disabled = false; layout();
+    wiring = false; layout();
   }
-  function layout() { volBox.hidden = !(on && gain); slider.hidden = !gain; }
+  function layout() { range.disabled = !(on && gain) || wiring; slider.classList.toggle('dim', range.disabled); }
 
   function apply() {
     try { navigator.audioSession.type = on ? 'ambient' : 'auto'; } catch {}   // always set, so a setting left over from an earlier page can never stick

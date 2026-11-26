@@ -1801,7 +1801,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   box.hidden = false;
   const KEY = 'wwj_mix_other_audio', VKEY = 'wwj_mix_episode_vol';
   let collapsed = false;
-  try { collapsed = localStorage.getItem('wwj_mix_collapsed') === '1'; } catch {}
+  try { localStorage.removeItem('wwj_mix_collapsed'); } catch {}   // no longer remembered: the instructions open every time the switch is turned on
   let touched = false, on = false, vol = 1, ctx = null, gain = null, gainFailed = false, lock = null;
   try { const v = parseFloat(localStorage.getItem(VKEY)); if (v >= .2 && v <= 4) vol = v; } catch {}   // always starts Off each visit; only the volume is remembered
   range.value = Math.round(vol * 100); pct.textContent = Math.round(vol * 100) + '%';
@@ -1879,7 +1879,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     if (compact && boostOn) { inline.appendChild(slider); inline.hidden = false; slider.hidden = false; }
     else { boostBtn.after(slider); inline.hidden = true; slider.hidden = !boostOn; }
   }
-  function setCollapsed(v) { collapsed = v; try { localStorage.setItem('wwj_mix_collapsed', v ? '1' : '0'); } catch {} layout(); }
+  function setCollapsed(v) { collapsed = v; layout(); }
   closeBtn.addEventListener('click', () => setCollapsed(true));
   info.addEventListener('click', () => setCollapsed(!collapsed));
 
@@ -1897,6 +1897,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   }
   btn.addEventListener('click', () => {
     on = !on; touched = true;
+    if (on) collapsed = false;   // always show the instructions when the switch is turned on
     // iOS applies a new session type only when playback starts, so if an episode is playing, restart it inside this tap.
     const was = !audio.paused;
     if (was) audio.pause();

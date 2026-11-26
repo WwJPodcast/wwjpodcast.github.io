@@ -97,6 +97,30 @@
   .speeds button{min-width:54px;min-height:44px;padding:0 10px;border-radius:22px;border:1.5px solid var(--gold-soft);background:transparent;color:var(--ink);
         font-family:inherit;font-weight:600;font-size:18px;cursor:pointer}
   @media(max-width:380px){.speeds{gap:5px}.speeds button{min-width:0;padding:0 8px}}
+  /* mixer: streak a little higher, About stays where it was; music button in the speed row; music sheet */
+  .speeds .mixopen{display:inline-flex;align-items:center;justify-content:center}
+  .speeds .mixopen.on{border-color:var(--red);color:var(--red)}
+  .mixback{position:fixed;inset:0;z-index:2000;background:rgba(17,17,17,.45)}
+  .mixsheet{position:fixed;left:0;right:0;bottom:0;z-index:2001;margin:0 auto;max-width:520px;max-height:88vh;max-height:88dvh;overflow-y:auto;background:#fff;color:#222;border-radius:26px 26px 0 0;padding:12px 24px max(24px,env(safe-area-inset-bottom));box-sizing:border-box;box-shadow:0 -8px 30px rgba(0,0,0,.25)}
+  .mixsheet [hidden],.mixback[hidden],.mixsheet[hidden]{display:none!important}
+  .mixgrab{width:44px;height:5px;border-radius:3px;background:#dcdad5;margin:0 auto 10px}
+  .mixhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .mixhead h2{margin:0;font-size:22px;font-weight:700;color:var(--ink)}
+  .mixx{width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:#6b625a;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+  .mixsw-row{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;border:0;background:transparent;padding:0;font:inherit;font-size:18px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left}
+  .mixsw{position:relative;width:38px;height:22px;border-radius:11px;background:var(--track);flex:none;transition:background .2s}
+  .mixsw::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .2s}
+  .mixsw-row[aria-pressed=true] .mixsw{background:var(--red)}
+  .mixsw-row[aria-pressed=true] .mixsw::after{transform:translateX(16px)}
+  .mixrule{height:1px;background:var(--gold-soft);margin:6px 0 12px}
+  .mixvol label{display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+  .mixvol input[type=range]{width:100%;accent-color:var(--red);height:32px}
+  #mixslider.dim{opacity:.4}
+  .mixhead .mixsw-row{flex:1;font-size:20px;font-weight:700}
+  .mixsub{margin:2px 0 10px;font-size:14px;line-height:1.4;color:#3b342e}
+  .mixlist{list-style:none;margin:8px 0 0;padding:0}
+  .mixlist li{display:flex;gap:12px;align-items:flex-start;margin:0 0 10px;font-size:16px;line-height:1.4}
+  .mixlist li svg{flex:none;width:22px;height:22px;margin-top:1px;color:var(--red)}
   .speeds button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
 
   /* bottom categories */
@@ -611,7 +635,7 @@
     { id: 3, label: 'Luke + John Harmony',     weeks: '5 weeks',  total: 25 },
     { id: 4, label: 'Four Gospel Harmony',     weeks: '10 weeks', total: 50 },
   ];
-  const SPEEDS = [0.75, 1, 1.25, 1.5, 2];
+  const SPEEDS = [1, 1.25, 1.5, 2];
   const STORE_KEY = 'wwj.player.v1', FEED_CACHE = 'wwj.feed.v3', SHOW_CACHE = 'wwj.show.v1';
 
   /* ---------- helpers ---------- */
@@ -623,6 +647,7 @@
   const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
   let store = Object.assign({ speed: 1, season: null, pos: {}, last: {}, done: {} }, lsGet(STORE_KEY) || {});
+  if (!SPEEDS.includes(store.speed)) store.speed = 1;   // 0.75x was removed: anyone who had it saved starts at 1x
   const save = () => lsSet(STORE_KEY, store);
 
   let eps = {};            // season id -> [{n,title,url,dur}] ascending
@@ -1738,5 +1763,153 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
 })();
 </script>
 
+
+<style>.prog{margin-top:-6px}.app>.more{margin-top:96px}</style>
+<div class="mixback" id="mixback" hidden></div>
+<div class="mixsheet" id="mixsheet" role="dialog" aria-modal="true" aria-labelledby="mixtitle" hidden>
+  <div class="mixgrab" aria-hidden="true"></div>
+  <div class="mixhead"><button type="button" class="mixsw-row" id="mixbtn" aria-pressed="false"><span class="mixsw" aria-hidden="true"></span><span id="mixtitle">Add Background Music</span></button><button type="button" class="mixx" id="mixclose" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="mixrule"></div>
+  <div class="mixvol" id="mixvol">
+    <div id="mixslider">
+      <label for="mixrange"><span>Episode Volume Boost</span><span id="mixpct">100%</span></label>
+      <input type="range" id="mixrange" min="20" max="400" step="10" value="100" disabled>
+    </div>
+  </div>
+  <ul class="mixlist">
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10.3 8.6v6.8l5.4-3.4z" fill="currentColor" stroke="none"/></svg><span>Start your music, turn this on, then press play on the episode.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></svg><span>Set your music's volume in your music app. If the podcast is too quiet, boost the podcast volume with the slider above.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>Instrumental works best. Lyrics compete with hearing Jesus’ words.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v4"/></svg><span>Plug in for long listening. The screen stays on during playback.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Locking with the side button stops the episode. Music keeps playing.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5h12l-1.4-2v-4a4.6 4.6 0 0 0-9.2 0v4z"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="M4 4l16 16"/></svg><span>No sound from the speaker? Turn off Silent Mode. Headphones work either way.</span></li>
+    <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span>Something off? Close your browser completely, reopen this page, and start over.</span></li>
+  </ul>
+</div>
+
+<script>
+/* Background music (mixer test page).
+   - The music-note button in the speed row opens a sheet; the switch inside it turns mixing on or off.
+   - Audio Session type "ambient" lets this page's audio mix with Apple Music and other apps instead of stopping them.
+   - A screen wake lock keeps the phone awake while an episode plays (ambient audio stops when the screen locks).
+   - The Episode Volume Boost slider runs the episode through Web Audio (iOS ignores audio.volume), only if the audio host allows it. */
+(function () {
+  const $ = id => document.getElementById(id);
+  const audio = $('audio'), speeds = $('speeds'), sheet = $('mixsheet'), back = $('mixback');
+  const btn = $('mixbtn'), closeBtn = $('mixclose'), volBox = $('mixvol'), range = $('mixrange'), pct = $('mixpct'), slider = $('mixslider');
+  if (!audio || !speeds || !sheet || !navigator.audioSession) return;   // no Audio Session API: no button at all
+  let on = false, vol = 1, ctx = null, gain = null, gainFailed = false, lock = null, wiring = false;
+
+  // the button in the speed row (same look as the speed buttons; outline turns red when on)
+  const opener = document.createElement('button');
+  opener.type = 'button'; opener.className = 'mixopen'; opener.setAttribute('aria-label', 'Background music'); opener.setAttribute('aria-haspopup', 'dialog');
+  opener.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>';
+  const rawSet = opener.setAttribute;   // the speed code marks every button in the row as pressed or not: ignore that for this one
+  opener.setAttribute = function (n, v) { if (n === 'aria-pressed') return; return rawSet.call(this, n, v); };
+  speeds.appendChild(opener);
+
+  function openSheet() { back.hidden = false; sheet.hidden = false; try { btn.focus({ preventScroll: true }); } catch {} }
+  function closeSheet() { sheet.hidden = true; back.hidden = true; try { opener.focus({ preventScroll: true }); } catch {} }
+  opener.addEventListener('click', openSheet);
+  closeBtn.addEventListener('click', closeSheet);
+  back.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+
+  // iOS can forget the session type once playback stops, so re-apply it before every play, on any new load, and on return to the page.
+  function reassert() {
+    if (!on) return;
+    try { navigator.audioSession.type = 'ambient'; } catch {}
+    if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
+  }
+  const rawPlay = audio.play.bind(audio);
+  audio.play = function () { reassert(); return rawPlay(); };
+  ['pause', 'ended', 'loadstart', 'emptied', 'waiting'].forEach(ev => audio.addEventListener(ev, reassert));
+  document.addEventListener('pointerdown', reassert, true);
+  document.addEventListener('touchend', reassert, true);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { reassert(); wantLock(); } });
+
+  async function wantLock() {
+    if (!on || audio.paused || lock || !navigator.wakeLock) return;
+    try { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } catch { lock = null; }
+  }
+  function dropLock() { if (lock) { try { lock.release(); } catch {} lock = null; } }
+  audio.addEventListener('play', () => { wantLock(); if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {}); });
+  audio.addEventListener('pause', dropLock);
+  audio.addEventListener('ended', dropLock);
+
+  let busy = null;
+  function enableGain() { return busy || (busy = enableGain1().finally(() => { busy = null; })); }
+  async function enableGain1() {
+    if (gain) return true;
+    if (gainFailed) return false;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const src = audio.currentSrc || audio.src;
+    if (!AC || !src) return false;
+    const t = audio.currentTime, was = !audio.paused;
+    // iOS only lets an AudioContext run if it is started inside the tap itself, so do it before any waiting.
+    try { ctx = ctx || new AC(); if (ctx.state !== 'running') ctx.resume().catch(() => {}); } catch { return false; }
+    audio.pause();
+    audio.crossOrigin = 'anonymous';
+    const ok = await new Promise(res => {
+      let done = false;
+      const fin = v => { if (done) return; done = true; audio.removeEventListener('loadedmetadata', good); audio.removeEventListener('error', bad); clearTimeout(tm); res(v); };
+      const good = () => fin(true), bad = () => fin(false), tm = setTimeout(() => fin(false), 8000);
+      audio.addEventListener('loadedmetadata', good); audio.addEventListener('error', bad);
+      audio.src = src; audio.load();
+    });
+    if (!ok) {   // the audio host did not allow it: put everything back the way it was
+      gainFailed = true; try { if (ctx) ctx.close(); } catch {} ctx = null;
+      audio.removeAttribute('crossorigin');
+      audio.src = src; audio.load();
+      audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = t; } catch {} }, { once: true });
+      const m = $('msg'); if (m) m.textContent = '';
+      return false;
+    }
+    try { audio.currentTime = t; } catch {}
+    try {
+      const node = ctx.createMediaElementSource(audio);
+      gain = ctx.createGain(); gain.gain.value = vol;
+      const lim = ctx.createDynamicsCompressor();   // soft limiter so a big boost squeezes loud peaks instead of distorting
+      lim.threshold.value = -4; lim.knee.value = 0; lim.ratio.value = 20; lim.attack.value = .003; lim.release.value = .15;
+      node.connect(gain); gain.connect(lim); lim.connect(ctx.destination);
+      if (ctx.state === 'suspended') await ctx.resume();
+    } catch { gain = null; gainFailed = true; try { ctx.close(); } catch {} ctx = null; return false; }
+    if (was) audio.play().catch(() => {});
+    return true;
+  }
+  async function wireOnce() {
+    if (gain || gainFailed || wiring) return;
+    wiring = true; layout();
+    await enableGain();
+    wiring = false; layout();
+  }
+  function layout() { range.disabled = !(on && gain) || wiring; slider.classList.toggle('dim', range.disabled); }
+
+  function apply() {
+    try { navigator.audioSession.type = on ? 'ambient' : 'auto'; } catch {}   // always set, so a setting left over from an earlier page can never stick
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    opener.classList.toggle('on', on);
+    if (gain) gain.gain.value = on ? vol : 1;
+    if (on) wantLock(); else dropLock();
+    layout();
+  }
+  btn.addEventListener('click', async () => {
+    on = !on;
+    // iOS applies a new session type only when playback starts, so if an episode is playing, restart it inside this tap.
+    const was = !audio.paused;
+    if (was) audio.pause();
+    apply();
+    if (on) await wireOnce();
+    if (was) rawPlay().catch(() => {});
+  });
+  range.addEventListener('input', () => {
+    vol = range.value / 100; pct.textContent = range.value + '%';
+    if (gain) gain.gain.value = vol;
+  });
+  // Leaving the page puts the session back to normal, so the next page (or this one) never inherits mix mode.
+  addEventListener('pagehide', () => { try { navigator.audioSession.type = 'auto'; } catch {} });
+  apply();
+})();
+</script>
 </body>
 </html>

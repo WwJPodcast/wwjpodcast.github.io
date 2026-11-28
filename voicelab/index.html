@@ -1910,11 +1910,16 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     $('bednow').textContent = live ? 'Now playing: ' + titleOf(lastFile) + ' (' + m + ')' : 'Mood for this episode: ' + m + '.';
     $('bednext').disabled = !live;
   }
+  // One AudioContext for the episode and the music (two at once makes iOS crackle at faster speeds). 'playback' = bigger buffers, fewer dropouts.
+  function mkCtx() {
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+    try { return new AC({ latencyHint: 'playback' }); } catch { return new AC(); }
+  }
   function bedInit() {   // call inside a tap: iOS only lets Web Audio start from a gesture
     if (bctx) return true;
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
     try {
-      bctx = new AC(); bmaster = bctx.createGain(); bmaster.gain.value = prefs.vol / 100; bmaster.connect(bctx.destination);
+      ctx = ctx || mkCtx(); bctx = ctx; bmaster = bctx.createGain(); bmaster.gain.value = prefs.vol / 100; bmaster.connect(bctx.destination);
       slots = [0, 1].map(i => {
         const el = new Audio(); el.crossOrigin = 'anonymous'; el.preload = 'auto';
         const g = bctx.createGain(); g.gain.value = 0;
@@ -2035,7 +2040,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     if (!AC || !src) return false;
     const t = audio.currentTime, was = !audio.paused;
     // iOS only lets an AudioContext run if it is started inside the tap itself, so do it before any waiting.
-    try { ctx = ctx || new AC(); if (ctx.state !== 'running') ctx.resume().catch(() => {}); } catch { return false; }
+    try { ctx = ctx || mkCtx(); if (ctx.state !== 'running') ctx.resume().catch(() => {}); } catch { return false; }
     audio.pause();
     audio.crossOrigin = 'anonymous';
     const ok = await new Promise(res => {
@@ -2046,7 +2051,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       audio.src = src; audio.load();
     });
     if (!ok) {   // the audio host did not allow it: put everything back the way it was
-      gainFailed = true; try { if (ctx) ctx.close(); } catch {} ctx = null;
+      gainFailed = true; if (!bctx) { try { if (ctx) ctx.close(); } catch {} ctx = null; }   // the music may still be using it
       audio.removeAttribute('crossorigin');
       audio.src = src; audio.load();
       audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = t; } catch {} }, { once: true });
@@ -2061,7 +2066,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       node.connect(lab.hp);
       labApply();
       if (ctx.state === 'suspended') await ctx.resume();
-    } catch { gain = null; gainFailed = true; try { ctx.close(); } catch {} ctx = null; return false; }
+    } catch { gain = null; gainFailed = true; if (!bctx) { try { ctx.close(); } catch {} ctx = null; } return false; }
     if (was) audio.play().catch(() => {});
     return true;
   }
@@ -2146,7 +2151,8 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       const x = i / (N - 1) * 2 - 1, a = Math.abs(x);
       curve[i] = (a <= knee ? a : knee + (1 - knee) * Math.tanh((a - knee) / (1 - knee))) * Math.sign(x);
     }
-    L.shaper.curve = curve; L.shaper.oversample = '4x';
+    L.shaper.curve = curve; L.shaper.oversample = '2x';
+    L.comp.knee.value = 24; L.comp.attack.value = .012; L.comp.release.value = .28;   // fixed: only threshold/ratio/makeup move with the sliders
     L.hp.connect(L.pres);
     L.mode = null;
     return L;
@@ -2169,7 +2175,6 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     lab.pres.gain.setTargetAtTime(clar, t, .02);
     const thr = -10 - level * .3, ratio = 1 + level * .04;
     lab.comp.threshold.setTargetAtTime(thr, t, .02); lab.comp.ratio.setTargetAtTime(ratio, t, .02);
-    lab.comp.knee.value = 24; lab.comp.attack.value = .012; lab.comp.release.value = .28;
     const makeupDb = (-thr) * (1 - 1 / ratio) * .5;   // win back about half of what the leveler takes off the peaks
     lab.makeup.gain.setTargetAtTime(boost * Math.pow(10, makeupDb / 20), t, .02);
   }

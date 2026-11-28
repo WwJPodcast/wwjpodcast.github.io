@@ -1807,7 +1807,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   </div>
   <div class="mixvol" id="mastervolbox">
     <label for="mastervol"><span>Player volume</span><span id="mastervolv">100%</span></label>
-    <input type="range" id="mastervol" min="0" max="100" step="1" value="100" disabled>
+    <input type="range" id="mastervol" min="0" max="200" step="5" value="100" disabled>
   </div>
   <div class="lab dim" id="lab">
     <h3>Voice Lab</h3>
@@ -1815,6 +1815,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     <div class="labrow"><label for="labboost"><span>Boost</span><span id="labboostv">100%</span></label><input type="range" id="labboost" min="50" max="400" step="10" value="100"></div>
     <div class="labrow"><label for="lablevel"><span>Leveler (evens out loud and soft)</span><span id="lablevelv">0</span></label><input type="range" id="lablevel" min="0" max="100" step="5" value="0"></div>
     <div class="labrow"><label for="labclar"><span>Clarity (voice presence)</span><span id="labclarv">0 dB</span></label><input type="range" id="labclar" min="0" max="8" step="0.5" value="0"></div>
+    <div class="labrow"><button type="button" id="labbypass" aria-pressed="false" style="font:inherit;font-size:15px;padding:8px 12px;border:1px solid var(--gold-soft);border-radius:10px;background:#fff;color:var(--ink)">Popping test: skip all voice processing (off)</button></div>
   </div>
   <div id="mixwwj" hidden>
     <div class="bednow"><span id="bednow">Pick a mood, then press play on the episode.</span><button type="button" class="bednext" id="bednext" disabled>Next track</button></div>
@@ -1868,7 +1869,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   if (!audio || !speeds || !sheet) return;
   const hasAS = !!navigator.audioSession;   // iOS 17+ only. "My music" needs it; "WWJ music" does not, so the button always shows.
   let lab = null;
-  let master = null;   // final volume for everything this page plays (episode + music), after all the processing
+  let master = null, epNode = null, bypass = false;   // final volume for everything this page plays (episode + music), after all the processing
   let on = false, vol = 1, ctx = null, gain = null, gainFailed = false, lock = null, wiring = false;
 
   /* ---- WWJ music: our own background beds, mixed in the page ----
@@ -1890,9 +1891,9 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     '2-7': 'nature', '2-8': 'bright', '3-13': 'bright', '3-15': 'bright'
   };
   const lsRead = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
-  const prefs = Object.assign({ mode: 'own', vol: 50, mood: 'auto', master: 100 }, lsRead(BED_KEY));
+  const prefs = Object.assign({ mode: 'own', vol: 50, mood: 'auto' }, lsRead(BED_KEY));
   let mode = hasAS && prefs.mode !== 'wwj' ? 'own' : 'wwj';
-  const savePrefs = () => { try { localStorage.setItem(BED_KEY, JSON.stringify({ mode, vol: prefs.vol, mood: prefs.mood, master: prefs.master })); } catch {} };
+  const savePrefs = () => { try { localStorage.setItem(BED_KEY, JSON.stringify({ mode, vol: prefs.vol, mood: prefs.mood })); } catch {} };
 
   let cat = null, catBusy = null, bctx = null, bmaster = null, slots = null, active = -1;
   let queue = [], lastFile = null, moodNow = null, bedWanted = false;
@@ -1924,7 +1925,11 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   }
   function getMaster() {
     if (master && master.context === ctx) return master;
-    master = ctx.createGain(); master.gain.value = prefs.master / 100; master.connect(ctx.destination); return master;
+    master = ctx.createGain(); master.gain.value = +$('mastervol').value / 100;
+    const sh = ctx.createWaveShaper(), N = 2048, curve = new Float32Array(N), knee = .6;   // clean up to 0.6, then a smooth roll-off toward 1.0
+    for (let i = 0; i < N; i++) { const x = i / (N - 1) * 2 - 1, a = Math.abs(x); curve[i] = (a <= knee ? a : knee + (1 - knee) * Math.tanh((a - knee) / (1 - knee))) * Math.sign(x); }
+    sh.curve = curve; sh.oversample = '2x';
+    master.connect(sh); sh.connect(ctx.destination); return master;
   }
   function bedInit() {   // call inside a tap: iOS only lets Web Audio start from a gesture
     if (bctx) return true;
@@ -2075,7 +2080,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       const node = ctx.createMediaElementSource(audio);
       lab = buildLab(ctx);
       gain = lab.makeup;
-      node.connect(lab.hp);
+      epNode = node; node.connect(lab.hp);
       labApply();
       if (ctx.state === 'suspended') await ctx.resume();
     } catch { gain = null; gainFailed = true; if (!bctx) { try { ctx.close(); } catch {} ctx = null; } return false; }
@@ -2147,11 +2152,9 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     prefs.vol = +bedvol.value; $('bedvolv').textContent = prefs.vol + '%'; savePrefs();
     if (bmaster) bmaster.gain.setTargetAtTime(prefs.vol / 100, bctx.currentTime, .03);
   });
-  const mvol = $('mastervol'); mvol.value = prefs.master; $('mastervolv').textContent = prefs.master + '%';
-  mvol.addEventListener('input', () => {
-    prefs.master = +mvol.value; $('mastervolv').textContent = prefs.master + '%'; savePrefs();
-    if (master && ctx) master.gain.setTargetAtTime(prefs.master / 100, ctx.currentTime, .02);
-  });
+  const mvol = $('mastervol');
+  function masterApply() { $('mastervolv').textContent = mvol.value + '%'; if (master && ctx) master.gain.setTargetAtTime(+mvol.value / 100, ctx.currentTime, .02); }
+  mvol.addEventListener('input', () => { masterApply(); labSave(); });
   range.addEventListener('input', () => {
     vol = range.value / 100; pct.textContent = range.value + '%';
   });
@@ -2164,13 +2167,6 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     L.pres = c.createBiquadFilter(); L.pres.type = 'peaking'; L.pres.frequency.value = 3000; L.pres.Q.value = .9; L.pres.gain.value = 0;
     L.comp = c.createDynamicsCompressor();
     L.makeup = c.createGain();
-    L.shaper = c.createWaveShaper();
-    const N = 2048, curve = new Float32Array(N), knee = .6;   // clean up to 0.6, then a smooth roll-off toward 1.0
-    for (let i = 0; i < N; i++) {
-      const x = i / (N - 1) * 2 - 1, a = Math.abs(x);
-      curve[i] = (a <= knee ? a : knee + (1 - knee) * Math.tanh((a - knee) / (1 - knee))) * Math.sign(x);
-    }
-    L.shaper.curve = curve; L.shaper.oversample = '2x';
     L.comp.knee.value = 24; L.comp.attack.value = .012; L.comp.release.value = .28;   // fixed: only threshold/ratio/makeup move with the sliders
     L.hp.connect(L.pres);
     L.mode = null;
@@ -2179,8 +2175,8 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   const lb = $('labboost'), ll = $('lablevel'), lc = $('labclar'), labBox = $('lab');
   function route(L) {
     if (L.mode === 'new') return;
-    ['pres', 'comp', 'makeup', 'shaper'].forEach(k => { try { L[k].disconnect(); } catch {} });
-    L.pres.connect(L.comp); L.comp.connect(L.makeup); L.makeup.connect(L.shaper); L.shaper.connect(getMaster());
+    ['pres', 'comp', 'makeup'].forEach(k => { try { L[k].disconnect(); } catch {} });
+    L.pres.connect(L.comp); L.comp.connect(L.makeup); L.makeup.connect(getMaster());
     L.mode = 'new';
   }
   function labApply() {
@@ -2198,11 +2194,17 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     lab.makeup.gain.setTargetAtTime(boost * Math.pow(10, makeupDb / 20), t, .02);
   }
   // Boost / Leveler / Clarity are remembered separately for "My music" and "WWJ music"
-  const LAB_KEY = 'wwj.lab.v1', LAB0 = { boost: 100, level: 0, clar: 0 };
+  const LAB_KEY = 'wwj.lab.v1', LAB0 = { boost: 100, level: 0, clar: 0, master: 100 };
   const labSet = Object.assign({ own: LAB0, wwj: LAB0 }, lsRead(LAB_KEY));
-  function labSave() { labSet[mode] = { boost: +lb.value, level: +ll.value, clar: +lc.value }; try { localStorage.setItem(LAB_KEY, JSON.stringify(labSet)); } catch {} }
-  function labLoad() { const v = Object.assign({}, LAB0, labSet[mode]); lb.value = v.boost; ll.value = v.level; lc.value = v.clar; }
+  function labSave() { labSet[mode] = { boost: +lb.value, level: +ll.value, clar: +lc.value, master: +mvol.value }; try { localStorage.setItem(LAB_KEY, JSON.stringify(labSet)); } catch {} }
+  function labLoad() { const v = Object.assign({}, LAB0, labSet[mode]); lb.value = v.boost; ll.value = v.level; lc.value = v.clar; mvol.value = v.master; masterApply(); }
   [lb, ll, lc].forEach(r => r.addEventListener('input', () => { labApply(); labSave(); }));
+  $('labbypass').addEventListener('click', () => {
+    if (!epNode || !ctx) return;
+    bypass = !bypass;
+    try { epNode.disconnect(); epNode.connect(bypass ? ctx.destination : lab.hp); } catch {}
+    const b = $('labbypass'); b.setAttribute('aria-pressed', String(bypass)); b.textContent = 'Popping test: skip all voice processing (' + (bypass ? 'ON' : 'off') + ')';
+  });
   labLoad(); labApply();
 
   apply();

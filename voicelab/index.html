@@ -1805,6 +1805,10 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       <input type="range" id="mixrange" min="20" max="400" step="10" value="100" disabled>
     </div>
   </div>
+  <div class="mixvol" id="mastervolbox">
+    <label for="mastervol"><span>Player volume</span><span id="mastervolv">100%</span></label>
+    <input type="range" id="mastervol" min="0" max="100" step="1" value="100" disabled>
+  </div>
   <div class="lab dim" id="lab">
     <h3>Voice Lab</h3>
     <p>Keep the voice clear over the music. Turn music on first, and the sliders come alive.</p>
@@ -1864,6 +1868,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   if (!audio || !speeds || !sheet) return;
   const hasAS = !!navigator.audioSession;   // iOS 17+ only. "My music" needs it; "WWJ music" does not, so the button always shows.
   let lab = null;
+  let master = null;   // final volume for everything this page plays (episode + music), after all the processing
   let on = false, vol = 1, ctx = null, gain = null, gainFailed = false, lock = null, wiring = false;
 
   /* ---- WWJ music: our own background beds, mixed in the page ----
@@ -1885,9 +1890,9 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     '2-7': 'nature', '2-8': 'bright', '3-13': 'bright', '3-15': 'bright'
   };
   const lsRead = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
-  const prefs = Object.assign({ mode: 'own', vol: 50, mood: 'auto' }, lsRead(BED_KEY));
+  const prefs = Object.assign({ mode: 'own', vol: 50, mood: 'auto', master: 100 }, lsRead(BED_KEY));
   let mode = hasAS && prefs.mode !== 'wwj' ? 'own' : 'wwj';
-  const savePrefs = () => { try { localStorage.setItem(BED_KEY, JSON.stringify({ mode, vol: prefs.vol, mood: prefs.mood })); } catch {} };
+  const savePrefs = () => { try { localStorage.setItem(BED_KEY, JSON.stringify({ mode, vol: prefs.vol, mood: prefs.mood, master: prefs.master })); } catch {} };
 
   let cat = null, catBusy = null, bctx = null, bmaster = null, slots = null, active = -1;
   let queue = [], lastFile = null, moodNow = null, bedWanted = false;
@@ -1917,11 +1922,15 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     c.onstatechange = () => { if (c.state !== 'running' && !audio.paused) c.resume().catch(() => {}); };
     return c;
   }
+  function getMaster() {
+    if (master && master.context === ctx) return master;
+    master = ctx.createGain(); master.gain.value = prefs.master / 100; master.connect(ctx.destination); return master;
+  }
   function bedInit() {   // call inside a tap: iOS only lets Web Audio start from a gesture
     if (bctx) return true;
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
     try {
-      ctx = ctx || mkCtx(); bctx = ctx; bmaster = bctx.createGain(); bmaster.gain.value = prefs.vol / 100; bmaster.connect(bctx.destination);
+      ctx = ctx || mkCtx(); bctx = ctx; bmaster = bctx.createGain(); bmaster.gain.value = prefs.vol / 100; bmaster.connect(getMaster());
       slots = [0, 1].map(i => {
         const el = new Audio(); el.crossOrigin = 'anonymous'; el.preload = 'auto';
         const g = bctx.createGain(); g.gain.value = 0;
@@ -2080,7 +2089,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     wiring = false; layout(); labApply();   // the Voice Lab sliders come alive once the episode is wired in
     if (!lab && gainFailed) { const p = labBox.querySelector('p'); if (p) p.textContent = 'This browser or audio host does not allow the Voice Lab sliders.'; }
   }
-  function layout() { range.disabled = !(on && gain) || wiring; slider.classList.toggle('dim', range.disabled); }
+  function layout() { range.disabled = !(on && gain) || wiring; slider.classList.toggle('dim', range.disabled); const mv = $('mastervol'); if (mv) mv.disabled = !master; }
 
   function apply() {
     try { navigator.audioSession.type = on ? (mode === 'wwj' ? 'playback' : 'ambient') : 'auto'; } catch {}   // always set, so a setting left over from an earlier page can never stick
@@ -2115,7 +2124,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   function setMode(m) {
     if (m === mode || (m === 'own' && !hasAS)) return;
     const was = !audio.paused;
-    mode = m; savePrefs(); paintMode();
+    labSave(); mode = m; savePrefs(); paintMode(); labLoad(); labApply();   // each mode keeps its own voice settings
     if (!on) return;
     if (m === 'wwj') bedInit();   // inside the tap
     if (was) audio.pause();       // iOS applies a new session type only when playback starts
@@ -2137,6 +2146,11 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   bedvol.addEventListener('input', () => {
     prefs.vol = +bedvol.value; $('bedvolv').textContent = prefs.vol + '%'; savePrefs();
     if (bmaster) bmaster.gain.setTargetAtTime(prefs.vol / 100, bctx.currentTime, .03);
+  });
+  const mvol = $('mastervol'); mvol.value = prefs.master; $('mastervolv').textContent = prefs.master + '%';
+  mvol.addEventListener('input', () => {
+    prefs.master = +mvol.value; $('mastervolv').textContent = prefs.master + '%'; savePrefs();
+    if (master && ctx) master.gain.setTargetAtTime(prefs.master / 100, ctx.currentTime, .02);
   });
   range.addEventListener('input', () => {
     vol = range.value / 100; pct.textContent = range.value + '%';
@@ -2166,7 +2180,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   function route(L) {
     if (L.mode === 'new') return;
     ['pres', 'comp', 'makeup', 'shaper'].forEach(k => { try { L[k].disconnect(); } catch {} });
-    L.pres.connect(L.comp); L.comp.connect(L.makeup); L.makeup.connect(L.shaper); L.shaper.connect(ctx.destination);
+    L.pres.connect(L.comp); L.comp.connect(L.makeup); L.makeup.connect(L.shaper); L.shaper.connect(getMaster());
     L.mode = 'new';
   }
   function labApply() {
@@ -2183,8 +2197,13 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     const makeupDb = (-thr) * (1 - 1 / ratio) * .5;   // win back about half of what the leveler takes off the peaks
     lab.makeup.gain.setTargetAtTime(boost * Math.pow(10, makeupDb / 20), t, .02);
   }
-  [lb, ll, lc].forEach(r => r.addEventListener('input', labApply));
-  labApply();
+  // Boost / Leveler / Clarity are remembered separately for "My music" and "WWJ music"
+  const LAB_KEY = 'wwj.lab.v1', LAB0 = { boost: 100, level: 0, clar: 0 };
+  const labSet = Object.assign({ own: LAB0, wwj: LAB0 }, lsRead(LAB_KEY));
+  function labSave() { labSet[mode] = { boost: +lb.value, level: +ll.value, clar: +lc.value }; try { localStorage.setItem(LAB_KEY, JSON.stringify(labSet)); } catch {} }
+  function labLoad() { const v = Object.assign({}, LAB0, labSet[mode]); lb.value = v.boost; ll.value = v.level; lc.value = v.clar; }
+  [lb, ll, lc].forEach(r => r.addEventListener('input', () => { labApply(); labSave(); }));
+  labLoad(); labApply();
 
   apply();
   paintMode();

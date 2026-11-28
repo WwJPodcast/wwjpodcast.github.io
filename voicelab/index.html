@@ -1777,6 +1777,17 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
 .labrow label{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--ink);margin-top:6px}
 .labrow input[type=range]{width:100%;accent-color:var(--red);height:30px}
 .lab.dim .labrow{opacity:.45}
+.mixmode{display:flex;gap:0;margin:2px 0 12px;border:1.5px solid var(--gold-soft);border-radius:999px;overflow:hidden;background:#fff}
+.mixmode button{flex:1;font:inherit;font-size:16px;font-weight:700;min-height:44px;padding:0 10px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.mixmode button[aria-pressed=true]{background:var(--red);color:#fff}
+.mixmode[hidden],#mixwwj[hidden],#mixown[hidden]{display:none!important}
+.bednow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px;font-size:15px;line-height:1.35;color:#3b342e}
+.bednext{flex:none;font:inherit;font-size:15px;font-weight:600;min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--gold-soft);background:#fff;color:var(--ink);cursor:pointer}
+.bednext:disabled{opacity:.4;cursor:default}
+.bedmoods{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.bedmoods button{font:inherit;font-size:15px;font-weight:600;min-height:40px;padding:0 13px;border-radius:999px;border:1.5px solid var(--gold-soft);background:#fff;color:var(--ink);cursor:pointer}
+.bedmoods button[aria-pressed=true]{border-color:var(--red);color:var(--red)}
+.bedmsg{margin:6px 0 0;font-size:14px;line-height:1.4;color:var(--red)}
 </style>
 <div hidden id="labtpl"></div>
 <div class="mixback" id="mixback" hidden></div>
@@ -1784,6 +1795,10 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   <div class="mixgrab" aria-hidden="true"></div>
   <div class="mixhead"><button type="button" class="mixsw-row" id="mixbtn" aria-pressed="false"><span class="mixsw" aria-hidden="true"></span><span id="mixtitle">Add Background Music</span></button><button type="button" class="mixx" id="mixclose" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="mixrule"></div>
+  <div class="mixmode" id="mixmode" role="group" aria-label="Music source">
+    <button type="button" id="modeown" aria-pressed="false">My music</button>
+    <button type="button" id="modewwj" aria-pressed="false">WWJ music</button>
+  </div>
   <div class="mixvol" id="mixvol">
     <div id="mixslider">
       <label for="mixrange"><span>Episode Volume Boost</span><span id="mixpct">100%</span></label>
@@ -1792,18 +1807,37 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   </div>
   <div class="lab dim" id="lab">
     <h3>Voice Lab</h3>
-    <p>Tap a preset, then compare while your music plays. First tap pauses and resumes the episode once.</p>
-    <div class="labpre" id="labpre">
-      <button type="button" data-p="clean" aria-pressed="false">Clean</button>
-      <button type="button" data-p="old" aria-pressed="false">Old boost</button>
-      <button type="button" data-p="clear" aria-pressed="false">Clear</button>
-      <button type="button" data-p="strong" aria-pressed="false">Strong</button>
-      <button type="button" data-p="max" aria-pressed="false">Max</button>
-    </div>
+    <p>Keep the voice clear over the music. Turn music on first, and the sliders come alive.</p>
     <div class="labrow"><label for="labboost"><span>Boost</span><span id="labboostv">100%</span></label><input type="range" id="labboost" min="50" max="400" step="10" value="100"></div>
     <div class="labrow"><label for="lablevel"><span>Leveler (evens out loud and soft)</span><span id="lablevelv">0</span></label><input type="range" id="lablevel" min="0" max="100" step="5" value="0"></div>
     <div class="labrow"><label for="labclar"><span>Clarity (voice presence)</span><span id="labclarv">0 dB</span></label><input type="range" id="labclar" min="0" max="8" step="0.5" value="0"></div>
   </div>
+  <div id="mixwwj" hidden>
+    <div class="bednow"><span id="bednow">Pick a mood, then press play on the episode.</span><button type="button" class="bednext" id="bednext" disabled>Next track</button></div>
+    <div class="mixvol">
+      <label for="bedvol"><span>Music volume</span><span id="bedvolv">18%</span></label>
+      <input type="range" id="bedvol" min="0" max="60" step="1" value="18">
+    </div>
+    <div class="bedmoods" id="bedmoods" role="group" aria-label="Music mood">
+      <button type="button" data-m="auto" aria-pressed="true">Auto</button>
+      <button type="button" data-m="somber" aria-pressed="false">Somber</button>
+      <button type="button" data-m="reflective" aria-pressed="false">Reflective</button>
+      <button type="button" data-m="sacred" aria-pressed="false">Sacred</button>
+      <button type="button" data-m="peaceful" aria-pressed="false">Peaceful</button>
+      <button type="button" data-m="bright" aria-pressed="false">Bright</button>
+      <button type="button" data-m="hopeful" aria-pressed="false">Hopeful</button>
+      <button type="button" data-m="easter" aria-pressed="false">Easter</button>
+      <button type="button" data-m="dramatic" aria-pressed="false">Dramatic</button>
+      <button type="button" data-m="nature" aria-pressed="false">Nature</button>
+    </div>
+    <p class="bedmsg" id="bedmsg" hidden></p>
+    <ul class="mixlist">
+      <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10.3 8.6v6.8l5.4-3.4z" fill="currentColor" stroke="none"/></svg><span>Turn this on, then press play. The music fades in with the episode and rests when you pause.</span></li>
+      <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg><span>Auto picks a mood to fit the episode. Choose a mood yourself to override it. Tracks are about two minutes, so they rotate and cross-fade.</span></li>
+      <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v4"/></svg><span>The screen stays on during playback. Locking it may stop the music, so tell me if it does.</span></li>
+    </ul>
+  </div>
+  <div id="mixown">
   <ul class="mixlist">
     <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10.3 8.6v6.8l5.4-3.4z" fill="currentColor" stroke="none"/></svg><span>Start your music, turn this on, then press play on the episode.</span></li>
     <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></svg><span>Set your music's volume in your music app. If the podcast is too quiet, boost the podcast volume with the slider above.</span></li>
@@ -1813,21 +1847,139 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5h12l-1.4-2v-4a4.6 4.6 0 0 0-9.2 0v4z"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="M4 4l16 16"/></svg><span>No sound from the speaker? Turn off Silent Mode. Headphones work either way.</span></li>
     <li><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span>Something off? Close your browser completely, reopen this page, and start over.</span></li>
   </ul>
+  </div>
 </div>
 
 <script>
 /* Background music (mixer test page).
    - The music-note button in the speed row opens a sheet; the switch inside it turns mixing on or off.
-   - Audio Session type "ambient" lets this page's audio mix with Apple Music and other apps instead of stopping them.
+   - Two options: "My music" (Apple Music or another app plays; Audio Session type "ambient" lets this page's audio mix with it
+     instead of stopping it) and "WWJ music" (our own beds play inside this page with their own volume and a mood per episode).
    - A screen wake lock keeps the phone awake while an episode plays (ambient audio stops when the screen locks).
    - The Episode Volume Boost slider runs the episode through Web Audio (iOS ignores audio.volume), only if the audio host allows it. */
 (function () {
   const $ = id => document.getElementById(id);
   const audio = $('audio'), speeds = $('speeds'), sheet = $('mixsheet'), back = $('mixback');
   const btn = $('mixbtn'), closeBtn = $('mixclose'), volBox = $('mixvol'), range = $('mixrange'), pct = $('mixpct'), slider = $('mixslider');
-  if (!audio || !speeds || !sheet || !navigator.audioSession) return;   // no Audio Session API: no button at all
+  if (!audio || !speeds || !sheet) return;
+  const hasAS = !!navigator.audioSession;   // iOS 17+ only. "My music" needs it; "WWJ music" does not, so the button always shows.
   let lab = null;
   let on = false, vol = 1, ctx = null, gain = null, gainFailed = false, lock = null, wiring = false;
+
+  /* ---- WWJ music: our own background beds, mixed in the page ----
+     The episode MP3 is never changed. The beds (about two minutes each) play through a second Web Audio chain with their
+     own volume, rotate within a mood, and cross-fade. Files and beds.json live in R2 under beds/ (the bucket needs a CORS rule). */
+  const BED_BASE = 'https://pub-306859672a3d4fa4a0d0662093095c81.r2.dev/beds/';
+  const BED_KEY = 'wwj.bed.v1', PLAYER_KEY = 'wwj.player.v1', XF = 5;   // XF = cross-fade seconds
+  const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+  // Thin moods borrow from neighbours so a long episode never repeats a track.
+  const BORROW = { easter: ['easter', 'hopeful', 'peaceful'], dramatic: ['dramatic', 'somber', 'sacred'], nature: ['nature', 'peaceful'], hopeful: ['hopeful', 'peaceful', 'easter'] };
+  // Test mapping: "season-episode" -> mood. Anything not listed falls back to "peaceful" (or the mood you pick).
+  const EP_MOOD = {
+    '1-12': 'somber', '1-17': 'somber', '1-18': 'somber', '1-19': 'somber', '2-15': 'somber', '2-21': 'somber', '2-22': 'somber',
+    '2-23': 'somber', '2-24': 'somber', '3-17': 'somber', '3-22': 'somber', '3-23': 'somber', '3-24': 'somber',
+    '1-20': 'hopeful', '2-25': 'hopeful', '3-16': 'hopeful', '3-25': 'easter',
+    '1-6': 'dramatic', '2-9': 'dramatic', '3-9': 'dramatic', '4-15': 'dramatic', '4-16': 'dramatic', '4-19': 'dramatic',
+    '2-5': 'peaceful', '2-6': 'peaceful', '3-14': 'peaceful', '4-9': 'peaceful', '4-11': 'peaceful',
+    '1-15': 'sacred', '2-19': 'sacred', '4-10': 'sacred',
+    '2-7': 'nature', '2-8': 'bright', '3-13': 'bright', '3-15': 'bright'
+  };
+  const lsRead = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
+  const prefs = Object.assign({ mode: 'own', vol: 18, mood: 'auto' }, lsRead(BED_KEY));
+  let mode = hasAS && prefs.mode !== 'wwj' ? 'own' : 'wwj';
+  const savePrefs = () => { try { localStorage.setItem(BED_KEY, JSON.stringify({ mode, vol: prefs.vol, mood: prefs.mood })); } catch {} };
+
+  let cat = null, catBusy = null, bctx = null, bmaster = null, slots = null, active = -1;
+  let queue = [], lastFile = null, moodNow = null, bedWanted = false;
+
+  const epKey = () => { const s = lsRead(PLAYER_KEY), n = s.last && s.last[s.season]; return s.season != null && n != null ? s.season + '-' + n : null; };
+  const wantMood = () => prefs.mood !== 'auto' ? prefs.mood : (EP_MOOD[epKey()] || 'peaceful');
+  const titleOf = f => { const t = cat && cat.tracks.find(x => x.file === f); return t ? t.title : f; };
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  function loadCat() {
+    return catBusy || (catBusy = fetch(BED_BASE + 'beds.json', { cache: 'no-cache' }).then(r => { if (!r.ok) throw 0; return r.json(); }).then(j => (cat = j)).catch(() => { catBusy = null; return null; }));
+  }
+  function pick() {
+    if (!queue.length) queue = (BORROW[moodNow] || [moodNow]).flatMap(k => shuffle(cat.moods[k] || []));
+    if (queue.length > 1 && queue[0] === lastFile) queue.push(queue.shift());   // never the same track twice in a row
+    lastFile = queue.shift() || null; return lastFile;
+  }
+  function bedMsg(t) { const e = $('bedmsg'); if (!e) return; e.textContent = t || ''; e.hidden = !t; }
+  function paintNow() {
+    const m = wantMood(), live = bedWanted && active >= 0 && lastFile;
+    $('bednow').textContent = live ? 'Now playing: ' + titleOf(lastFile) + ' (' + m + ')' : 'Mood for this episode: ' + m + '.';
+    $('bednext').disabled = !live;
+  }
+  function bedInit() {   // call inside a tap: iOS only lets Web Audio start from a gesture
+    if (bctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+    try {
+      bctx = new AC(); bmaster = bctx.createGain(); bmaster.gain.value = prefs.vol / 100; bmaster.connect(bctx.destination);
+      slots = [0, 1].map(i => {
+        const el = new Audio(); el.crossOrigin = 'anonymous'; el.preload = 'auto';
+        const g = bctx.createGain(); g.gain.value = 0;
+        bctx.createMediaElementSource(el).connect(g); g.connect(bmaster);
+        const s = { el, g, i, xf: false };
+        el.addEventListener('timeupdate', () => watch(s));
+        el.addEventListener('ended', () => { if (active === i) advance(false); });
+        el.addEventListener('error', () => { if (active === i && el.src.indexOf('data:') !== 0) bedMsg('That music could not load. Check your connection and try Next track.'); });
+        // Play each element once inside this tap so the page may start it later (the second one starts mid-episode) without a tap.
+        el.src = SILENT; el.play().then(() => { if (el.src.indexOf('data:') === 0) el.pause(); }).catch(() => {});
+        return s;
+      });
+      return true;
+    } catch { bctx = null; return false; }
+  }
+  function fade(g, to, sec) {
+    const t = bctx.currentTime;
+    try { g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(to, t + Math.max(.01, sec)); } catch {}
+  }
+  function startSlot(s, file, sec) {
+    const t = bctx.currentTime; s.g.gain.cancelScheduledValues(t); s.g.gain.setValueAtTime(0, t);
+    s.xf = false; s.el.src = BED_BASE + file;
+    const p = s.el.play(); if (p && p.catch) p.catch(() => {});
+    fade(s.g, 1, sec);
+  }
+  function stopSlot(s, sec) {
+    fade(s.g, 0, sec);
+    setTimeout(() => { if (active !== s.i || !bedWanted) { try { s.el.pause(); } catch {} } }, sec * 1000 + 150);
+  }
+  async function advance(cross) {   // start the next track in the idle slot and fade the current one out
+    if (!bedWanted || !bctx) return;
+    if (!cat && !(await loadCat())) { bedMsg('The music list could not load. Check your connection.'); return; }
+    if (!bedWanted) return;
+    const m = wantMood(); if (m !== moodNow) { moodNow = m; queue = []; }
+    const f = pick(); if (!f) { bedMsg('No music found for this mood yet.'); return; }
+    const old = active >= 0 ? slots[active] : null, i = old ? 1 - old.i : 0;
+    bedMsg(''); active = i;
+    startSlot(slots[i], f, cross && old ? XF : 1.2);
+    if (old) { old.xf = true; stopSlot(old, cross ? XF : .6); }
+    paintNow();
+  }
+  function watch(s) {   // near the end of a track, start the next one under it
+    if (active !== s.i || s.xf || !bedWanted) return;
+    const d = s.el.duration, t = s.el.currentTime;
+    if (isFinite(d) && d > 0 && d - t <= XF + .3) { s.xf = true; advance(true); }
+  }
+  let startBusy = null;   // pressing Play and the audio's own "play" event both call this: run it once
+  function bedStart() { return startBusy || (startBusy = bedStart1().finally(() => { startBusy = null; })); }
+  async function bedStart1() {
+    if (!(on && mode === 'wwj') || !bedInit()) return;
+    bedWanted = true; bctx.resume().catch(() => {});
+    const cur = active >= 0 ? slots[active] : null;
+    if (cur && cur.el.src.indexOf('data:') !== 0 && wantMood() === moodNow) {   // same mood: pick up where it rested
+      const p = cur.el.play(); if (p && p.catch) p.catch(() => {});
+      fade(cur.g, 1, .8); paintNow(); return;
+    }
+    await advance(!!cur);
+  }
+  function bedPause() {   // rest the music (keeps its place) when the episode pauses or ends
+    if (!bctx) return; bedWanted = false;
+    slots.forEach(s => { fade(s.g, 0, .5); setTimeout(() => { if (!bedWanted) { try { s.el.pause(); } catch {} } }, 650); });
+    paintNow();
+  }
+  function bedHalt() { bedPause(); active = -1; queue = []; moodNow = null; bedMsg(''); paintNow(); }
+  function moodRefresh() { paintNow(); if (bedWanted && active >= 0 && wantMood() !== moodNow) advance(true); }
 
   // the button in the speed row (same look as the speed buttons; outline turns red when on)
   const opener = document.createElement('button');
@@ -1847,12 +1999,19 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   // iOS can forget the session type once playback stops, so re-apply it before every play, on any new load, and on return to the page.
   function reassert() {
     if (!on) return;
-    try { navigator.audioSession.type = 'ambient'; } catch {}
+    // "My music" mixes with other apps (ambient). "WWJ music" is our own sound: "playback" also makes it play with the Silent switch on.
+    try { navigator.audioSession.type = mode === 'wwj' ? 'playback' : 'ambient'; } catch {}
     if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
+    if (bctx && bctx.state !== 'running') bctx.resume().catch(() => {});
   }
   const rawPlay = audio.play.bind(audio);
-  audio.play = function () { reassert(); return rawPlay(); };
+  // Pressing Play is a tap, so this is where the music is allowed to start.
+  audio.play = function () { reassert(); if (on && mode === 'wwj') bedStart(); return rawPlay(); };
   ['pause', 'ended', 'loadstart', 'emptied', 'waiting'].forEach(ev => audio.addEventListener(ev, reassert));
+  audio.addEventListener('play', () => { if (on && mode === 'wwj') bedStart(); });   // also when the next episode starts by itself
+  audio.addEventListener('pause', bedPause);
+  audio.addEventListener('ended', bedPause);
+  audio.addEventListener('loadstart', moodRefresh);
   document.addEventListener('pointerdown', reassert, true);
   document.addEventListener('touchend', reassert, true);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { reassert(); wantLock(); } });
@@ -1908,14 +2067,15 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   }
   async function wireOnce() {
     if (gain || gainFailed || wiring) return;
-    wiring = true; layout();
+    wiring = true; layout(); labApply();
     await enableGain();
-    wiring = false; layout();
+    wiring = false; layout(); labApply();   // the Voice Lab sliders come alive once the episode is wired in
+    if (!lab && gainFailed) { const p = labBox.querySelector('p'); if (p) p.textContent = 'This browser or audio host does not allow the Voice Lab sliders.'; }
   }
   function layout() { range.disabled = !(on && gain) || wiring; slider.classList.toggle('dim', range.disabled); }
 
   function apply() {
-    try { navigator.audioSession.type = on ? 'ambient' : 'auto'; } catch {}   // always set, so a setting left over from an earlier page can never stick
+    try { navigator.audioSession.type = on ? (mode === 'wwj' ? 'playback' : 'ambient') : 'auto'; } catch {}   // always set, so a setting left over from an earlier page can never stick
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     opener.classList.toggle('on', on);
     if (on) wantLock(); else dropLock();
@@ -1925,10 +2085,48 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     on = !on;
     // iOS applies a new session type only when playback starts, so if an episode is playing, restart it inside this tap.
     const was = !audio.paused;
+    if (on && mode === 'wwj') bedInit();   // inside the tap, so iOS lets the music play later
     if (was) audio.pause();
     apply();
+    if (!on) bedHalt();
     if (on) await wireOnce();
+    if (on && mode === 'wwj' && was) bedStart();
     if (was) rawPlay().catch(() => {});
+  });
+
+  // "My music" (Apple Music or any other app, less control) or "WWJ music" (our beds, volume under your control)
+  const modeOwn = $('modeown'), modeWwj = $('modewwj');
+  function paintMode() {
+    $('mixmode').hidden = !hasAS;
+    modeOwn.setAttribute('aria-pressed', String(mode === 'own')); modeWwj.setAttribute('aria-pressed', String(mode === 'wwj'));
+    $('mixown').hidden = mode !== 'own'; $('mixwwj').hidden = mode !== 'wwj';
+    document.querySelectorAll('#bedmoods button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === prefs.mood)));
+    paintNow();
+  }
+  function setMode(m) {
+    if (m === mode || (m === 'own' && !hasAS)) return;
+    const was = !audio.paused;
+    mode = m; savePrefs(); paintMode();
+    if (!on) return;
+    if (m === 'wwj') bedInit();   // inside the tap
+    if (was) audio.pause();       // iOS applies a new session type only when playback starts
+    if (m === 'own') bedHalt();
+    apply();
+    if (m === 'wwj' && was) bedStart();
+    if (was) rawPlay().catch(() => {});
+  }
+  modeOwn.addEventListener('click', () => setMode('own'));
+  modeWwj.addEventListener('click', () => setMode('wwj'));
+  $('bedmoods').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    prefs.mood = b.dataset.m; savePrefs(); paintMode(); moodRefresh();
+  });
+  $('bednext').addEventListener('click', () => { if (bedWanted) advance(true); });
+  const bedvol = $('bedvol');
+  bedvol.value = prefs.vol; $('bedvolv').textContent = prefs.vol + '%';
+  bedvol.addEventListener('input', () => {
+    prefs.vol = +bedvol.value; $('bedvolv').textContent = prefs.vol + '%'; savePrefs();
+    if (bmaster) bmaster.gain.setTargetAtTime(prefs.vol / 100, bctx.currentTime, .03);
   });
   range.addEventListener('input', () => {
     vol = range.value / 100; pct.textContent = range.value + '%';
@@ -1949,65 +2147,37 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
       curve[i] = (a <= knee ? a : knee + (1 - knee) * Math.tanh((a - knee) / (1 - knee))) * Math.sign(x);
     }
     L.shaper.curve = curve; L.shaper.oversample = '4x';
-    L.old = c.createGain(); L.oldLim = c.createDynamicsCompressor();   // the earlier boost, kept for comparison
-    L.oldLim.threshold.value = -4; L.oldLim.knee.value = 0; L.oldLim.ratio.value = 20; L.oldLim.attack.value = .003; L.oldLim.release.value = .15;
     L.hp.connect(L.pres);
     L.mode = null;
     return L;
   }
-  const PRE = {
-    clean:  { boost: 100, level: 0,   clar: 0 },
-    old:    { boost: 250, level: 0,   clar: 0, old: true },
-    clear:  { boost: 150, level: 40,  clar: 4 },
-    strong: { boost: 200, level: 70,  clar: 5 },
-    max:    { boost: 300, level: 100, clar: 6 }
-  };
   const lb = $('labboost'), ll = $('lablevel'), lc = $('labclar'), labBox = $('lab');
-  let curPre = null;
-  function route(L, old) {
-    if (L.mode === (old ? 'old' : 'new')) return;
-    ['pres', 'comp', 'makeup', 'shaper', 'old', 'oldLim'].forEach(k => { try { L[k].disconnect(); } catch {} });
-    if (old) { L.pres.connect(L.old); L.old.connect(L.oldLim); L.oldLim.connect(ctx.destination); }
-    else { L.pres.connect(L.comp); L.comp.connect(L.makeup); L.makeup.connect(L.shaper); L.shaper.connect(ctx.destination); }
-    L.mode = old ? 'old' : 'new';
+  function route(L) {
+    if (L.mode === 'new') return;
+    ['pres', 'comp', 'makeup', 'shaper'].forEach(k => { try { L[k].disconnect(); } catch {} });
+    L.pres.connect(L.comp); L.comp.connect(L.makeup); L.makeup.connect(L.shaper); L.shaper.connect(ctx.destination);
+    L.mode = 'new';
   }
   function labApply() {
-    const boost = lb.value / 100, level = +ll.value, clar = +lc.value, old = !!(curPre && PRE[curPre].old);
+    const boost = lb.value / 100, level = +ll.value, clar = +lc.value;
     $('labboostv').textContent = lb.value + '%'; $('lablevelv').textContent = level; $('labclarv').textContent = clar + ' dB';
     labBox.classList.toggle('dim', !lab);
     [lb, ll, lc].forEach(r => { r.disabled = !lab || wiring; });
     if (!lab) return;
-    route(lab, old);
+    route(lab);
     const t = ctx.currentTime;
-    lab.pres.gain.setTargetAtTime(old ? 0 : clar, t, .02);
-    if (old) { lab.old.gain.setTargetAtTime(boost, t, .02); return; }
+    lab.pres.gain.setTargetAtTime(clar, t, .02);
     const thr = -10 - level * .3, ratio = 1 + level * .04;
     lab.comp.threshold.setTargetAtTime(thr, t, .02); lab.comp.ratio.setTargetAtTime(ratio, t, .02);
     lab.comp.knee.value = 24; lab.comp.attack.value = .012; lab.comp.release.value = .28;
     const makeupDb = (-thr) * (1 - 1 / ratio) * .5;   // win back about half of what the leveler takes off the peaks
     lab.makeup.gain.setTargetAtTime(boost * Math.pow(10, makeupDb / 20), t, .02);
   }
-  function setPre(name) {
-    curPre = name; const p = PRE[name];
-    lb.value = p.boost; ll.value = p.level; lc.value = p.clar;
-    document.querySelectorAll('#labpre button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === name ? 'true' : 'false'));
-    labApply();
-  }
-  $('labpre').addEventListener('click', async e => {
-    const b = e.target.closest('button'); if (!b) return;
-    const name = b.dataset.p;
-    if (!lab) { await wireOnce(); }
-    if (!lab) { labBox.querySelector('p').textContent = 'This browser or audio host does not allow the Voice Lab.'; return; }
-    setPre(name);
-  });
-  [lb, ll, lc].forEach(r => r.addEventListener('input', () => {
-    curPre = curPre && PRE[curPre].old ? 'clear' : curPre;
-    document.querySelectorAll('#labpre button').forEach(b => b.setAttribute('aria-pressed', 'false'));
-    curPre = null; labApply();
-  }));
+  [lb, ll, lc].forEach(r => r.addEventListener('input', labApply));
   labApply();
 
   apply();
+  paintMode();
 })();
 </script>
 </body>

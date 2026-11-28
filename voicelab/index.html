@@ -1885,7 +1885,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     '2-7': 'nature', '2-8': 'bright', '3-13': 'bright', '3-15': 'bright'
   };
   const lsRead = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
-  const prefs = Object.assign({ mode: 'own', vol: 18, mood: 'auto' }, lsRead(BED_KEY));
+  const prefs = Object.assign({ mode: 'own', vol: 50, mood: 'auto' }, lsRead(BED_KEY));
   let mode = hasAS && prefs.mode !== 'wwj' ? 'own' : 'wwj';
   const savePrefs = () => { try { localStorage.setItem(BED_KEY, JSON.stringify({ mode, vol: prefs.vol, mood: prefs.mood })); } catch {} };
 
@@ -1913,7 +1913,9 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
   // One AudioContext for the episode and the music (two at once makes iOS crackle at faster speeds). 'playback' = bigger buffers, fewer dropouts.
   function mkCtx() {
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
-    try { return new AC({ latencyHint: 'playback' }); } catch { return new AC(); }
+    let c; try { c = new AC({ latencyHint: 'playback' }); } catch { c = new AC(); }
+    c.onstatechange = () => { if (c.state !== 'running' && !audio.paused) c.resume().catch(() => {}); };
+    return c;
   }
   function bedInit() {   // call inside a tap: iOS only lets Web Audio start from a gesture
     if (bctx) return true;
@@ -2003,11 +2005,12 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
 
   // iOS can forget the session type once playback stops, so re-apply it before every play, on any new load, and on return to the page.
   function reassert() {
+    // Once the episode has been wired in, ALL of its sound goes through the audio context, even with the mixer off,
+    // so a suspended context means a silent player. Wake it on every tap and play, whether or not the mixer is on.
+    if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
     if (!on) return;
     // "My music" mixes with other apps (ambient). "WWJ music" is our own sound: "playback" also makes it play with the Silent switch on.
     try { navigator.audioSession.type = mode === 'wwj' ? 'playback' : 'ambient'; } catch {}
-    if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
-    if (bctx && bctx.state !== 'running') bctx.resume().catch(() => {});
   }
   const rawPlay = audio.play.bind(audio);
   // Pressing Play is a tap, so this is where the music is allowed to start.
@@ -2093,6 +2096,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     if (on && mode === 'wwj') bedInit();   // inside the tap, so iOS lets the music play later
     if (was) audio.pause();
     apply();
+    if (ctx && ctx.state !== 'running') { try { await ctx.resume(); } catch {} }   // inside the tap, so iOS lets it restart
     if (!on) bedHalt();
     if (on) await wireOnce();
     if (on && mode === 'wwj' && was) bedStart();
@@ -2117,6 +2121,7 @@ const OPEN = {"01":["Faith cometh by hearing, and hearing by the word of God.","
     if (was) audio.pause();       // iOS applies a new session type only when playback starts
     if (m === 'own') bedHalt();
     apply();
+    if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
     if (m === 'wwj' && was) bedStart();
     if (was) rawPlay().catch(() => {});
   }
